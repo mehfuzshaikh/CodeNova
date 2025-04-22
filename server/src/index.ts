@@ -1,10 +1,10 @@
 import express from 'express';
+import './db/config';
+import userRouter from './routes/userRouter';
 
 const app = express();
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello from TypeScript backend! 🎉');
-});
+app.use('/api/v1/user',userRouter);
 
-app.listen(5000, () => console.log('Server running on http://localhost:5000'));
+app.listen(process.env.PORT, () => console.log('Server running on http://localhost:5000'));
