@@ -1,17 +1,23 @@
-import mongoose , { Document,Schema, Types } from 'mongoose';
+import mongoose , { Schema, Types,Model } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 
-export interface IUser extends Document{
+export interface IUser{
     _id: Types.ObjectId,
     email:string,
     password:string,
     confirmPassword?:string,
+    passwordChangedAt?: Date;
     username:string,
     isActive:boolean
 }
+export interface IUserMethods {
+    correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
+    changedPasswordAfter(JWTTimestamp: number | undefined): boolean;
+}
+type UserModel = Model<IUser, {}, IUserMethods>;
 
-const userSchema:Schema<IUser> = new mongoose.Schema({
+const userSchema = new Schema<IUser, UserModel>({
     email:{
         type:String,
         required:[true,'Email is required'],
@@ -35,6 +41,7 @@ const userSchema:Schema<IUser> = new mongoose.Schema({
             message:'Password and confirm password should match'
         }
     },
+    passwordChangedAt:Date,
     username:{
         type:String,
         required:[true,'Username is required']
@@ -54,4 +61,21 @@ userSchema.pre('save',async function(next)
     next()
 });
 
-export const USER = mongoose.model<IUser>('Users',userSchema);
+userSchema.methods.correctPassword = async function(candidatePassword:string,userPassword:string):Promise<boolean>
+{
+    return await bcrypt.compare(candidatePassword,userPassword);
+}
+
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp: number):boolean
+{
+    if(this.passwordChangedAt)
+    {
+        const changedTimestamp = Math.floor(this.passwordChangedAt.getTime()/1000);
+        return JWTTimestamp < changedTimestamp;
+    }
+    return false;
+}
+
+// This below line is for error solving of controller
+export type UserDocument = IUser & mongoose.Document & IUserMethods;
+export const USER = mongoose.model<IUser, UserModel>('Users',userSchema);
