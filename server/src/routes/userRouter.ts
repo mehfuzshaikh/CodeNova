@@ -4,8 +4,10 @@ import express from 'express';
 
 const router = express.Router();
 
-router.post('/signup',authController.signUp);
+router.post('/sendotp',authController.senOTP);
+router.post('/signup',authController.verifyOtpAndSignUp);
 router.post('/login',authController.logIn);
+router.post('/resendotp',authController.resendOTP);
 
 // testing
 router.get('/',protect,async(req,res)=>{

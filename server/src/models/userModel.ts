@@ -1,6 +1,7 @@
 import mongoose , { Schema, Types,Model } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 export interface IUser{
     _id: Types.ObjectId,
@@ -9,7 +10,13 @@ export interface IUser{
     confirmPassword?:string,
     passwordChangedAt?: Date;
     username:string,
-    isActive:boolean
+    isActive:boolean,
+    isVerified: boolean;
+    verificationCode?: string | null;
+    otpExpires?: Date | null;
+    otpRequestedAt?:Date | null;
+    passwordResetToken?: string | null;
+    passwordResetExpires?:Date | null;
 }
 export interface IUserMethods {
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
@@ -33,7 +40,9 @@ const userSchema = new Schema<IUser, UserModel>({
     },
     confirmPassword:{
         type:String,
-        required:[true,'Confirm password is required'],
+        required: [function (this: mongoose.Document) {
+            return this.isNew; // Only required when creating
+        }, 'Confirm password is required'],
         validate:{
             validator:function(element){
                 return element == this.password
@@ -50,7 +59,37 @@ const userSchema = new Schema<IUser, UserModel>({
         type:Boolean,
         default:true,
         select:false
+    },
+    isVerified:{
+        type:Boolean,
+        default:false
+    },
+    verificationCode:{
+        type: String,
+        default:null,
+        select:false
+    },
+    otpExpires:{
+        type:Date,
+        default:null,
+        select:false
+    },
+    otpRequestedAt: {
+        type: Date,
+        default: null,
+        select: false
+    },
+    passwordResetToken: {
+        type: String,
+        default: null,
+        select: false,
+    },
+    passwordResetExpires: {
+        type: Date,
+        default: null,
+        select: false,
     }
+
 })
 
 userSchema.pre('save',async function(next)
