@@ -1,7 +1,6 @@
 import mongoose , { Schema, Types,Model } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
 
 export interface IUser{
     _id: Types.ObjectId,
@@ -100,6 +99,14 @@ userSchema.pre('save',async function(next)
     next()
 });
 
+userSchema.pre('save', function (next) {
+    if (!this.isModified('password') || this.isNew) return next();
+
+    this.passwordChangedAt = new Date(Date.now() - 1000);
+    next();
+});
+
+
 userSchema.methods.correctPassword = async function(candidatePassword:string,userPassword:string):Promise<boolean>
 {
     return await bcrypt.compare(candidatePassword,userPassword);
@@ -114,6 +121,7 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp: number):boolean
     }
     return false;
 }
+
 
 // This below line is for error solving of controller
 export type UserDocument = IUser & mongoose.Document & IUserMethods;
