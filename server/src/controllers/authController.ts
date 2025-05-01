@@ -23,7 +23,7 @@ export const generateResetToken = () => {
 };
 
 
-export const senOTP = async(req:Request,res:Response):Promise<void>=>{
+export const signUp = async(req:Request,res:Response):Promise<void>=>{
     try {
         const { email, password, confirmPassword, username } = req.body;
 
@@ -34,7 +34,7 @@ export const senOTP = async(req:Request,res:Response):Promise<void>=>{
         if(existingUser){
             if(existingUser.isVerified){
                 const conflictField = existingUser.email === email ? 'Email' : 'Username';
-                res.status(400).json({message:`${conflictField} is already exists`});
+                res.status(400).json({message:`${conflictField} is already in use`});
                 return;
             }
             if(existingUser.username !== username){
@@ -61,7 +61,7 @@ export const senOTP = async(req:Request,res:Response):Promise<void>=>{
     }
 }
 
-export const verifyOtpAndSignUp = async(req:Request,res:Response):Promise<void>=>{
+export const verifyOtp = async(req:Request,res:Response):Promise<void>=>{
     try {
         const { email,otp } = req.body;
 
