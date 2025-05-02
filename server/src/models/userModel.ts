@@ -16,6 +16,8 @@ export interface IUser{
     otpRequestedAt?:Date | null;
     passwordResetToken?: string | null;
     passwordResetExpires?:Date | null;
+    createdAt?:Date | null;
+    updatedAt?:Date | null
 }
 export interface IUserMethods {
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
@@ -27,6 +29,7 @@ const userSchema = new Schema<IUser, UserModel>({
     email:{
         type:String,
         required:[true,'Email is required'],
+        unique:[true,'Email must be unique'],
         lowercase:true,
         validate:[validator.isEmail,'Enter valid email']
     },
@@ -52,7 +55,8 @@ const userSchema = new Schema<IUser, UserModel>({
     passwordChangedAt:Date,
     username:{
         type:String,
-        required:[true,'Username is required']
+        required:[true,'Username is required'],
+        unique:[true,'Username must be unique']
     },
     isActive:{
         type:Boolean,
@@ -89,7 +93,7 @@ const userSchema = new Schema<IUser, UserModel>({
         select: false,
     }
 
-})
+},{timestamps:true})
 
 userSchema.pre('save',async function(next)
 {
@@ -121,6 +125,11 @@ userSchema.methods.changedPasswordAfter = function(JWTTimestamp: number):boolean
     }
     return false;
 }
+
+userSchema.index(
+    { createdAt: 1 },
+    { expireAfterSeconds: 600, partialFilterExpression: { isVerified: false } } // only unverified accounts auto-delete
+);
 
 
 // This below line is for error solving of controller

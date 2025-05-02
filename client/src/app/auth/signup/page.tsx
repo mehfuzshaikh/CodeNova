@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { signUp } from '@/lib/api/auth';
+import { toast } from 'sonner';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required').min(4),
@@ -38,28 +39,27 @@ export default function SignUpPage() {
   const onSubmit = async (data: any) => {
     try {
         const res = await signUp(data);
-        alert(res.data.message);
+        toast.success(res.data.message);
         router.push(`/auth/verify-otp?email=${data.email}`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-        const msg = err.response?.data?.message;
-
+    } catch (err) {
+        const error = err as { response?: { data?: { message?: string } } };
+        const msg = error.response?.data?.message;
         if (msg?.includes('Email')) {
           setError('email', { type: 'manual', message: msg });
         } else if (msg?.includes('Username')) {
           setError('username', { type: 'manual', message: msg });
         } else {
           // fallback: show general error if you like
-          alert(msg || 'Signup failed');
+          toast.error(msg || 'Signup failed')
         }
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-20">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-md space-y-6 rounded-xl bg-white p-8 shadow-md"
+        className="w-full max-w-md min-h-[500px] space-y-8 rounded-xl bg-white p-10 shadow-md"
       >
         <h2 className="text-2xl font-bold text-center">Create an account</h2>
 
@@ -103,6 +103,11 @@ export default function SignUpPage() {
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? 'Signing up...' : 'Sign Up'}
         </Button>
+
+        <p className='text-center text-sm text-gray-600'>
+          Have an account?{' '}
+          <a href='auth/login' className='font-medium text-blue-600 hover:underline'>Sign In</a>
+        </p>
       </form>
     </div>
   );

@@ -23,44 +23,82 @@ export const generateResetToken = () => {
 };
 
 
-export const signUp = async(req:Request,res:Response):Promise<void>=>{
-    try {
-        const { email, password, confirmPassword, username } = req.body;
+export const signUp = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password, confirmPassword, username } = req.body;
 
-        const otp = generateOTP();
-        const otpExpires = new Date(Date.now() + 2 * 60 * 1000) // 2 minute
+    const otp = generateOTP();
+    const otpExpires = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes
+    const expirationThreshold = 10 * 60 * 1000; // 10 minute
 
-        const existingUser = await USER.findOne({$or:[{email},{username}],isActive:true});
-        if(existingUser){
-            if(existingUser.isVerified){
-                const conflictField = existingUser.email === email ? 'Email' : 'Username';
-                res.status(400).json({message:`${conflictField} is already in use`});
-                return;
-            }
-            if(existingUser.username !== username){
-                const usernameConflict = await USER.findOne({ username, _id: { $ne: existingUser._id }, isActive: true });
-                if (usernameConflict) {
-                    res.status(400).json({ message: 'Username is already in use.' });
-                    return;
-                }
-            }
-            existingUser.verificationCode = otp;
-            existingUser.otpExpires = otpExpires;
-            existingUser.password = password;
-            existingUser.confirmPassword = confirmPassword;
-            existingUser.username = username; // in case they want to change!
-            await existingUser.save();
-        }else{
-            const newUser = await USER.create({ email,password,confirmPassword,username,verificationCode:otp,otpExpires});
+    const existingUser = await USER.findOne({$or: [{ email }, { username }],isActive: true});
+
+    if (existingUser) {
+      const isSameEmail = existingUser.email === email;
+      const isVerified = existingUser.isVerified;
+
+      const isExpired = !isVerified && existingUser.createdAt && Date.now() - new Date(existingUser.createdAt).getTime() > expirationThreshold;
+
+      if (isVerified) {
+        const conflictField = isSameEmail ? "Email" : "Username";
+        res.status(400).json({ message: `${conflictField} is already in use.`});
+        return;
+      }
+
+      if (!isVerified && isSameEmail) {
+        const usernameConflict = await USER.findOne({
+          username,
+          _id: { $ne: existingUser._id },
+          isActive: true,
+          isVerified: true,
+        });
+        if (usernameConflict) {
+          res.status(400).json({ message: "Username is already in use." });
+          return;
         }
 
-        sendEmail(email,'Your OTP Code',`Your OTP for signup is ${otp}.\n It is valid for 2 minutes.`)
-        res.status(201).json({message:'OTP sent successfully. Please check your email.'});
-    } catch (error) {
-        res.status(400).json({message:'Something went wrong',error:(error as Error).message});
-    }
-}
+        existingUser.password = password;
+        existingUser.confirmPassword = confirmPassword;
+        existingUser.username = username;
+        existingUser.verificationCode = otp;
+        existingUser.otpExpires = otpExpires;
+        await existingUser.save();
 
+        await sendEmail(email,"Your OTP Code",`Your OTP for signup is ${otp}.\n It is valid for 2 minutes.`);
+
+        res.status(201).json({ message: "OTP resent successfully. Please check your email."});
+        return;
+      }
+
+      if (!isVerified && isExpired) {
+        await USER.deleteOne({ _id: existingUser._id });
+      } else {
+        // Case: unverified, not expired, and not same email → block
+        const conflictField = isSameEmail ? "Email" : "Username";
+        res.status(400).json({
+          message: `${conflictField} is already in use`,
+        });
+        return;
+      }
+    }
+
+    const newUser = await USER.create({
+      email,
+      password,
+      confirmPassword,
+      username,
+      verificationCode: otp,
+      otpExpires,
+    });
+
+    await sendEmail(email,"Your OTP Code",`Your OTP for signup is ${otp}.\n It is valid for 2 minutes.`);
+
+    res.status(201).json({ message: "OTP sent successfully. Please check your email." });
+  } catch (error) {
+    res.status(400).json({message: "Something went wrong",error: (error as Error).message});
+  }
+};
+  
 export const verifyOtp = async(req:Request,res:Response):Promise<void>=>{
     try {
         const { email,otp } = req.body;
@@ -72,7 +110,7 @@ export const verifyOtp = async(req:Request,res:Response):Promise<void>=>{
 
         const user = await USER.findOne({email,verificationCode:otp}).select('+otpExpires');
         if(!user){
-            res.status(400).json({message:'Invalid OTP or Email'});
+            res.status(400).json({message:'Invalid OTP'});
             return;
         }
         
