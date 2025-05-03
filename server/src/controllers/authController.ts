@@ -16,10 +16,19 @@ const generateToken = (id:string):string=>{
 
 const generateOTP = (): string => Math.floor(100000 + Math.random() * 900000).toString();
 
-export const generateResetToken = () => {
+const generateResetToken = () => {
   const token = crypto.randomBytes(32).toString('hex');
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
   return { token, hashedToken };
+};
+
+const setCookiesToken = (res: Response, token: string) => {
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
 };
 
 
@@ -126,6 +135,8 @@ export const verifyOtp = async(req:Request,res:Response):Promise<void>=>{
         
         const token = generateToken(user._id.toString());
 
+        setCookiesToken(res,token);
+
         res.status(201).json({message:'Sign up successful!',token});
     } catch (error) {
         res.status(400).json({message:'Something went wrong',error:(error as Error).message});
@@ -154,6 +165,8 @@ export const logIn = async(req:Request,res:Response):Promise<void>=>{
 
         const userObject = user.toObject() as Record<string,any>;
         delete userObject.password;
+
+        setCookiesToken(res,token);
 
         res.status(200).json({message:'Login successful',data:userObject,token});
     } catch (error) {
@@ -220,7 +233,8 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
         user.passwordResetExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
         await user.save();
     
-        const resetLink = `${req.protocol}://${req.get('host')}/api/v1/user/reset-password/${token}`;
+        // const resetLink = `${req.protocol}://${req.get('host')}/api/v1/user/reset-password/${token}`;  // For postman
+        const resetLink = `${req.protocol}://localhost:3000/auth/reset-password/${token}`; // For frontend
         const message = `Click the link to reset your password:\n${resetLink}\nThis link will expire in 15 minutes.`;
     
         await sendEmail(user.email, "Password Reset", message);

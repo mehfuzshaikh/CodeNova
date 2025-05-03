@@ -12,9 +12,21 @@ export const signUp = async (data: {
 };
 
 export const verifyOtp = async (email: string, otp: string) => {
-  return axios.post(`${API_BASE}/verify-otp`, { email, otp });
+  return axios.post(`${API_BASE}/verify-otp`, { email, otp },{ withCredentials: true }); // cross origin
 };
 
 export const resendOtp = async (email: string) => {
   return axios.post(`${API_BASE}/resend-otp`, { email });
 };
+
+export const login = (data: { email: string; password: string }) => {
+  return axios.post(`${API_BASE}/login`, data, { withCredentials: true }); // cross origin
+};
+
+export const forgotPassword = async (email:string) => {
+  return axios.post(`${API_BASE}/forgot-password`, { email })
+}
+
+export const resetPassword = async (token: string, data: { password: string; confirmPassword: string; }) => {
+  return axios.post(`${API_BASE}/reset-password/${token}`,data)
+}
