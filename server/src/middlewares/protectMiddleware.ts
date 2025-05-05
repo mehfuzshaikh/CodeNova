@@ -6,10 +6,15 @@ const jwtSecret = process.env.JWT_SECRET_KEY as string;
 
 export const protect = async(req:Request,res:Response,next:NextFunction):Promise<void>=>{
     try {
-      let token;
-      if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
-          token = req.headers.authorization.split(' ')[1];
-      }
+
+      // Read token from header (This is for Postman)
+      // let token;
+      // if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+      //     token = req.headers.authorization.split(' ')[1];
+      // }
+
+      // Read token from cookie (Frontend)
+      const token = req.cookies.token; 
       if(!token){
           res.status(401).json({message:'You are not logged In'});
           return;

@@ -12,6 +12,7 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { signUp } from '@/lib/api/auth';
 import { toast } from 'sonner';
 
+
 const schema = yup.object().shape({
   username: yup.string().required('Username is required').min(4),
   email: yup.string().email('Invalid email').required('Email is required'),

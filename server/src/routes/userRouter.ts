@@ -1,4 +1,5 @@
 import * as authController from '../controllers/authController';
+import * as userController from '../controllers/userController';
 import { protect } from '../middlewares/protectMiddleware';
 import express from 'express';
 
@@ -11,10 +12,9 @@ router.post('/resend-otp',authController.resendOTP);
 router.post('/forgot-password',authController.forgotPassword);
 router.post('/reset-password/:token',authController.resetPassword);
 router.post('/update-password/',protect,authController.updatePassword);
+router.post('/logout',authController.logout);
 
 // testing
-router.get('/',protect,async(req,res)=>{
-    res.send('Route accessed')
-})
+router.get('/me',protect,userController.getMe)
 
 export default router;

@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { verifyOtp, resendOtp } from "@/lib/api/auth";
 import { toast } from "sonner";
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '@/redux/features/auth/authSlice';
 
 const schema = yup.object().shape({
   otp: yup
@@ -28,6 +30,7 @@ export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [customError, setCustomError] = useState<string | null>(null);
   const [resendDisabled, setResendDisabled] = useState(false);
@@ -71,7 +74,8 @@ export default function VerifyOtpPage() {
       setLoading(true);
       const res = await verifyOtp(email, data.otp);
       toast.success(res.data.message);
-      router.push("/");
+      dispatch(setCredentials(res.data.data))
+      router.push("/dashboard");
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       setCustomError(error.response?.data?.message || "OTP verification failed");

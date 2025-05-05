@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '@/redux/features/auth/authSlice';
 
 const schema = yup.object().shape({
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -22,6 +24,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [commonError, setCommonError] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -36,7 +39,8 @@ export default function LoginPage() {
     try {
       const res = await login(data);
       toast.success(res.data.message || 'Login successful');
-      router.push('/'); // redirect to home or dashboard
+      dispatch(setCredentials(res.data.data))
+      router.push('/dashboard');
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       const msg = error.response?.data?.message || 'Login failed';
