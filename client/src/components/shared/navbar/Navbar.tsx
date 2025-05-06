@@ -2,29 +2,13 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { logout as logoutApi } from '@/lib/api/auth';
-import { logout } from '@/redux/features/auth/authSlice';
-import { toast } from 'sonner';
-import router from 'next/router';
+import ProfileAvatar from './ProfileAvatar';
+
 
 export default function Navbar() {
-  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state:RootState)=>state.auth);
-
-  const handleLogout = async()=>{
-    try {
-      const res = await logoutApi();
-      dispatch(logout());
-      toast.success(res.data.message || "Logged out");
-      router.push('/');
-    } catch (err) {
-      const error = err as { response?: { data?: { message?: string } } };
-      const msg = error.response?.data?.message || 'Logout failed';
-      toast.error(msg);
-    }
-  }
   return (
     <nav className="w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between">
       {/* Left: Logo & App Name */}
@@ -56,7 +40,7 @@ export default function Navbar() {
             </Link>
           </>
         ):(
-          <Button onClick={handleLogout}>Logout</Button>
+          <ProfileAvatar />
         )}
         
       </div>

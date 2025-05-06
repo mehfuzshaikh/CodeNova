@@ -14,7 +14,8 @@ router.post('/reset-password/:token',authController.resetPassword);
 router.post('/update-password/',protect,authController.updatePassword);
 router.post('/logout',authController.logout);
 
-// testing
-router.get('/me',protect,userController.getMe)
+
+router.get('/me',protect,userController.getMe);
+// router.patch('/update-profile',protect,userController.updateProfile);
 
 export default router;

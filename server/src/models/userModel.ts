@@ -10,14 +10,24 @@ export interface IUser{
     passwordChangedAt?: Date;
     username:string,
     isActive:boolean,
-    isVerified: boolean;
-    verificationCode?: string | null;
-    otpExpires?: Date | null;
-    otpRequestedAt?:Date | null;
-    passwordResetToken?: string | null;
-    passwordResetExpires?:Date | null;
-    createdAt?:Date | null;
-    updatedAt?:Date | null
+    isVerified: boolean,
+    verificationCode?: string | null,
+    otpExpires?: Date | null,
+    otpRequestedAt?:Date | null,
+    passwordResetToken?: string | null,
+    passwordResetExpires?:Date | null,
+    createdAt?:Date | null,
+    updatedAt?:Date | null,
+    name?:string | null,
+    gender?:string | null,
+    location?:string | null,
+    birthday?:Date | null,
+    summary?:String | null,
+    website?:string | null,
+    github?:string | null,
+    linkedin?:string | null,
+
+
 }
 export interface IUserMethods {
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;
@@ -91,7 +101,18 @@ const userSchema = new Schema<IUser, UserModel>({
         type: Date,
         default: null,
         select: false,
-    }
+    },
+    name:String,
+    gender:{
+        type:String,
+        enum:['Male','Female','Other']
+    },
+    location:String,
+    birthday:Date,
+    summary:String,
+    website:String,
+    github:String,
+    linkedin:String 
 
 },{timestamps:true})
 
