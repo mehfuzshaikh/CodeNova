@@ -59,8 +59,14 @@ export default function ProfileMenu({ children }: Props) {
           </div>
         </div>
 
-        <DropdownMenuItem onClick={() => router.push('/settings')} className='cursor-pointer'>
-          Settings
+        <DropdownMenuItem onClick={() => router.push('/edit-profile')} className='cursor-pointer'>
+          Edit Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push('/change-password')} className='cursor-pointer'>
+          Change Password
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push('/account')} className='cursor-pointer'>
+          Account
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleLogout}

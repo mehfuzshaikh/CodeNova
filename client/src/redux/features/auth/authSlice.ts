@@ -4,7 +4,15 @@ interface User {
   _id: string;
   username: string;
   email: string;
-  profileImage: string | Blob | undefined;
+  location: string;
+  birthday: string;
+  summary: string;
+  website: string;
+  github: string;
+  linkedin: string;
+  gender: string;
+  name:string
+  profileImage: string;
 }
 
 interface AuthState {
@@ -25,6 +33,11 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.user = action.payload;
     },
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
+    },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
@@ -32,5 +45,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, logout, updateUser } = authSlice.actions;
 export default authSlice.reducer;

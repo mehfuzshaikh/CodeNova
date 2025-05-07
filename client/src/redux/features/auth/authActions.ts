@@ -1,6 +1,6 @@
 import { AppDispatch } from '@/redux/store';
 import { setCredentials, logout } from './authSlice';
-import { getCurrentUser } from '@/lib/api/auth';
+import { getCurrentUser } from '@/lib/api/user';
 
 export const loadUser = () => async (dispatch: AppDispatch) => {
   try {

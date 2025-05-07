@@ -9,35 +9,54 @@ export const getMe = async(req:Request,res:Response):Promise<void>=>{
     }
 }
 
-// export const updateProfile = async(req:Request,res:Response):Promise<void>=>{
-//     try {
-//         const userId = req.user?._id;
-//         const updateData:IUser = req.body;
+export const updateProfile = async(req:Request,res:Response):Promise<void>=>{
+    try {
+        const userId = req.user?._id;  // Assuming `req.user` contains authenticated user data.
+        const updateData: Partial<Record<string, any>> = {};
 
-//         const allowedFields:(keyof IUser)[] = [
-//             'name',
-//             'gender',
-//             'location',
-//             'birthday',
-//             'summary',
-//             'website',
-//             'github',
-//             'linkedin'
-//           ];
-
-//           const filteredUpdates = Object.keys(updateData).reduce((acc:Partial<IUser>, key) => {
-//             if (allowedFields.includes(key  as keyof IUser)) {
-//                 const value = updateData[key as keyof IUser];
-//                 if (value !== undefined && value !== null) {
-//                     acc[key as keyof IUser] = value;
-//                   }
-//             }
-//             return acc;
-//           }, {});
-
-//           const updatedUser = await USER.findByIdAndUpdate(userId,{$set:filteredUpdates},{new:true})
-//           res.status(200).json({message:'Profile updated successfully',data:updatedUser});
-//     } catch (error) {
-//         res.status(400).json({message:"Failed to update profile", error: (error as Error).message });
-//     }
-// }
+        const formatUrl = (value: string, baseUrl: string): string => {
+            return value.trim() ? `${baseUrl}${value.trim()}` : "";
+        };
+    
+        // Filter only valid fields from the request body
+        const validFields = [
+          "name", "gender", "location", "birthday", 
+          "summary", "website", "github", "linkedin"
+        ];
+    
+        validFields.forEach((field) => {
+            if (req.body[field] !== undefined && req.body[field].trim() !== "") {
+                let fieldValue = req.body[field].trim();
+                if (field === "website") {
+                    fieldValue = formatUrl(fieldValue, "http://");
+                } else if (field === "github") {
+                    fieldValue = formatUrl(fieldValue, "https://github.com/");
+                } else if (field === "linkedin") {
+                    fieldValue = formatUrl(fieldValue, "https://linkedin.com/in/");
+                }
+                updateData[field] = fieldValue;
+            }
+        });
+    
+        if (Object.keys(updateData).length === 0) {
+          res.status(400).json({ message: "No valid fields to update" });
+          return;
+        }
+    
+        // Update the user document
+        const updatedUser = await USER.findByIdAndUpdate(
+          userId,
+          { $set: updateData },
+          { new: true, runValidators: true }
+        );
+    
+        if (!updatedUser) {
+          res.status(404).json({ message: "User not found" });
+          return;
+        }
+    
+        res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
+    } catch (error) {
+        res.status(400).json({message:"Failed to update profile", error: (error as Error).message });
+    }
+}
