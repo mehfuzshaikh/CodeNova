@@ -7,6 +7,22 @@ import { updateProfile } from '@/lib/api/user';
 import ProfileField from './ProfileField';
 import { updateUser } from '@/redux/features/auth/authSlice';
 
+// Later we shift this code to utils or any other place
+const formatDate = (datestring:string):string=>{
+  if(!datestring) return '';
+  const date = new Date(datestring);
+  return date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})
+};
+
+const formatUrl = (value: string, baseUrl: string): string => {
+  if(!value) return '';
+  value = value.trim()
+
+  if(value.startsWith('https://')){
+      return value;
+  }
+  return `${baseUrl}${value}`;
+};
 
 const ProfileForm: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -17,27 +33,26 @@ const ProfileForm: React.FC = () => {
 
   const handleUpdate = async (field: string, newValue: string) => {
     try {
-      const res = await updateProfile({ [field]: newValue });
-      dispatch(updateUser(res.data.user));
-      alert('Profile updated successfully');
+      await updateProfile({ [field]: newValue });
+      dispatch(updateUser({ [field]: newValue }));
       setEditingField(null); // Close edit mode
     } catch {
-      alert('Failed to update profile');
+      setEditingField(null);
     }
   };
 
   return (
-    <div className="p-4 bg-white rounded shadow font-normal">
+    <div className="p-4 text-sm bg-white rounded shadow font-normal">
       <h2 className="text-xl font-bold mb-4">Basic Info</h2>
       {[
         { label: 'Name', field: 'name', value: user.name },
         { label: 'Gender', field: 'gender', value: user.gender },
         { label: 'Location', field: 'location', value: user.location },
-        { label: 'Birthday', field: 'birthday', value: user.birthday },
+        { label: 'Birthday', field: 'birthday', value: formatDate(user.birthday) },
         { label: 'Summary', field: 'summary', value: user.summary },
-        { label: 'Website', field: 'website', value: user.website },
-        { label: 'GitHub', field: 'github', value: user.github },
-        { label: 'LinkedIn', field: 'linkedin', value: user.linkedin },
+        { label: 'Website', field: 'website', value: formatUrl(user.website,'https://') },
+        { label: 'GitHub', field: 'github', value: formatUrl(user.github,'https://github.com/') },
+        { label: 'LinkedIn', field: 'linkedin', value: formatUrl(user.linkedin,'https://linkedin.com/in/') },
       ].map(({ label, field, value }) => (
         <ProfileField
           key={field}

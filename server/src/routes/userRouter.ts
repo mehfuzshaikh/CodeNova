@@ -1,5 +1,6 @@
 import * as authController from '../controllers/authController';
 import * as userController from '../controllers/userController';
+import upload from '../middlewares/imageUpload';
 import { protect } from '../middlewares/protectMiddleware';
 import { validate } from '../middlewares/validateSchemaMiddleware';
 import { userProfileSchema } from '../validators/userProfileSchema';
@@ -18,6 +19,11 @@ router.post('/logout',authController.logout);
 
 
 router.get('/me',protect,userController.getMe);
-router.patch('/update-profile',protect,validate(userProfileSchema),userController.updateProfile);
+router.patch('/update-profile',
+    protect,
+    validate(userProfileSchema),
+    upload.single('profileImg'),
+    userController.updateProfile
+);
 
 export default router;

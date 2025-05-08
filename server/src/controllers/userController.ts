@@ -1,6 +1,16 @@
 import { USER,IUser } from '../models/userModel';
 import { Request,Response} from 'express'
 
+const formatUrl = (value: string, baseUrl: string): string => {
+    if(!value) return '';
+    value = value.trim()
+
+    if(value.startsWith('https://')){
+        return value;
+    }
+    return `${baseUrl}${value}`;
+};
+
 export const getMe = async(req:Request,res:Response):Promise<void>=>{
     try {
         res.status(200).json({user:req.user})
@@ -14,21 +24,21 @@ export const updateProfile = async(req:Request,res:Response):Promise<void>=>{
         const userId = req.user?._id;  // Assuming `req.user` contains authenticated user data.
         const updateData: Partial<Record<string, any>> = {};
 
-        const formatUrl = (value: string, baseUrl: string): string => {
-            return value.trim() ? `${baseUrl}${value.trim()}` : "";
-        };
+        if(req.file){
+            updateData.profileImg = req.file.path;
+        }
     
         // Filter only valid fields from the request body
         const validFields = [
           "name", "gender", "location", "birthday", 
-          "summary", "website", "github", "linkedin"
+          "summary", "website", "github", "linkedin","profileImg"
         ];
     
         validFields.forEach((field) => {
             if (req.body[field] !== undefined && req.body[field].trim() !== "") {
                 let fieldValue = req.body[field].trim();
                 if (field === "website") {
-                    fieldValue = formatUrl(fieldValue, "http://");
+                    fieldValue = formatUrl(fieldValue, "https://");
                 } else if (field === "github") {
                     fieldValue = formatUrl(fieldValue, "https://github.com/");
                 } else if (field === "linkedin") {

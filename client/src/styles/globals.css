@@ -119,4 +119,13 @@
   body {
     @apply bg-background text-foreground;
   }
+  .ReactModal__Overlay {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  .ReactModal__Content {
+    position: relative;
+    max-width: 400px;
+    margin: auto;
+  }
 }

@@ -8,5 +8,6 @@ export interface ProfileData {
     website?: string;
     github?: string;
     linkedin?: string;
+    profileImg?: string;
   }
   

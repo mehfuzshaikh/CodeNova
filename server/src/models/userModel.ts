@@ -26,6 +26,7 @@ export interface IUser{
     website?:string | null,
     github?:string | null,
     linkedin?:string | null,
+    profileImg?:string | null
 
 
 }
@@ -112,7 +113,8 @@ const userSchema = new Schema<IUser, UserModel>({
     summary:String,
     website:String,
     github:String,
-    linkedin:String 
+    linkedin:String,
+    profileImg:String
 
 },{timestamps:true})
 

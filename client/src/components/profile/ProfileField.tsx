@@ -66,7 +66,7 @@ const ProfileField: React.FC<ProfileFieldProps> = ({
       ) : (
         <div className="flex items-center gap-2">
           <span>{value || 'Not provided'}</span>
-          <Button onClick={() => onEdit(field)} variant="link" className="text-blue-500">Edit</Button>
+          <Button onClick={() => onEdit(field)} variant="link" className="text-blue-600">Edit</Button>
         </div>
       )}
     </div>

@@ -12,7 +12,7 @@ interface User {
   linkedin: string;
   gender: string;
   name:string
-  profileImage: string;
+  profileImg: string;
 }
 
 interface AuthState {
