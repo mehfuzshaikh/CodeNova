@@ -10,4 +10,5 @@ export const userProfileSchema = Joi.object({
   website: Joi.string().trim(),
   github: Joi.string().trim(),
   linkedin: Joi.string().trim(),
+  profileImg: Joi.string().trim()
 }).min(1); 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ProfileData } from '@/types/profileDataType';
+// import { ProfileData } from '@/types/profileDataType';
 
 const API_BASE = 'http://localhost:5000/api/v1/user';
 
@@ -9,7 +9,12 @@ export const getCurrentUser = async () => {
     return res.data;
   };
   
-export const updateProfile = async(data:ProfileData)=>{
-    const res = await axios.patch(`${API_BASE}/update-profile`,data,{ withCredentials:true })
+export const updateProfile = async(data:FormData)=>{
+    const res = await axios.patch(`${API_BASE}/update-profile`,data,{ 
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      withCredentials:true 
+    })
     return res.data;
 }

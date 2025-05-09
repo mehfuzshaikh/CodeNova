@@ -1,57 +1,148 @@
-// 'use client';
+"use client";
 
-// import { useState } from 'react';
-// import Modal from 'react-modal';
-// import AvatarEditor from 'react-avatar-edit';
-// import { Button } from '@/components/ui/button';
-// import Image from 'next/image';
+import React, { useState, useCallback, useEffect } from "react";
+import Cropper, { Area } from "react-easy-crop";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { Input } from "../ui/input";
+import { useDispatch } from "react-redux";
+import { updateProfile } from "@/lib/api/user";
+import { updateUser } from "@/redux/features/auth/authSlice";
 
-// interface ImageUploadModalProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-//   onSave: (image: string) => void;
-// }
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
+const ALLOWED_FORMATS = ["image/jpeg", "image/png", "image/jpg"];
 
-// const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, onSave }) => {
-//   const [preview, setPreview] = useState<string | null>(null);
+const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
+  isOpen,
+  onClose,
+}) => {
+  const [image, setImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const dispatch = useDispatch();
 
-//   const handleCrop = (image: string) => {
-//     setPreview(image);
-//   };
+  useEffect(() => {
+    if (!isOpen) {
+      setImage(null);
+      setError(null);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+    }
+  }, [isOpen]);
 
-//   const handleSave = () => {
-//     if (preview) {
-//       onSave(preview);
-//       onClose();
-//     }
-//   };
+  const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-//   return (
-//     <Modal
-//       isOpen={isOpen}
-//       onRequestClose={onClose}
-//       contentLabel="Upload a New Avatar"
-//       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-//       overlayClassName="fixed inset-0 bg-black bg-opacity-25"
-//     >
-//       <div className="bg-white p-5 rounded-md w-[400px] text-center">
-//         <h2 className="text-xl font-semibold mb-4">Upload a New Avatar</h2>
-//         <AvatarEditor
-//           width={300}
-//           height={300}
-//           onCrop={handleCrop}
-//           onClose={() => setPreview(null)}
-//         />
-//         {preview && (
-//           <Image src={preview} alt="Preview" className="mt-4 w-[100px] h-[100px] rounded-full mx-auto" />
-//         )}
-//         <div className="mt-4 flex justify-center gap-3">
-//           <Button onClick={handleSave} className="bg-blue-500 text-white">Save</Button>
-//           <Button onClick={onClose} variant="secondary">Cancel</Button>
-//         </div>
-//       </div>
-//     </Modal>
-//   );
-// };
+    if (!ALLOWED_FORMATS.includes(file.type)) {
+      setError("Only JPEG and PNG images are allowed!");
+      return;
+    }
+    console.log("This is for file size", file.size);
+    if (file.size > MAX_FILE_SIZE) {
+      setError("File size exceeds 1MB!");
+      return;
+    }
 
-// export default ImageUploadModal;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImage(reader.result as string);
+      setError(null); // Reset error if valid
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      console.log(croppedArea, croppedAreaPixels);
+    },
+    []
+  );
+
+  const handleImageSave = async (imageUrl: string | null) => {
+    console.log(imageUrl);
+    if (!imageUrl) return setError("No image selected");
+  
+    try {
+      // Create a FormData object
+      const formData = new FormData();
+  
+      // Check if the imageUrl is a Base64 string
+      if (imageUrl.startsWith("data:image")) {
+        // Convert Base64 to Blob
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const file = new File([blob], "profile.png", { type: blob.type });
+  
+        // Append the file to the FormData object
+        formData.append("profileImg", file);
+      }
+  
+      // Make the API call with FormData
+      const response = await updateProfile(formData);
+      if (response?.user?.profileImg) {
+        console.log("Profile image updated successfully");
+        dispatch(updateUser({ profileImg: response.user.profileImg }));
+        onClose();
+        alert("Profile picture updated successfully");
+      }
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      const errorMessage = error?.response?.data?.message || "Failed to update profile picture";
+      setError(errorMessage);
+    }
+  };
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="p-4">
+        <DialogTitle>Upload a New Avatar</DialogTitle>
+
+        {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+
+        <div className="relative w-full h-64 bg-gray-100">
+          {image ? (
+            <Cropper
+              image={image}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p>No image selected</p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 mt-4 justify-center">
+          <Input type="file" accept="image/*" onChange={onImageChange} />
+        </div>
+
+        <div className="text-xs">
+          <p>
+            <b className="text-red-500">Note:</b>Only image files (JPG, JPEG,
+            PNG) are allowed. Maximum file size: 1 MB.
+          </p>
+        </div>
+
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            className="bg-blue-500 text-white"
+            onClick={() => handleImageSave(image)}
+          >
+            Save
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default ImageUploadModal;

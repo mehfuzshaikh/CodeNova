@@ -31,7 +31,7 @@ export const updateProfile = async(req:Request,res:Response):Promise<void>=>{
         // Filter only valid fields from the request body
         const validFields = [
           "name", "gender", "location", "birthday", 
-          "summary", "website", "github", "linkedin","profileImg"
+          "summary", "website", "github", "linkedin", "profileImg"
         ];
     
         validFields.forEach((field) => {
