@@ -14,7 +14,7 @@ router.post('/login',authController.logIn);
 router.post('/resend-otp',authController.resendOTP);
 router.post('/forgot-password',authController.forgotPassword);
 router.post('/reset-password/:token',authController.resetPassword);
-router.post('/update-password/',protect,authController.updatePassword);
+router.post('/update-password',protect,authController.updatePassword);
 router.post('/logout',authController.logout);
 
 
@@ -25,5 +25,6 @@ router.patch('/update-profile',
     uploadImage,
     userController.updateProfile
 );
+router.delete('/delete-user',protect,userController.deleteUser);
 
 export default router;

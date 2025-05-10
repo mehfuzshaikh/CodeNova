@@ -19,7 +19,6 @@ const storage = new CloudinaryStorage({
 const upload = multer({ 
   storage,
   fileFilter: (req, file, cb) => {
-    console.log(file);
     const ext = file.mimetype.split('/')[1];
     if (!allowedFormats.includes(ext)) {
       return cb(new Error('Only images are allowed!'));

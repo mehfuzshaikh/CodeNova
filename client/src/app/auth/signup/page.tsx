@@ -23,6 +23,8 @@ const schema = yup.object().shape({
     .required('Confirm Password is required'),
 });
 
+type SignUpFormData = yup.InferType<typeof schema>;
+
 export default function SignUpPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -32,12 +34,11 @@ export default function SignUpPage() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<SignUpFormData>({
     resolver: yupResolver(schema),
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: SignUpFormData) => {
     try {
         const res = await signUp(data);
         toast.success(res.data.message);

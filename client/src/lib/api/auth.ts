@@ -31,6 +31,14 @@ export const resetPassword = async (token: string, data: { password: string; con
   return axios.post(`${API_BASE}/reset-password/${token}`,data)
 };
 
+export const updatePassword = async (data:{ 
+  currentPassword:string;
+  newPassword:string;
+  confirmNewPassword:string;  
+}) => {
+  return axios.post(`${API_BASE}/update-password`,data,{ withCredentials:true })
+}
+
 export const logout = async() => {
   return axios.post(`${API_BASE}/logout`,{},{ withCredentials:true })
 };

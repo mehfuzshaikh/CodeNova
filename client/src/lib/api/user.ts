@@ -18,3 +18,10 @@ export const updateProfile = async(data:FormData)=>{
     })
     return res.data;
 }
+
+export const deleteUser = async(password:string)=>{
+  return axios.delete(`${API_BASE}/delete-user`,{
+    data:{password},
+    withCredentials:true
+  })
+}

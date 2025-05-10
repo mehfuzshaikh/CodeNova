@@ -48,7 +48,7 @@ export default function ProfileMenu({ children }: Props) {
         <div className="flex items-center space-x-3 px-3 py-2 border-b cursor-pointer">
           <Avatar className="h-10 w-10">
             <AvatarImage
-              src={user.profileImage}
+              src={user.profileImg}
               alt="Profile"
             />
             <AvatarFallback>{user.username?.[0].toUpperCase()}</AvatarFallback>

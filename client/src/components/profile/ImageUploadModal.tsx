@@ -39,7 +39,6 @@ const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       setError("Only JPEG and PNG images are allowed!");
       return;
     }
-    console.log("This is for file size", file.size);
     if (file.size > MAX_FILE_SIZE) {
       setError("File size exceeds 1MB!");
       return;
@@ -61,7 +60,6 @@ const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   );
 
   const handleImageSave = async (imageUrl: string | null) => {
-    console.log(imageUrl);
     if (!imageUrl) return setError("No image selected");
   
     try {
@@ -82,7 +80,6 @@ const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       // Make the API call with FormData
       const response = await updateProfile(formData);
       if (response?.user?.profileImg) {
-        console.log("Profile image updated successfully");
         dispatch(updateUser({ profileImg: response.user.profileImg }));
         onClose();
         alert("Profile picture updated successfully");

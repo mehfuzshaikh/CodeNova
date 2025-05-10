@@ -70,3 +70,31 @@ export const updateProfile = async(req:Request,res:Response):Promise<void>=>{
         res.status(400).json({message:"Failed to update profile", error: (error as Error).message });
     }
 }
+
+export const deleteUser = async(req:Request,res:Response)=>{
+    try {
+        const userId = req.user?._id;
+        const {password} = req.body;
+
+        if(!password){
+            res.status(400).json({message:'Password is required.'});
+            return;
+        }
+
+        const user = await USER.findOne({_id:userId}).select('+password');
+        if(!user){
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+        
+        const correct = await user.correctPassword(password,user.password)
+        if(!correct){
+            res.status(401).json({message:'Invalid password try again!'});
+            return;
+        }
+        await USER.deleteOne({_id:userId});
+        res.status(200).json({message:'User deleted successfully'});
+    } catch (error) {
+        res.status(400).json({message:"Failed to delete user", error: (error as Error).message });
+    }
+}

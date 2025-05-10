@@ -14,7 +14,7 @@ export default function ProfileAvatar() {
     <ProfileMenu>
       <Avatar className="h-9 w-9 cursor-pointer">
         <AvatarImage
-          src={user.profileImage}
+          src={user.profileImg}
           alt="Profile"
         />
         <AvatarFallback>{user.username?.[0].toUpperCase()}</AvatarFallback>
