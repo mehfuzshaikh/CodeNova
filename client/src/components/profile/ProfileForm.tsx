@@ -33,7 +33,15 @@ const ProfileForm: React.FC = () => {
 
   const handleUpdate = async (field: string, newValue: string) => {
     try {
-      await updateProfile({ [field]: newValue });
+      if (field === 'birthday') {
+        if (new Date(newValue) > new Date()) {
+          alert("Birthday cannot be in the future.");
+          return;
+        }
+      }
+      const formData = new FormData();
+      formData.append(field,newValue);
+      await updateProfile(formData);
       dispatch(updateUser({ [field]: newValue }));
       setEditingField(null); // Close edit mode
     } catch {

@@ -9,7 +9,7 @@ interface ModalProps {
 
 export const Modal: React.FC<ModalProps> = ({ onClose, title, children }) => {
   return (
-    <Dialog open onClose={onClose}>
+    <Dialog open onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

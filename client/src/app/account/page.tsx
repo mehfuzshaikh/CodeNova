@@ -87,10 +87,6 @@ const AccountPage = () => {
         </div>
 
         <div className="pt-7">
-          {/* <button className="cursor-pointer w-40 flex justify-center items-center px-4 py-3 mx-auto border border-transparent text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700 transition-colors">
-            <FiTrash2 className="mr-2" />
-            Delete Account
-          </button> */}
           <Button
             onClick={() => setIsModalOpen(true)}
             className="cursor-pointer w-40 flex justify-center items-center px-4 py-4 mx-auto border border-transparent text-sm font-medium rounded-md text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700 transition-colors"
@@ -116,7 +112,7 @@ const AccountPage = () => {
             <Input
               type="password"
               placeholder="Password"
-              value={password}
+              value={password}  
               onChange={(e) => setPassword(e.target.value)}
             />
             {error && <p className="text-red-600 text-sm">{error}</p>}
