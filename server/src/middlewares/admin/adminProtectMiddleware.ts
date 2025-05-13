@@ -8,17 +8,17 @@ export const protect = async(req:Request,res:Response,next:NextFunction):Promise
     try {
 
       // Read token from header (This is for Postman)
-      let adminToken: string;
-      if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
-          adminToken = req.headers.authorization.split(' ')[1];
-      }
+      // let adminToken: string;
+      // if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+      //     adminToken = req.headers.authorization.split(' ')[1];
+      // }
 
       // Read token from cookie (Frontend)
-      // const token = req.cookies.token; 
-      // if(!token){
-      //     res.status(401).json({message:'You are not logged In'});
-      //     return;
-      // }
+      const adminToken = req.cookies.adminToken; 
+      if(!adminToken){
+          res.status(401).json({message:'You are not logged In'});
+          return;
+      }
       
       const decoded = await new Promise<JwtPayload>((resolve, reject) => {
         jwt.verify(adminToken, jwtSecret, (err: any, decodedToken: any) => {

@@ -11,7 +11,7 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { login } from '@/lib/api/admin/auth';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
-import { setCredentials } from '@/redux/features/admin/authSlice';
+import { setAdminCredentials } from '@/redux/features/admin/authSlice';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
     try {
       const res = await login(data);
       toast.success(res.data.message || 'Login successful');
-      dispatch(setCredentials(res.data.data))
+      dispatch(setAdminCredentials(res.data.data))
       router.push('/admin/dashboard');
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };

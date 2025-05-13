@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/redux/features/auth/authSlice';
 import { logout as logoutApi } from '@/lib/api/auth';
+import ProtectedUserRoute from '@/components/shared/ProtectedUserRoute';
 
 const schema = yup.object().shape({
   currentPassword:yup.string().required('Current password is required'),
@@ -67,6 +68,7 @@ const ChangePasswordPage = () => {
     }
   }
   return (
+    <ProtectedUserRoute>
     <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-30">
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -96,6 +98,7 @@ const ChangePasswordPage = () => {
         </Button>
       </form>
     </div>
+    </ProtectedUserRoute>
   )
 }
 

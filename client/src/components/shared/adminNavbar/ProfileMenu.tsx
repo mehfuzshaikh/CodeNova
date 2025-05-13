@@ -9,7 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout as logoutApi } from '@/lib/api/admin/auth';
-import { logout } from '@/redux/features/admin/authSlice';
+import { adminLogout } from '@/redux/features/admin/authSlice';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { RootState } from '@/redux/store';
@@ -26,9 +26,9 @@ export default function ProfileMenu({ children }: Props) {
   const handleLogout = async () => {
     try {
       const res = await logoutApi();
-      dispatch(logout());
+      dispatch(adminLogout());
       toast.success(res.data.message || 'Logged out');
-      router.push('/');
+      router.push('/admin');
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       const msg = error.response?.data?.message || 'Logout failed';

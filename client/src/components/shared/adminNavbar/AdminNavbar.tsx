@@ -8,7 +8,7 @@ import ProfileAvatar from './ProfileAvatar';
 
 
 export default function AdminNavbar() {
-  const { isAuthenticated } = useSelector((state:RootState)=>state.adminAuth);
+  const { isAdminAuthenticated } = useSelector((state:RootState)=>state.adminAuth);
   return (
     <nav className="w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between">
       {/* Left: Logo & App Name */}
@@ -18,7 +18,7 @@ export default function AdminNavbar() {
       </div>
 
       {/* Center: Navigation */}
-      {isAuthenticated && (
+      {isAdminAuthenticated && (
         <div className="hidden md:flex gap-6 text-sm font-medium text-gray-700">
           <Link href="/explore">Users</Link>
           <Link href="/challenges">Add challenges</Link>
@@ -29,7 +29,7 @@ export default function AdminNavbar() {
 
       {/* Right: Auth Buttons */}
       <div className="flex gap-3">
-        {!isAuthenticated ? (
+        {!isAdminAuthenticated ? (
           <>
             <Link href="/admin/login">
               <Button variant="ghost">Login</Button>

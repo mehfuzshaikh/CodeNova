@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { deleteUser } from "@/lib/api/user";
 import { logout as logoutApi } from "@/lib/api/auth";
 import { logout } from "@/redux/features/auth/authSlice";
+import ProtectedUserRoute from "@/components/shared/ProtectedUserRoute";
 
 const AccountPage = () => {
   const { user } = useSelector((state: RootState) => state.auth);
@@ -41,6 +42,7 @@ const AccountPage = () => {
   };
 
   return (
+    <ProtectedUserRoute>
     <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-22">
       <div className="w-full max-w-4xl min-h-[400px] space-y-8 rounded-xl bg-white p-8 shadow-md">
         <h2 className="text-2xl font-bold text-center mb-15">
@@ -132,6 +134,7 @@ const AccountPage = () => {
         </Modal>
       )}
     </div>
+    </ProtectedUserRoute>
   );
 };
 

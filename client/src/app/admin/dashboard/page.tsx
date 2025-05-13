@@ -1,8 +1,11 @@
 import React from 'react'
+import ProtectedAdminRoute from '@/components/shared/ProtectedAdminRoute'
 
 const AdminDashboard = () => {
   return (
-    <h1>Admin Dashboard</h1>
+    <ProtectedAdminRoute>
+      <h1>Admin Dashboard</h1>
+    </ProtectedAdminRoute>
   )
 }
 

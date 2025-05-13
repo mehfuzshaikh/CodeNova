@@ -6,7 +6,7 @@ import adminAuthReduce from './features/admin/authSlice';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    adminAuth:adminAuthReduce
+    adminAuth:adminAuthReduce,
     // user: userReducer,
   },
 });
@@ -14,4 +14,3 @@ export const store = configureStore({
 // Types for global usage
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-  

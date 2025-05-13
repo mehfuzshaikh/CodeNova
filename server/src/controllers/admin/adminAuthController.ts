@@ -12,7 +12,7 @@ const generateToken = (id:string):string=>{
 }
 
 const setCookiesToken = (res: Response, token: string) => {
-    res.cookie('admin-token', token, {
+    res.cookie('adminToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days
@@ -70,7 +70,7 @@ export const adminLogin = async(req:Request,res:Response):Promise<void> => {
 
 export const logout = async (req:Request,res:Response): Promise<void> => {
     try {
-        res.clearCookie('admin-token',{
+        res.clearCookie('adminToken',{
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',

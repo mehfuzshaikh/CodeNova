@@ -6,30 +6,30 @@ interface Admin {
   name:string
 }
 
-interface AuthState {
-  isAuthenticated: boolean;
+interface AdminAuthState {
+  isAdminAuthenticated: boolean;
   admin: Admin | null;
 }
 
-const initialState: AuthState = {
-  isAuthenticated: false,
+const initialState: AdminAuthState = {
+  isAdminAuthenticated: false,
   admin: null,
 };
 
-const authSlice = createSlice({
+const adminAuthSlice = createSlice({
   name: 'adminAuth',
   initialState,
   reducers: {
-    setCredentials: (state, action: PayloadAction<Admin>) => {
-      state.isAuthenticated = true;
+    setAdminCredentials: (state, action: PayloadAction<Admin>) => {
+      state.isAdminAuthenticated = true;
       state.admin = action.payload;
     },
-    logout: (state) => {
-      state.isAuthenticated = false;
+    adminLogout: (state) => {
+      state.isAdminAuthenticated = false;
       state.admin = null;
     },
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
-export default authSlice.reducer;
+export const { setAdminCredentials, adminLogout } = adminAuthSlice.actions;
+export default adminAuthSlice.reducer;
