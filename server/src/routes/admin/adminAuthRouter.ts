@@ -3,7 +3,7 @@ import * as questionController from '../../controllers/admin/questionController'
 
 import express from 'express';
 import { protect } from '../../middlewares/admin/adminProtectMiddleware';
-import { questionSchema } from '../../validators/questionSchema';
+import { addQuestionSchema,updateQuestionSchema } from '../../validators/questionSchema';
 import { validate } from '../../middlewares/validateSchemaMiddleware';
 
 const router = express.Router();
@@ -14,7 +14,10 @@ router.post('/logout',protect,authController.logout);
 
 router.get('/me',protect,authController.getMe);
 
-router.post('/question',protect,validate(questionSchema),questionController.addQuestion); // Add question
+router.post('/question',protect,validate(addQuestionSchema),questionController.addQuestion); // Add question
+router.patch('/question/:id',protect,validate(updateQuestionSchema),questionController.updateQuestion); // Update question
+router.delete('/question/:id',protect,questionController.deleteQuestion); // Delete question
+router.get('/question',protect,questionController.questions); // View all question
 
 export default router;
 

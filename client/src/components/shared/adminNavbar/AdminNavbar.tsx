@@ -21,7 +21,7 @@ export default function AdminNavbar() {
       {isAdminAuthenticated && (
         <div className="hidden md:flex gap-6 text-sm font-medium text-gray-700">
           <Link href="/explore">Users</Link>
-          <Link href="/challenges">Add challenges</Link>
+          <Link href="/admin/challenges">Challenges</Link>
           <Link href="/about">About</Link>
         </div>
       )}
