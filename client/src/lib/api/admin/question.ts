@@ -17,3 +17,8 @@ export const addQuestion = async (data: Omit<Question, '_id'>) => {   // because
     const res = await axios.post(`${API_BASE}/question`, data, { withCredentials: true });
     return res.data;
 };
+
+export const updateQuestion = async (id: string, data: Question) => {
+    const res = await axios.patch(`${API_BASE}/question/${id}`, data, { withCredentials: true });
+    return res.data;
+}

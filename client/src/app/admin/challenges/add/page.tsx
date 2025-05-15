@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { FiTrash2 } from "react-icons/fi";
 
 const schema = yup.object().shape({
   title: yup
@@ -29,7 +30,7 @@ const schema = yup.object().shape({
     .min(3, "Title must be at least 3 characters")
     .max(100, "Title must be at most 100 characters")
     .required("Title is required"),
-  
+
   description: yup
     .string()
     .trim()
@@ -39,92 +40,102 @@ const schema = yup.object().shape({
   difficulty: yup
     .string()
     .trim()
-    .oneOf(["Easy", "Medium", "Hard"], "Difficulty must be one of Easy, Medium, or Hard")
+    .oneOf(["Easy", "Medium", "Hard"])
     .required("Difficulty is required"),
 
-  topics: yup
-    .array()
-    .of(yup.string().trim())
-    .optional(),
+ topics: yup
+  .string()
+  .trim()
+  .optional()
+  .test("commaSeparated", "Enter topics separated by commas", (value) => {
+    if (!value) return true; // Allow empty value
+    return value.split(",").every((topic) => topic.trim().length > 0);
+  }),
 
-  constraints: yup
-    .array()
-    .of(yup.string().trim())
-    .optional(),
+constraints: yup
+  .string()
+  .trim()
+  .optional()
+  .test("commaSeparated", "Enter constraints separated by commas", (value) => {
+    if (!value) return true; // Allow empty value
+    return value.split(",").every((constraint) => constraint.trim().length > 0);
+  }),
 
   examples: yup
     .array()
     .of(
       yup.object().shape({
-        input: yup
-          .string()
-          .trim()
-          .required("Example input is required"),
-        output: yup
-          .string()
-          .trim()
-          .required("Example output is required"),
-        explanation: yup
-          .string()
-          .trim()
-          .optional(),
+        input: yup.string().trim().required("Example input is required"),
+        output: yup.string().trim().required("Example output is required"),
+        explanation:yup.string().trim().required("Example explanation is required"),
       })
     )
-    .min(1, "At least one example is required"),
-    // .required("Examples are required"),
+    .min(1, "At least one example is required")
+    .required("Examples are required"),
 
   testCases: yup
     .array()
     .of(
       yup.object().shape({
-        input: yup
-          .string()
-          .trim()
-          .required("Test case input is required"),
-        expectedOutput: yup
-          .string()
-          .trim()
-          .required("Expected output is required"),
+        input: yup.string().trim().required("Test case input is required"),
+        expectedOutput: yup.string().trim().required("Expected output is required"),
       })
     )
     .min(1, "At least one test case is required")
-    // .required("Test cases are required"),
+    .required("Test cases are required"),
 });
 
-type AddQuestionFormData = yup.InferType<typeof schema>;
+type AddQuestionFormData = Omit<yup.InferType<typeof schema>, "topics" | "constraints"> & {
+  difficulty: "Easy" | "Medium" | "Hard";
+  topics?: string;
+  constraints?: string;
+};
+// type AddQuestionFormData = {
+//   title: string;
+//   description: string;
+//   difficulty: "Easy" | "Medium" | "Hard";
+//   topics?: string;
+//   constraints?: string;
+//   examples: { input: string; output: string; explanation: string }[];
+//   testCases: { input: string; expectedOutput: string }[];
+// };
 
 export default function AddQuestionPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<AddQuestionFormData>({
-    resolver: yupResolver(schema),
+  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<AddQuestionFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: yupResolver(schema) as any,
     defaultValues: {
+      title: "",
+      description: "",
+      topics: "",
+      constraints: "",
       examples: [{ input: "", output: "", explanation: "" }],
       testCases: [{ input: "", expectedOutput: "" }],
     },
   });
 
-  const { fields: exampleFields, append: addExample, remove: removeExample } =
-    useFieldArray({
-      control,
-      name: "examples",
-    });
+  const { fields: exampleFields, append: addExample, remove: removeExample } = useFieldArray({
+    control,
+    name: "examples",
+  });
 
-  const { fields: testCaseFields, append: addTestCase, remove: removeTestCase } =
-    useFieldArray({
-      control,
-      name: "testCases",
-    });
+  const { fields: testCaseFields, append: addTestCase, remove: removeTestCase } = useFieldArray({
+    control,
+    name: "testCases",
+  });
 
   const onSubmit = async (data: AddQuestionFormData) => {
     try {
-      await dispatch(addQuestionAction(data));
+      const formattedData = {
+        ...data,
+        topics: data.topics?.split(",").map((topic) => topic.trim()).filter((topic) => topic) || [],
+        constraints: data.constraints?.split(",").map((constraint) => constraint.trim()).filter((constraint) => constraint) || [],
+      };
+      const res = await dispatch(addQuestionAction(formattedData));
+      console.log('res from add question:',res);
       toast.success("Question added successfully!");
       router.push("/admin/challenges");
     } catch {
@@ -136,67 +147,134 @@ export default function AddQuestionPage() {
     <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-20">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-5xl space-y-4 rounded-lg bg-white p-8 shadow-lg"
+        className="w-full max-w-3xl space-y-4 bg-white p-8 shadow-md rounded"
       >
         <h2 className="text-2xl font-bold text-center">Add New Question</h2>
 
         <Input placeholder="Title" {...register("title")} />
-        {errors.title && <p className="text-sm text-red-600">{errors.title.message}</p>}
+        {errors.title && <p className="text-red-600">{errors.title.message}</p>}
 
-        <Textarea placeholder="Description" {...register("description")}/>
+        <Textarea placeholder="Description" {...register("description")} />
         {errors.description && (
-          <p className="text-sm text-red-600">{errors.description.message}</p>
+          <p className="text-red-600">{errors.description.message}</p>
         )}
 
-        <Select {...register("difficulty")}>
-        <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select Difficulty" />
-        </SelectTrigger>
-        <SelectContent>
-            <SelectGroup>
-            <SelectLabel>Difficulties</SelectLabel>
-            <SelectItem value="Easy">Easy</SelectItem>
-            <SelectItem value="Medium">Medium</SelectItem>
-            <SelectItem value="Hard">Hard</SelectItem>
-            </SelectGroup>
-        </SelectContent>
-        </Select>
-
+        <Controller
+          name="difficulty"
+          control={control}
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select Difficulty" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Difficulty</SelectLabel>
+                  <SelectItem value="Easy">Easy</SelectItem>
+                  <SelectItem value="Medium">Medium</SelectItem>
+                  <SelectItem value="Hard">Hard</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.difficulty && (
-          <p className="text-sm text-red-600">{errors.difficulty.message}</p>
+          <p className="text-red-600">{errors.difficulty.message}</p>
         )}
 
         <Input placeholder="Topics (comma-separated)" {...register("topics")} />
-        {errors.topics && <p className="text-sm text-red-600">{errors.topics.message}</p>}
+        {errors.topics && (
+          <p className="text-red-600">{errors.topics.message}</p>
+        )}
 
-        <Input placeholder="Constraints (comma-separated)" {...register("constraints")} />
+        <Input
+          placeholder="Constraints (comma-separated)"
+          {...register("constraints")}
+        />
+        {errors.constraints && (
+          <p className="text-red-600">{errors.constraints.message}</p>
+        )}
 
         <h3>Examples:</h3>
-        {exampleFields.map((_, index) => (
-          <div key={index} className="space-y-2">
-            <Input placeholder="Input" {...register(`examples.${index}.input`)} />
-            <Input placeholder="Output" {...register(`examples.${index}.output`)} />
-            <Input placeholder="Explanation" {...register(`examples.${index}.explanation`)} />
-            <button type="button" onClick={() => removeExample(index)}>Remove</button>
+        {errors.examples && (
+          <p className="text-red-600">{errors.examples.message}</p>
+        )}
+        {exampleFields.map((field, index) => (
+          <div key={field.id} className="space-y-2">
+            <Input
+              placeholder="Input"
+              {...register(`examples.${index}.input`)}
+            />
+            {errors.examples?.[index]?.input && (
+              <p className="text-red-600">
+                {errors.examples[index]?.input?.message}
+              </p>
+            )}
+
+            <Input
+              placeholder="Output"
+              {...register(`examples.${index}.output`)}
+            />
+            {errors.examples?.[index]?.output && (
+              <p className="text-red-600">
+                {errors.examples[index]?.output?.message}
+              </p>
+            )}
+
+            <Input
+              placeholder="Explanation"
+              {...register(`examples.${index}.explanation`)}
+            />
+            {errors.examples?.[index]?.explanation && (
+              <p className="text-red-600">
+                {errors.examples[index]?.explanation?.message}
+              </p>
+            )}
+
+            <Button variant="destructive" onClick={() => removeExample(index)}> <FiTrash2/></Button>
           </div>
         ))}
-        <Button type="button" onClick={() => addExample({ input: "", output: "", explanation: "" })}>
+        <Button
+          variant='outline'
+          onClick={() => addExample({ input: "", output: "", explanation: "" })}
+        >
           Add Example
         </Button>
 
         <h3>Test Cases:</h3>
-        {testCaseFields.map((_, index) => (
-          <div key={index} className="space-y-2">
-            <Input placeholder="Input" {...register(`testCases.${index}.input`)} />
-            <Input placeholder="Expected Output" {...register(`testCases.${index}.expectedOutput`)} />
-            <button type="button" onClick={() => removeTestCase(index)}>Remove</button>
+        {errors.testCases && (
+          <p className="text-red-600">{errors.testCases.message}</p>
+        )}
+        {testCaseFields.map((field, index) => (
+          <div key={field.id} className="space-y-2">
+            <Input
+              placeholder="Input"
+              {...register(`testCases.${index}.input`)}
+            />
+            {errors.testCases?.[index]?.input && (
+              <p className="text-red-600">
+                {errors.testCases[index]?.input?.message}
+              </p>
+            )}
+
+            <Input
+              placeholder="Expected Output"
+              {...register(`testCases.${index}.expectedOutput`)}
+            />
+            {errors.testCases?.[index]?.expectedOutput && (
+              <p className="text-red-600">
+                {errors.testCases[index]?.expectedOutput?.message}
+              </p>
+            )}
+
+            <Button variant="destructive" onClick={() => removeTestCase(index)}><FiTrash2/></Button>
           </div>
         ))}
-        <Button type="button" onClick={() => addTestCase({ input: "", expectedOutput: "" })}>
+        <Button variant='outline' onClick={() => addTestCase({ input: "", expectedOutput: "" })}>
           Add Test Case
         </Button>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting ? "Adding..." : "Add Question"}
         </Button>
       </form>

@@ -1,7 +1,7 @@
 export interface Example {
   input: string;
   output: string;
-  explanation?: string;
+  explanation: string;
 }
 
 export interface TestCase {

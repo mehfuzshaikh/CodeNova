@@ -38,6 +38,20 @@ const questionSlice = createSlice({
     deleteQuestionSuccess(state, action: PayloadAction<string>) {
       state.questions = state.questions.filter((q) => q._id !== action.payload);
     },
+    updateQuestionStart(state) {
+      state.loading = true;
+      state.error = null;
+    },
+    updateQuestionSuccess(state, action: PayloadAction<Question>) {
+       state.questions = state.questions.map((q) =>
+         q._id === action.payload._id ? action.payload : q
+       );
+       state.loading = false;
+    },
+    updateQuestionFailure(state, action: PayloadAction<string>) {
+      state.error = action.payload;
+      state.loading = false;
+    },
   },
 });
 
@@ -48,7 +62,10 @@ export const {
   addQuestionStart,
   addQuestionSuccess,
   addQuestionFailure,
-  deleteQuestionSuccess
+  deleteQuestionSuccess,
+  updateQuestionStart,
+  updateQuestionSuccess,
+  updateQuestionFailure
 } = questionSlice.actions;
 
 export default questionSlice.reducer;

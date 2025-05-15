@@ -12,10 +12,10 @@ export const addQuestionSchema = Joi.object({
       Joi.object({
         input: Joi.string().trim().required(),
         output: Joi.string().trim().required(),
-        explanation: Joi.string().trim().optional(),
+        explanation: Joi.string().trim().required(),
       })
     )
-    .min(1) 
+    .min(1)
     .required(),
   testCases: Joi.array()
     .items(
@@ -24,19 +24,19 @@ export const addQuestionSchema = Joi.object({
         expectedOutput: Joi.string().trim().required(),
       })
     )
-    .min(1) 
+    .min(1)
     .required(),
-  createdBy: Joi.string()
-    .custom((value, helpers) => {
-      if (!Types.ObjectId.isValid(value)) {
-        return helpers.error("any.invalid");
-      }
-      return value;
-    })
-    .messages({
-      "any.invalid": "Invalid ObjectId",
-    })
-    .required(),
+  // createdBy: Joi.string()
+  //   .custom((value, helpers) => {
+  //     if (!Types.ObjectId.isValid(value)) {
+  //       return helpers.error("any.invalid");
+  //     }
+  //     return value;
+  //   })
+  //   .messages({
+  //     "any.invalid": "Invalid ObjectId",
+  //   })
+  //   .required(),
 });
 
 export const updateQuestionSchema = Joi.object({
