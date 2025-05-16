@@ -1,6 +1,6 @@
 import { AppDispatch } from '@/redux/store';
 import { Question } from '@/types/questionType';
-import { getQuestions,deleteQuestion,addQuestion,updateQuestion } from '@/lib/api/admin/question';
+import { getQuestions,deleteQuestion,addQuestion,updateQuestion,getOneQuestion } from '@/lib/api/admin/question';
 
 import {
   fetchQuestionsStart,
@@ -13,6 +13,9 @@ import {
   updateQuestionStart,
   updateQuestionSuccess,
   updateQuestionFailure,
+  getQuestionStart,
+  getQuestionSuccess,
+  getQuestionFailure,
 } from './questionSlice';
 
 export const fetchQuestions = () => async (dispatch: AppDispatch) => {
@@ -59,3 +62,16 @@ export const updateQuestionAction = (id: string, data: Question) => async (dispa
      dispatch(updateQuestionFailure(msg));
   }
 };
+
+export const fetchOneQuestion = (id:string) => async (dispatch: AppDispatch) => {
+  try {
+    dispatch(getQuestionStart());
+    const res = await getOneQuestion(id);
+    console.log('res from getOneQuestion:',res.data);
+    dispatch(getQuestionSuccess(res.data));
+  } catch (err) {
+    const error = err as { response?: { data?: { message?: string } } };
+    const msg = error.response?.data?.message || 'Failed to fetch questions';
+     dispatch(getQuestionFailure(msg));
+  }
+}

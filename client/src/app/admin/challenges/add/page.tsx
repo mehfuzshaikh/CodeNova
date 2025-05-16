@@ -235,7 +235,7 @@ export default function AddQuestionPage() {
           </div>
         ))}
         <Button
-          variant='outline'
+          variant="secondary"
           onClick={() => addExample({ input: "", output: "", explanation: "" })}
         >
           Add Example
@@ -270,13 +270,23 @@ export default function AddQuestionPage() {
             <Button variant="destructive" onClick={() => removeTestCase(index)}><FiTrash2/></Button>
           </div>
         ))}
-        <Button variant='outline' onClick={() => addTestCase({ input: "", expectedOutput: "" })}>
+        <Button  variant="secondary" onClick={() => addTestCase({ input: "", expectedOutput: "" })}>
           Add Test Case
         </Button>
 
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? "Adding..." : "Add Question"}
-        </Button>
+        <div className="flex justify-between">
+          <Button type="submit" disabled={isSubmitting} className="w-1/2 mr-2">
+            {isSubmitting ? "Adding..." : "Add Question"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-1/2 ml-2"
+            onClick={() => router.push("/admin/challenges")}
+          >
+            Cancel
+          </Button>
+        </div>
       </form>
     </div>
   );

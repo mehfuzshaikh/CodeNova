@@ -21,7 +21,7 @@ export default function Navbar() {
       {isAuthenticated && (
         <div className="hidden md:flex gap-6 text-sm font-medium text-gray-700">
           <Link href="/explore">Explore</Link>
-          <Link href="/challenges">Challenges</Link>
+          <Link href="/problems">Problems</Link>
           <Link href="/leaderboard">Leaderboard</Link>
           <Link href="/about">About</Link>
         </div>

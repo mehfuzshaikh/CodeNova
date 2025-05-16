@@ -7,12 +7,11 @@ import * as yup from "yup";
 import { useRouter, useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { updateQuestionAction } from "@/redux/features/admin/questions/questionActions";
-import { getQuestions } from "@/redux/features/admin/questions/questionActions";
-import { toast } from "sonner";
+import { fetchOneQuestion, updateQuestionAction } from "@/redux/features/admin/questions/questionActions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -25,50 +24,93 @@ import {
 import { FiTrash2 } from "react-icons/fi";
 
 const schema = yup.object().shape({
-  title: yup.string().trim().required("Title is required"),
-  description: yup.string().trim().required("Description is required"),
+  title: yup.string().trim().min(3).max(100).required("Title is required"),
+  description: yup.string().trim().min(10).required("Description is required"),
   difficulty: yup.string().oneOf(["Easy", "Medium", "Hard"]).required("Difficulty is required"),
-  topics: yup.string().optional(),
-  constraints: yup.string().optional(),
+  topics: yup.string().trim().optional(),
+  constraints: yup.string().trim().optional(),
   examples: yup.array().of(
     yup.object().shape({
-      input: yup.string().required("Input is required"),
-      output: yup.string().required("Output is required"),
+      input: yup.string().required("Example input is required"),
+      output: yup.string().required("Example output is required"),
       explanation: yup.string().required("Explanation is required"),
     })
-  ),
+  ).min(1, "At least one example is required"),
   testCases: yup.array().of(
     yup.object().shape({
-      input: yup.string().required("Input is required"),
+      input: yup.string().required("Test case input is required"),
       expectedOutput: yup.string().required("Expected output is required"),
     })
-  ),
+  ).min(1, "At least one test case is required"),
 });
-
-type EditQuestionFormData = yup.InferType<typeof schema>;
 
 export default function EditQuestionPage() {
   const { id } = useParams();
-  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const { question, loading } = useSelector((state: RootState) => state.questions);
+  type QuestionFormValues = {
+    title: string;
+    description: string;
+    difficulty: string;
+    topics?: string;
+    constraints?: string;
+    examples: { input: string; output: string; explanation: string }[];
+    testCases: { input: string; expectedOutput: string }[];
+  };
   
-  const question = useSelector((state: RootState) =>
-    state.questions.questions.find((q) => q._id === id)
-  );
+  const [initialValues, setInitialValues] = useState<QuestionFormValues | null>(null);
+
+
 
   useEffect(() => {
-    if (!question) {
-      dispatch(getQuestions());
-    } else {
-      setLoading(false);
+    if (id) {
+      const questionId = Array.isArray(id) ? id[0] : id;
+      dispatch(fetchOneQuestion(questionId));
     }
-  }, [dispatch, question]);
+  }, [dispatch, id]);
 
-  const { register, handleSubmit, control, setValue } = useForm<EditQuestionFormData>({
-    resolver: yupResolver(schema),
-    defaultValues: question || {},
+  useEffect(() => {
+  if (question) {
+    setInitialValues({
+      title: question.title || "",
+      description: question.description || "",
+      difficulty: question.difficulty || "Easy",
+      topics: question.topics?.join(", ") || "",
+      constraints: question.constraints?.join(", ") || "",
+      examples: question.examples?.map((example: { input: string; output: string; explanation: string }) => ({
+        input: example.input || "",
+        output: example.output || "",
+        explanation: example.explanation || "",
+      })) || [{ input: "", output: "", explanation: "" }],
+      testCases: question.testCases?.map((testCase: { input: string; expectedOutput: string }) => ({
+        input: testCase.input || "",
+        expectedOutput: testCase.expectedOutput || "",
+      })) || [{ input: "", expectedOutput: "" }],
+    });
+  }
+}, [question]);
+
+  const { register, handleSubmit, control, reset ,formState: { errors, isSubmitting } } = useForm<QuestionFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: yupResolver(schema) as any,
+    defaultValues: initialValues || {
+      title: "",
+      description: "",
+      difficulty: "Easy",
+      topics: "",
+      constraints: "",
+      examples: [{ input: "", output: "", explanation: "" }],
+      testCases: [{ input: "", expectedOutput: "" }],
+    },
+    
   });
+
+  useEffect(() => {
+    if (initialValues) {
+      reset(initialValues);
+    }
+  }, [initialValues, reset]);
 
   const { fields: exampleFields, append: addExample, remove: removeExample } = useFieldArray({
     control,
@@ -80,14 +122,24 @@ export default function EditQuestionPage() {
     name: "testCases",
   });
 
-  const onSubmit = async (data: EditQuestionFormData) => {
+  const onSubmit = async (data:QuestionFormValues) => {
     try {
+      const questionId = Array.isArray(id) ? id[0] : id;
+
+      if (!questionId) {
+        toast.error("Invalid question ID");
+        return;
+      }
       const formattedData = {
         ...data,
-        topics: data.topics?.split(",").map((topic) => topic.trim()).filter((topic) => topic) || [],
-        constraints: data.constraints?.split(",").map((constraint) => constraint.trim()).filter((constraint) => constraint) || [],
+        topics: data.topics?.trim()
+          ? data.topics.split(",").map((topic: string) => topic.trim())
+          : [],
+        constraints: data.constraints?.trim()
+          ? data.constraints.split(",").map((constraint: string) => constraint.trim())
+          : [],
       };
-      await dispatch(updateQuestionAction(id, formattedData));
+      await dispatch(updateQuestionAction(questionId,formattedData));
       toast.success("Question updated successfully!");
       router.push("/admin/challenges");
     } catch {
@@ -95,15 +147,23 @@ export default function EditQuestionPage() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading || !initialValues) return <p>Loading...</p>;
 
   return (
     <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-20">
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-3xl space-y-4 bg-white p-8 shadow-md rounded">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full max-w-3xl space-y-4 bg-white p-8 shadow-md rounded"
+      >
         <h2 className="text-2xl font-bold text-center">Edit Question</h2>
 
         <Input placeholder="Title" {...register("title")} />
+        {errors.title && <p className="text-red-600">{errors.title.message}</p>}
+
         <Textarea placeholder="Description" {...register("description")} />
+        {errors.description && (
+          <p className="text-red-600">{errors.description.message}</p>
+        )}
 
         <Controller
           name="difficulty"
@@ -125,26 +185,72 @@ export default function EditQuestionPage() {
           )}
         />
 
+        <Input placeholder="Topics (comma-separated)" {...register("topics")} />
+        <Input
+          placeholder="Constraints (comma-separated)"
+          {...register("constraints")}
+        />
+
+        <h3>Examples:</h3>
         {exampleFields.map((field, index) => (
-          <div key={field.id}>
-            <Input placeholder="Input" {...register(`examples.${index}.input`)} />
-            <Input placeholder="Output" {...register(`examples.${index}.output`)} />
-            <Input placeholder="Explanation" {...register(`examples.${index}.explanation`)} />
-            <Button variant="destructive" onClick={() => removeExample(index)}><FiTrash2 /></Button>
+          <div key={field.id} className="space-y-2">
+            <Input
+              placeholder="Input"
+              {...register(`examples.${index}.input`)}
+            />
+            <Input
+              placeholder="Output"
+              {...register(`examples.${index}.output`)}
+            />
+            <Input
+              placeholder="Explanation"
+              {...register(`examples.${index}.explanation`)}
+            />
+            <Button variant="destructive" onClick={() => removeExample(index)}>
+              <FiTrash2 />
+            </Button>
           </div>
         ))}
-        <Button onClick={() => addExample({ input: "", output: "", explanation: "" })}>Add Example</Button>
+        <Button
+          variant="secondary"
+          onClick={() => addExample({ input: "", output: "", explanation: "" })}
+        >
+          Add Example
+        </Button>
 
+        <h3>Test Cases:</h3>
         {testCaseFields.map((field, index) => (
-          <div key={field.id}>
-            <Input placeholder="Input" {...register(`testCases.${index}.input`)} />
-            <Input placeholder="Expected Output" {...register(`testCases.${index}.expectedOutput`)} />
-            <Button variant="destructive" onClick={() => removeTestCase(index)}><FiTrash2 /></Button>
+          <div key={field.id} className="space-y-2">
+            <Input
+              placeholder="Input"
+              {...register(`testCases.${index}.input`)}
+            />
+            <Input
+              placeholder="Expected Output"
+              {...register(`testCases.${index}.expectedOutput`)}
+            />
+            <Button variant="destructive" onClick={() => removeTestCase(index)}>
+              <FiTrash2 />
+            </Button>
           </div>
         ))}
-        <Button onClick={() => addTestCase({ input: "", expectedOutput: "" })}>Add Test Case</Button>
+        <Button variant="secondary" onClick={() => addTestCase({ input: "", expectedOutput: "" })}>
+          Add Test Case
+        </Button>
 
-        <Button type="submit">Update Question</Button>
+        <div className="flex justify-between">
+          <Button type="submit" disabled={isSubmitting} className="w-1/2 mr-2">
+            {isSubmitting ? "Updating..." : "Update Question"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-1/2 ml-2"
+            onClick={() => router.push("/admin/challenges")}
+          >
+            Cancel
+          </Button>
+        </div>
       </form>
     </div>
   );

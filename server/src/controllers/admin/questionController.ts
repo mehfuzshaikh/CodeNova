@@ -101,3 +101,20 @@ export const questions = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Failed to delete question.", error: (error as Error).message });
   }
 };
+
+export const getQuestion = async (req: Request, res: Response): Promise<void> => {
+  try {
+
+    const questionId = req.params.id;
+    const question = await QUESTION.findOne({_id:questionId});
+
+    if (!question) {
+      res.status(404).json({ message: "No Question found" });
+      return;
+    }
+
+    res.status(200).json({ message: "Question fetched successfully.",data:question });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete question.", error: (error as Error).message });
+  }
+};

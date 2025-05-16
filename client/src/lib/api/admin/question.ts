@@ -22,3 +22,8 @@ export const updateQuestion = async (id: string, data: Question) => {
     const res = await axios.patch(`${API_BASE}/question/${id}`, data, { withCredentials: true });
     return res.data;
 }
+
+export const getOneQuestion = async (id: string) => {
+    const res = await axios.get(`${API_BASE}/question/${id}`, { withCredentials: true });
+    return res.data;
+}

@@ -10,7 +10,7 @@ export interface TestCase {
 }
 
 export interface Question {
-  _id: string;
+  _id?: string;
   title: string;
   description: string;
   difficulty: string;
@@ -22,6 +22,7 @@ export interface Question {
 
 export interface QuestionState {
   questions: Question[];
+  question?: Question;
   loading: boolean;
   error: string | null;
 }

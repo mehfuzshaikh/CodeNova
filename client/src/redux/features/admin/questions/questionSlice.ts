@@ -2,7 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Question,QuestionState } from '@/types/questionType';
 
 const initialState: QuestionState = {
-  questions: [],
+  questions: [] as Question[],
+  question: undefined, 
   loading: false,
   error: null,
 };
@@ -52,6 +53,19 @@ const questionSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    getQuestionStart(state) {
+      state.loading = true;
+      state.error = null;
+      state.question = undefined; 
+    },
+    getQuestionSuccess(state, action: PayloadAction<Question>) {
+      state.question = action.payload;
+      state.loading = false;
+    },
+    getQuestionFailure(state, action: PayloadAction<string>) {
+      state.error = action.payload;
+      state.loading = false;
+    },
   },
 });
 
@@ -65,7 +79,10 @@ export const {
   deleteQuestionSuccess,
   updateQuestionStart,
   updateQuestionSuccess,
-  updateQuestionFailure
+  updateQuestionFailure,
+  getQuestionStart,
+  getQuestionSuccess,
+  getQuestionFailure,
 } = questionSlice.actions;
 
 export default questionSlice.reducer;

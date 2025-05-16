@@ -18,6 +18,7 @@ router.post('/question',protect,validate(addQuestionSchema),questionController.a
 router.patch('/question/:id',protect,validate(updateQuestionSchema),questionController.updateQuestion); // Update question
 router.delete('/question/:id',protect,questionController.deleteQuestion); // Delete question
 router.get('/question',protect,questionController.questions); // View all question
+router.get('/question/:id',protect,questionController.getQuestion); // View one question
 
 export default router;
 

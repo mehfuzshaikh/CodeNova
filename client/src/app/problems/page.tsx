@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import QuestionCard from '@/components/admin/question/QuestionCard';
 
-export default function ChallengesPage() {
+export default function ProblemsPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { questions, loading, error } = useSelector((state: RootState) => state.questions);
 
@@ -20,9 +20,6 @@ export default function ChallengesPage() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Challenge Questions</h2>
-        <Link href="/admin/challenges/add">
-          <Button>Add Question</Button>
-        </Link>
       </div>
 
       {loading ? (
