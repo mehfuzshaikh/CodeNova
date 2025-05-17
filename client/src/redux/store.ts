@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './features/auth/authSlice';
+import problemReducer from './features/problem/problemSlice';
 import adminAuthReduce from './features/admin/authSlice';
 import questionReducer from './features/admin/questions/questionSlice';
 
@@ -10,7 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     adminAuth:adminAuthReduce,
     questions:questionReducer,
-    // user: userReducer,
+    problems: problemReducer,
   },
 });
 

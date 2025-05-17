@@ -1,43 +1,38 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { fetchQuestions } from '@/redux/features/admin/questions/questionActions';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import QuestionCard from '@/components/admin/question/QuestionCard';
-
-export default function ProblemsPage() {
+import { fetchProblems } from '@/redux/features/problem/problemActions';
+import { Loader2 } from 'lucide-react';
+import ProblemTable from '@/components/problems/ProblemTable';
+const QuestionListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { questions, loading, error } = useSelector((state: RootState) => state.questions);
+  const { problems, loading, error } = useSelector((state: RootState) => state.problems);
 
   useEffect(() => {
-    dispatch(fetchQuestions());
+    dispatch(fetchProblems());
   }, [dispatch]);
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Challenge Questions</h2>
-      </div>
+    <div className="p-4">
+      <h2 className="text-2xl font-semibold mb-4">Challenges</h2>
 
-      {loading ? (
-        <p>Loading questions...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : (
-        <div className="space-y-3">
-          {questions.map((question) => (
-            <QuestionCard
-              key={question._id}
-              id={question._id ?? ""}
-              title={question.title}
-              difficulty={question.difficulty}
-            />
-          ))}
+      {loading && (
+        <div className="flex justify-center items-center">
+          <Loader2 className="animate-spin mr-2" /> Loading...
         </div>
       )}
+
+      {error && <div className="text-red-500">Error: {error}</div>}
+
+      {!loading && problems.length === 0 && (
+        <div className="text-gray-500">No questions available.</div>
+      )}
+
+      {!loading && problems.length > 0 && <ProblemTable problems={problems} />}
     </div>
   );
-}
+};
+
+export default QuestionListPage;
