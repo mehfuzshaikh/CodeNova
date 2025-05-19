@@ -35,3 +35,44 @@ export const getUserQuestions = async (req: Request, res: Response):Promise<void
     res.status(500).json({ message: 'Failed to fetch questions', error: (error as Error).message });
   }
 };
+
+export const getUserQuestionById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?._id;  // Get user ID from middleware
+    const questionId = req.params.id;  // Get question ID from URL
+
+    // Find the specific question by ID
+    const question = await QUESTION.findOne({_id:questionId});
+
+    if (!question) {
+      res.status(404).json({ message: 'Question not found' });
+      return;
+    }
+
+    // Check if the user has solved this question
+    const userRelation = await USERQUESTIONRELATION.findOne({ 
+      user_id: userId, 
+      question_id: questionId 
+    });
+
+    const isSolved = userRelation?.isSolved || false;
+
+    // Prepare the response object
+    const questionDetails = {
+      _id: question._id,
+      title: question.title,
+      description: question.description,
+      difficulty: question.difficulty,
+      topics: question.topics,
+      constraints: question.constraints,
+      examples: question.examples,
+      testCases: question.testCases,
+      status: isSolved ? 'Solved' : 'Pending',
+    };
+
+    res.status(200).json({ message: 'Question fetched successfully', question: questionDetails });
+  } catch (error) {
+    console.error('Error fetching question by ID:', error);
+    res.status(500).json({ message: 'Failed to fetch the question', error: (error as Error).message });
+  }
+};

@@ -1,10 +1,13 @@
 import { AppDispatch } from "@/redux/store";
-import { fetchProblemsApi } from "@/lib/api/problem";
+import { fetchProblemsApi,fetchProblemByIdApi } from "@/lib/api/problem";
 
 import {
-  fetchProblemsStart,
-  fetchProblemsSuccess,
-  fetchProblemsFailure,
+    fetchProblemsStart,
+    fetchProblemsSuccess,
+    fetchProblemsFailure,
+    fetchProblemByIdStart,
+    fetchProblemByIdSuccess,
+    fetchProblemByIdFailure,
 } from "./problemSlice";
 
 export const fetchProblems = () => async (dispatch: AppDispatch) => {
@@ -17,4 +20,16 @@ export const fetchProblems = () => async (dispatch: AppDispatch) => {
         const msg = error.response?.data?.message || "Failed to fetch problems";
         dispatch(fetchProblemsFailure(msg));
     }
+}
+
+export const fetchProblemById = (id: string) => async (dispatch: AppDispatch) => {
+    try {
+        dispatch(fetchProblemByIdStart());
+        const res = await fetchProblemByIdApi(id);
+        dispatch(fetchProblemByIdSuccess(res.question));
+    } catch (err) {
+        const error = err as { response?: { data?: { message?: string } } };
+        const msg = error.response?.data?.message || "Failed to fetch problems";
+        dispatch(fetchProblemByIdFailure(msg));
     }
+}

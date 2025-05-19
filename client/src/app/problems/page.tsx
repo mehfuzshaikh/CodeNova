@@ -16,7 +16,7 @@ const QuestionListPage = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Challenges</h2>
+      {/* <h2 className="text-2xl font-semibold mb-4">Challenges</h2> */}
 
       {loading && (
         <div className="flex justify-center items-center">
@@ -27,7 +27,10 @@ const QuestionListPage = () => {
       {error && <div className="text-red-500">Error: {error}</div>}
 
       {!loading && problems.length === 0 && (
-        <div className="text-gray-500">No questions available.</div>
+         <div className="flex justify-center items-center">
+          <Loader2 className="animate-spin mr-2" /> Loading...
+        </div>
+        // <div className="text-gray-500">No questions available.</div>
       )}
 
       {!loading && problems.length > 0 && <ProblemTable problems={problems} />}
