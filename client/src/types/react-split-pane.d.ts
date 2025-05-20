@@ -6,6 +6,7 @@ declare module "react-split-pane" {
   interface SplitPaneProps {
     split?: "vertical" | "horizontal";
     minSize?: number;
+    maxSize?: number;
     defaultSize?: number | string;
     size?: number | string;
     allowResize?: boolean;

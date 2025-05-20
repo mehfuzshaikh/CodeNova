@@ -54,8 +54,14 @@ const ProblemTable: React.FC<ProblemTableProps> = ({ problems }) => {
               >
                 <td className="p-4 text-gray-800">{index + 1}.</td>
                 <td className="p-4 text-gray-800">
-                  <Link href={`/problems/${problem._id}`} className='hover:text-blue-500'>
-                      {problem.title}
+                  <Link
+                    href={{
+                      pathname: `/problems/${problem._id}`,
+                      query: { srNo: index + 1 },
+                    }}
+                    className="hover:text-blue-500"
+                  >
+                    {problem.title}
                   </Link>
                 </td>
                 <td className="p-4">
