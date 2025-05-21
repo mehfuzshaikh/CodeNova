@@ -9,6 +9,13 @@ export interface TestCase {
   expectedOutput: string;
 }
 
+export interface FunctionSignatures {
+  javascript?: string;
+  python?: string;
+  java?: string;
+  cpp?: string;
+}
+
 export interface Question {
   _id?: string;
   title: string;
@@ -18,6 +25,8 @@ export interface Question {
   constraints?: string[];
   examples: Example[];
   testCases: TestCase[];
+  functionSignatures?: FunctionSignatures;
+  status?: string;
 }
 
 export interface QuestionState {

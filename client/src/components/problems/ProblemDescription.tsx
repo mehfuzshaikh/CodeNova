@@ -1,27 +1,14 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchProblemById } from '@/redux/features/problem/problemActions';
-import { useParams,useSearchParams } from 'next/navigation';
+import React from 'react';
+import { Question } from '@/types/questionType';
 
-const ProblemDescription: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { problem, loading, error } = useAppSelector((state) => state.problems);
-  const params = useParams();
-  const problemId = params.id as string;
-  const searchParams = useSearchParams();
-  const srNo = searchParams.get('srNo');
+type ProblemDescriptionProps = {
+  problem: Question | null;
+  srNo: string | null;
+};
 
-  // Fetch problem by ID
-  useEffect(() => {
-    if (problemId) {
-      dispatch(fetchProblemById(problemId));
-    }
-  }, [dispatch, problemId]);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+const ProblemDescription: React.FC<ProblemDescriptionProps> = ({problem,srNo}) => {
 
   return (
     <div className="p-4 bg-white shadow-md rounded-md">

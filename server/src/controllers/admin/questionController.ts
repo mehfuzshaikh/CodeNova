@@ -11,6 +11,7 @@ export const addQuestion = async (req: Request, res: Response):Promise<void> => 
       constraints,
       examples,
       testCases,
+      functionSignatures,
     } = req.body;
 
     const questionData = {
@@ -21,6 +22,7 @@ export const addQuestion = async (req: Request, res: Response):Promise<void> => 
       constraints,
       examples,
       testCases,
+      functionSignatures,
       createdBy:req.admin?._id
     };
 
@@ -44,6 +46,7 @@ export const updateQuestion = async (req: Request, res: Response):Promise<void> 
       constraints,
       examples,
       testCases,
+      functionSignatures
     } = req.body;
 
     const updatedData = {
@@ -54,6 +57,7 @@ export const updateQuestion = async (req: Request, res: Response):Promise<void> 
       constraints,
       examples,
       testCases,
+      functionSignatures
     };
 
     const updatedQuestion = await QUESTION.findByIdAndUpdate( questionId,updatedData,{ new: true });

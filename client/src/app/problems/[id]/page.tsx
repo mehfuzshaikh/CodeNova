@@ -4,13 +4,41 @@ import SplitPane from "react-split-pane";
 import ProblemDescription from "@/components/problems/ProblemDescription";
 import CodeEditor from "@/components/problems/CodeEditor";
 import TestCasePanel from "@/components/problems/TestCasePanel";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { fetchProblemById } from '@/redux/features/problem/problemActions';
+import { useParams,useSearchParams } from 'next/navigation';
 
 const ProblemDetail = () => {
   const [language, setLanguage] = useState("javascript");
-  const [code, setCode] = useState("// Write your code here");
+  const [code, setCode] = useState("");
   const [theme, setTheme] = useState("vs-dark");
   const [fontSize, setFontSize] = useState(14);
+
+  const dispatch = useAppDispatch();
+  const { problem, loading, error } = useAppSelector((state) => state.problems);
+
+  const params = useParams();
+  const problemId = params.id as string;
+  const searchParams = useSearchParams();
+  const srNo = searchParams.get('srNo');
+
+  useEffect(() => {
+    if (problemId) {
+      dispatch(fetchProblemById(problemId));
+    }
+  }, [dispatch, problemId]);
+
+ useEffect(() => {
+    if (problem && problem?.functionSignatures) {
+      const defaultCode = problem.functionSignatures[language as keyof typeof problem.functionSignatures];
+      setCode(defaultCode || "// Write your code here");
+    }
+  }, [language, problem]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
 
   return (
     <div className="h-screen w-full overflow-hidden bg-gray-100">
@@ -20,7 +48,7 @@ const ProblemDetail = () => {
             Description
           </h2>
           <div className="overflow-y-auto flex-1">
-            <ProblemDescription />
+            <ProblemDescription problem={problem} srNo={srNo}/>
           </div>
         </div>
 
@@ -75,8 +103,8 @@ const ProblemDetail = () => {
           </div>
 
           <div className="p-3 bg-white shadow-md h-full">
-            <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">Testcase</h2>
-              <TestCasePanel />
+            {/* <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">Testcase</h2> */}
+              <TestCasePanel testCases={problem?.testCases ?? []}/>
           </div>
         </SplitPane>
       </SplitPane>

@@ -1,31 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Question } from '@/types/questionType';
 
-interface Example {
-  input: string;
-  output: string;
-  explanation: string;
-}
+// interface Example {
+//   input: string;
+//   output: string;
+//   explanation: string;
+// }
 
-interface TestCase {
-  input: string;
-  expectedOutput: string;
-}
+// interface TestCase {
+//   input: string;
+//   expectedOutput: string;
+// }
 
-interface Problem {
-  _id: string;
-  title: string;
-  difficulty: string;
-  topics: string[];
-  status: string;
-  description: string;
-  constraints: string[];
-  examples: Example[];
-  testCases: TestCase[];
-}
+// interface Problem {
+//   _id: string;
+//   title: string;
+//   difficulty: string;
+//   topics: string[];
+//   status: string;
+//   description: string;
+//   constraints: string[];
+//   examples: Example[];
+//   testCases: TestCase[];
+// }
 
 interface ProblemState {
-  problems: Problem[];
-  problem: Problem | null;
+  problems: Question[];
+  problem: Question | null;
   loading: boolean;
   error: string | null;
 }
@@ -45,7 +46,7 @@ const problemSlice = createSlice({
         state.loading = true;
         state.error = null;
         },
-        fetchProblemsSuccess(state, action: PayloadAction<Problem[]>) {
+        fetchProblemsSuccess(state, action: PayloadAction<Question[]>) {
         state.problems = action.payload;
         state.loading = false;
         },
@@ -58,7 +59,7 @@ const problemSlice = createSlice({
         state.error = null;
         state.problem = null;
         },
-        fetchProblemByIdSuccess(state, action: PayloadAction<Problem>) {
+        fetchProblemByIdSuccess(state, action: PayloadAction<Question>) {
           state.problem = action.payload;
           state.loading = false;
         },

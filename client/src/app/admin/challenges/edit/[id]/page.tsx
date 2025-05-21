@@ -42,6 +42,28 @@ const schema = yup.object().shape({
       expectedOutput: yup.string().required("Expected output is required"),
     })
   ).min(1, "At least one test case is required"),
+  functionSignatures: yup.object({
+      python: yup
+        .string()
+        .trim()
+        .required('Function signature for Python is required')
+        .max(300, "Python signature must be at most 300 characters"),
+      javascript: yup
+        .string()
+        .trim()
+        .required('Function signature for Javascript is required')
+        .max(300, "JavaScript signature must be at most 300 characters"),
+      java: yup
+        .string()
+        .trim()
+        .required('Function signature for Java is required')
+        .max(300, "Java signature must be at most 300 characters"),
+      cpp: yup
+        .string()
+        .trim()
+        .required('Function signature for C++ is required')
+        .max(300, "C++ signature must be at most 300 characters"),
+    }),
 });
 
 export default function EditQuestionPage() {
@@ -57,6 +79,12 @@ export default function EditQuestionPage() {
     constraints?: string;
     examples: { input: string; output: string; explanation: string }[];
     testCases: { input: string; expectedOutput: string }[];
+    functionSignatures?: {
+      python?: string;
+      javascript?: string;
+      java?: string;
+      cpp?: string;
+    };
   };
   
   const [initialValues, setInitialValues] = useState<QuestionFormValues | null>(null);
@@ -87,6 +115,12 @@ export default function EditQuestionPage() {
         input: testCase.input || "",
         expectedOutput: testCase.expectedOutput || "",
       })) || [{ input: "", expectedOutput: "" }],
+      functionSignatures: {
+        python: question.functionSignatures?.python || "",
+        javascript: question.functionSignatures?.javascript || "",
+        java: question.functionSignatures?.java || "",
+        cpp: question.functionSignatures?.cpp || "",
+      }
     });
   }
 }, [question]);
@@ -102,6 +136,12 @@ export default function EditQuestionPage() {
       constraints: "",
       examples: [{ input: "", output: "", explanation: "" }],
       testCases: [{ input: "", expectedOutput: "" }],
+      functionSignatures: {
+        python:"",
+        javascript:"",
+        java:"",
+        cpp:"",
+      }
     },
     
   });
@@ -234,9 +274,58 @@ export default function EditQuestionPage() {
             </Button>
           </div>
         ))}
-        <Button variant="secondary" onClick={() => addTestCase({ input: "", expectedOutput: "" })}>
+        <Button
+          variant="secondary"
+          onClick={() => addTestCase({ input: "", expectedOutput: "" })}
+        >
           Add Test Case
         </Button>
+
+        <h3>Function Signatures:</h3>
+
+        <label className="text-gray-500 text-sm">JavaScript</label>
+        <Textarea
+          placeholder="function twoSum(nums, target) { ... }"
+          {...register("functionSignatures.javascript")}
+        />
+        {errors.functionSignatures?.javascript && (
+          <p className="text-red-600">
+            {errors.functionSignatures.javascript.message}
+          </p>
+        )}
+
+        <label className="text-gray-500 text-sm">Python</label>
+        <Textarea
+          placeholder="def twoSum(nums: List[int], target: int) -> List[int]"
+          {...register("functionSignatures.python")}
+        />
+        {errors.functionSignatures?.python && (
+          <p className="text-red-600">
+            {errors.functionSignatures.python.message}
+          </p>
+        )}
+
+        <label className="text-gray-500 text-sm">C++</label>
+        <Textarea
+          placeholder="vector<int> twoSum(vector<int>& nums, int target) { ... }"
+          {...register("functionSignatures.cpp")}
+        />
+        {errors.functionSignatures?.cpp && (
+          <p className="text-red-600">
+            {errors.functionSignatures.cpp.message}
+          </p>
+        )}
+
+        <label className="text-gray-500 text-sm">Java</label>
+        <Textarea
+          placeholder="public int[] twoSum(int[] nums, int target) { ... }"
+          {...register("functionSignatures.java")}
+        />
+        {errors.functionSignatures?.java && (
+          <p className="text-red-600">
+            {errors.functionSignatures.java.message}
+          </p>
+        )}
 
         <div className="flex justify-between">
           <Button type="submit" disabled={isSubmitting} className="w-1/2 mr-2">

@@ -43,23 +43,29 @@ const schema = yup.object().shape({
     .oneOf(["Easy", "Medium", "Hard"])
     .required("Difficulty is required"),
 
- topics: yup
-  .string()
-  .trim()
-  .optional()
-  .test("commaSeparated", "Enter topics separated by commas", (value) => {
-    if (!value) return true; // Allow empty value
-    return value.split(",").every((topic) => topic.trim().length > 0);
-  }),
+  topics: yup
+    .string()
+    .trim()
+    .optional()
+    .test("commaSeparated", "Enter topics separated by commas", (value) => {
+      if (!value) return true; // Allow empty value
+      return value.split(",").every((topic) => topic.trim().length > 0);
+    }),
 
-constraints: yup
-  .string()
-  .trim()
-  .optional()
-  .test("commaSeparated", "Enter constraints separated by commas", (value) => {
-    if (!value) return true; // Allow empty value
-    return value.split(",").every((constraint) => constraint.trim().length > 0);
-  }),
+  constraints: yup
+    .string()
+    .trim()
+    .optional()
+    .test(
+      "commaSeparated",
+      "Enter constraints separated by commas",
+      (value) => {
+        if (!value) return true; // Allow empty value
+        return value
+          .split(",")
+          .every((constraint) => constraint.trim().length > 0);
+      }
+    ),
 
   examples: yup
     .array()
@@ -67,7 +73,10 @@ constraints: yup
       yup.object().shape({
         input: yup.string().trim().required("Example input is required"),
         output: yup.string().trim().required("Example output is required"),
-        explanation:yup.string().trim().required("Example explanation is required"),
+        explanation: yup
+          .string()
+          .trim()
+          .required("Example explanation is required"),
       })
     )
     .min(1, "At least one example is required")
@@ -78,17 +87,52 @@ constraints: yup
     .of(
       yup.object().shape({
         input: yup.string().trim().required("Test case input is required"),
-        expectedOutput: yup.string().trim().required("Expected output is required"),
+        expectedOutput: yup
+          .string()
+          .trim()
+          .required("Expected output is required"),
       })
     )
     .min(1, "At least one test case is required")
     .required("Test cases are required"),
+
+  functionSignatures: yup.object({
+    python: yup
+      .string()
+      .trim()
+      .required('Function signature for Python is required')
+      .max(300, "Python signature must be at most 300 characters"),
+    javascript: yup
+      .string()
+      .trim()
+      .required('Function signature for Javascript is required')
+      .max(300, "JavaScript signature must be at most 300 characters"),
+    java: yup
+      .string()
+      .trim()
+      .required('Function signature for Java is required')
+      .max(300, "Java signature must be at most 300 characters"),
+    cpp: yup
+      .string()
+      .trim()
+      .required('Function signature for C++ is required')
+      .max(300, "C++ signature must be at most 300 characters"),
+  }),
 });
 
-type AddQuestionFormData = Omit<yup.InferType<typeof schema>, "topics" | "constraints"> & {
+type AddQuestionFormData = Omit<
+  yup.InferType<typeof schema>,
+  "topics" | "constraints"
+> & {
   difficulty: "Easy" | "Medium" | "Hard";
   topics?: string;
   constraints?: string;
+  functionSignatures?: {
+    python?: string;
+    javascript?: string;
+    java?: string;
+    cpp?: string;
+  };
 };
 // type AddQuestionFormData = {
 //   title: string;
@@ -104,7 +148,12 @@ export default function AddQuestionPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<AddQuestionFormData>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<AddQuestionFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: yupResolver(schema) as any,
     defaultValues: {
@@ -114,15 +163,29 @@ export default function AddQuestionPage() {
       constraints: "",
       examples: [{ input: "", output: "", explanation: "" }],
       testCases: [{ input: "", expectedOutput: "" }],
+      functionSignatures: {
+        python: "",
+        javascript: "",
+        java: "",
+        cpp: "",
+      },
     },
   });
 
-  const { fields: exampleFields, append: addExample, remove: removeExample } = useFieldArray({
+  const {
+    fields: exampleFields,
+    append: addExample,
+    remove: removeExample,
+  } = useFieldArray({
     control,
     name: "examples",
   });
 
-  const { fields: testCaseFields, append: addTestCase, remove: removeTestCase } = useFieldArray({
+  const {
+    fields: testCaseFields,
+    append: addTestCase,
+    remove: removeTestCase,
+  } = useFieldArray({
     control,
     name: "testCases",
   });
@@ -131,11 +194,19 @@ export default function AddQuestionPage() {
     try {
       const formattedData = {
         ...data,
-        topics: data.topics?.split(",").map((topic) => topic.trim()).filter((topic) => topic) || [],
-        constraints: data.constraints?.split(",").map((constraint) => constraint.trim()).filter((constraint) => constraint) || [],
+        topics:
+          data.topics
+            ?.split(",")
+            .map((topic) => topic.trim())
+            .filter((topic) => topic) || [],
+        constraints:
+          data.constraints
+            ?.split(",")
+            .map((constraint) => constraint.trim())
+            .filter((constraint) => constraint) || [],
       };
       const res = await dispatch(addQuestionAction(formattedData));
-      console.log('res from add question:',res);
+      console.log("res from add question:", res);
       toast.success("Question added successfully!");
       router.push("/admin/challenges");
     } catch {
@@ -231,7 +302,10 @@ export default function AddQuestionPage() {
               </p>
             )}
 
-            <Button variant="destructive" onClick={() => removeExample(index)}> <FiTrash2/></Button>
+            <Button variant="destructive" onClick={() => removeExample(index)}>
+              {" "}
+              <FiTrash2 />
+            </Button>
           </div>
         ))}
         <Button
@@ -267,12 +341,55 @@ export default function AddQuestionPage() {
               </p>
             )}
 
-            <Button variant="destructive" onClick={() => removeTestCase(index)}><FiTrash2/></Button>
+            <Button variant="destructive" onClick={() => removeTestCase(index)}>
+              <FiTrash2 />
+            </Button>
           </div>
         ))}
-        <Button  variant="secondary" onClick={() => addTestCase({ input: "", expectedOutput: "" })}>
+        <Button
+          variant="secondary"
+          onClick={() => addTestCase({ input: "", expectedOutput: "" })}
+        >
           Add Test Case
         </Button>
+
+        <h3>Function Signatures:</h3>
+
+        <label className="text-gray-500 text-sm">JavaScript</label>
+        <Textarea
+          placeholder="function twoSum(nums, target) { ... }"
+          {...register("functionSignatures.javascript")}
+        />
+        {errors.functionSignatures?.javascript && (
+          <p className="text-red-600">{errors.functionSignatures.javascript.message}</p>
+        )}
+
+        <label className="text-gray-500 text-sm">Python</label>
+        <Textarea
+          placeholder="def twoSum(nums: List[int], target: int) -> List[int]"
+          {...register("functionSignatures.python")}
+        />
+        {errors.functionSignatures?.python && (
+          <p className="text-red-600">{errors.functionSignatures.python.message}</p>
+        )}
+
+        <label className="text-gray-500 text-sm">C++</label>
+        <Textarea
+          placeholder="vector<int> twoSum(vector<int>& nums, int target) { ... }"
+          {...register("functionSignatures.cpp")}
+        />
+        {errors.functionSignatures?.cpp && (
+          <p className="text-red-600">{errors.functionSignatures.cpp.message}</p>
+        )}
+
+        <label className="text-gray-500 text-sm">Java</label>
+        <Textarea
+          placeholder="public int[] twoSum(int[] nums, int target) { ... }"
+          {...register("functionSignatures.java")}
+        />
+        {errors.functionSignatures?.java && (
+          <p className="text-red-600">{errors.functionSignatures.java.message}</p>
+        )}
 
         <div className="flex justify-between">
           <Button type="submit" disabled={isSubmitting} className="w-1/2 mr-2">

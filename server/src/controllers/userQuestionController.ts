@@ -68,6 +68,7 @@ export const getUserQuestionById = async (req: Request, res: Response): Promise<
       examples: question.examples,
       testCases: question.testCases,
       status: isSolved ? 'Solved' : 'Pending',
+      functionSignatures: question.functionSignatures,
     };
 
     res.status(200).json({ message: 'Question fetched successfully', question: questionDetails });

@@ -1,6 +1,13 @@
 import Joi from "joi";
 import { Types } from "mongoose";
 
+const functionSignaturesSchema = Joi.object({
+  javascript: Joi.string().trim().required(),
+  python: Joi.string().trim().required(),
+  cpp: Joi.string().trim().required(),
+  java: Joi.string().trim().required(),
+});
+
 export const addQuestionSchema = Joi.object({
   title: Joi.string().trim().min(3).max(100).required(),
   description: Joi.string().trim().min(10).required(),
@@ -12,7 +19,7 @@ export const addQuestionSchema = Joi.object({
       Joi.object({
         input: Joi.string().trim().required(),
         output: Joi.string().trim().required(),
-        explanation: Joi.string().trim().required(),
+        explanation: Joi.string().trim().optional(),
       })
     )
     .min(1)
@@ -26,17 +33,7 @@ export const addQuestionSchema = Joi.object({
     )
     .min(1)
     .required(),
-  // createdBy: Joi.string()
-  //   .custom((value, helpers) => {
-  //     if (!Types.ObjectId.isValid(value)) {
-  //       return helpers.error("any.invalid");
-  //     }
-  //     return value;
-  //   })
-  //   .messages({
-  //     "any.invalid": "Invalid ObjectId",
-  //   })
-  //   .required(),
+  functionSignatures: functionSignaturesSchema.required(),
 });
 
 export const updateQuestionSchema = Joi.object({
@@ -62,4 +59,5 @@ export const updateQuestionSchema = Joi.object({
       })
     )
     .optional(),
+    functionSignatures: functionSignaturesSchema.optional(),
 });
