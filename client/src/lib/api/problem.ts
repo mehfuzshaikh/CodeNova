@@ -11,3 +11,8 @@ export const fetchProblemByIdApi = async (id: string) => {
     const res = await axios.get(`${API_BASE}/problems/${id}`,{ withCredentials:true });
     return res.data;
 }
+
+export const runCodeApi = async({sourceCode,languageId,stdin=''}:{sourceCode:string,languageId:number,stdin?:string}) => {
+    const res = await axios.post(`${API_BASE}/code/run`,{sourceCode,languageId,stdin},{ withCredentials:true });
+    return res.data;
+}

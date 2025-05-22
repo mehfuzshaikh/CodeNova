@@ -8,12 +8,17 @@ import { useState,useEffect } from "react";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { fetchProblemById } from '@/redux/features/problem/problemActions';
 import { useParams,useSearchParams } from 'next/navigation';
+import { runCodeApi } from "@/lib/api/problem";
+import languageMap from "@/lib/utils/languageMap";
 
 const ProblemDetail = () => {
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState("");
   const [theme, setTheme] = useState("vs-dark");
   const [fontSize, setFontSize] = useState(14);
+  const [output, setOutput] = useState<string | null>(null);
+  const [loadingOutput, setLoadingOutput] = useState(false);
+
 
   const dispatch = useAppDispatch();
   const { problem, loading, error } = useAppSelector((state) => state.problems);
@@ -39,21 +44,57 @@ const ProblemDetail = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  const handleRunCode = async () => {
+    try {
+      setLoadingOutput(true);
+      const languageId = languageMap[language];
+      const result = await runCodeApi({
+        sourceCode: code,
+        languageId,
+        stdin: "", // if you support input, put it here
+      });
+
+      if (result.stderr) {
+        setOutput(result.stderr);
+      } else if (result.compile_output) {
+        setOutput(result.compile_output);
+      } else {
+        setOutput(result.stdout);
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setOutput("Execution failed. Please try again.");
+      console.error("Run error:", error);
+    } finally {
+      setLoadingOutput(false);
+    }
+  };
+
 
   return (
     <div className="h-screen w-full overflow-hidden bg-gray-100">
-      <SplitPane split="vertical" minSize={300} maxSize={-400} defaultSize="50%">
+      <SplitPane
+        split="vertical"
+        minSize={300}
+        maxSize={-400}
+        defaultSize="50%"
+      >
         <div className="p-3 bg-white shadow-md flex flex-col h-full">
           <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">
             Description
           </h2>
           <div className="overflow-y-auto flex-1">
-            <ProblemDescription problem={problem} srNo={srNo}/>
+            <ProblemDescription problem={problem} srNo={srNo} />
           </div>
         </div>
 
         {/* Right Panel: Code Editor and Test Cases */}
-        <SplitPane split="horizontal" minSize={50} maxSize={-250} defaultSize="55%">
+        <SplitPane
+          split="horizontal"
+          minSize={50}
+          maxSize={-250}
+          defaultSize="55%"
+        >
           {/* Top Right: Code Editor */}
           <div className="p-3 bg-gray-50 shadow-md h-screen w-full">
             <div className="flex justify-start items-center mb-2 bg-gray-200 rounded-t-2xl p-2 h-10 gap-5">
@@ -104,7 +145,33 @@ const ProblemDetail = () => {
 
           <div className="p-3 bg-white shadow-md h-full">
             {/* <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">Testcase</h2> */}
-              <TestCasePanel testCases={problem?.testCases ?? []}/>
+            <div className="flex justify-end mr-5 mb-3">
+              <div className="mr-2">
+                <button
+                  onClick={handleRunCode}
+                  className="bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700 cursor-pointer"
+                >
+                  Run
+                </button>
+              </div>
+              <div>
+                <button
+                  // onClick={handleRunCode}
+                  className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 cursor-pointer"
+                >
+                  Submit
+                </button>
+                {loadingOutput ? (
+                <p className="text-gray-600 mt-2">Running code...</p>
+                ) : output !== null ? (
+                  <div className="mt-2 bg-black text-white p-3 rounded">
+                    <p className="font-semibold">Output:</p>
+                    <pre className="whitespace-pre-wrap">{output}</pre>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+            <TestCasePanel testCases={problem?.testCases ?? []} />
           </div>
         </SplitPane>
       </SplitPane>
