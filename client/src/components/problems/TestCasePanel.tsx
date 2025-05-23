@@ -5,54 +5,136 @@ import { TestCase } from "@/types/questionType";
 
 type TestCasePanelProps = {
   testCases: TestCase[];
+  output: string | null;
+  loadingOutput: boolean;
 };
 
-const TestCasePanel: React.FC<TestCasePanelProps> = ({testCases}) => {
-  const [activeTab, setActiveTab] = useState(0);
+const TestCasePanel: React.FC<TestCasePanelProps> = ({
+  testCases,
+  output,
+  loadingOutput,
+}) => {
+  const [activeSection, setActiveSection] = useState<"testcase" | "result">(
+    "testcase"
+  );
+  const [activeCaseIndex, setActiveCaseIndex] = useState(0);
 
   if (!testCases || testCases.length === 0) {
     return <p>Loading...</p>;
   }
 
-  const limitedTestCases = testCases.slice(0, 2); // Limit to 2 test cases
-  return (
-    <>
-      <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">Testcase</h2>
-      <div className="p-4 bg-white shadow-md">
-        {/* Tabs */}
-        <div className="flex border-b mb-4">
-          {limitedTestCases.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveTab(index)}
-              className={`px-4 py-2 text-sm rounded-t-md mr-2 cursor-pointer ${
-                activeTab === index
-                  ? "bg-gray-300 hover:bg-gray-400 border-blue-500 border-b-2 font-semibold"
-                  : "bg-white"
-              }`}
-            >
-              Case {index + 1}
-            </button>
-          ))}
-        </div>
+  const limitedTestCases = testCases.slice(0, 2);
 
-        {/* Active Test Case Display */}
-        <div className="bg-white p-4 rounded-md text-sm">
-          <div className="mb-2">
-            <span className="font-medium">Input:</span>{" "}
-            <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">
-              {limitedTestCases[activeTab].input}
-            </pre>
-          </div>
-          {/* <div>
-            <span className="font-medium">Expected Output:</span>{" "}
-            <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">
-              {testCases[activeTab].expectedOutput}
-            </pre>
-          </div> */}
-        </div>
+  return (
+    <div className="p-3 -mt-4 bg-white shadow-md rounded-md">
+      {/* Main Tabs: Testcase | Result */}
+      <div className="flex gap-4 mb-4 border-b bg-gray-200 text-xl font-semibold rounded-t-2xl h-10">
+        <button
+          onClick={() => setActiveSection("testcase")}
+          className={`px-4 py-1 rounded-t-md font-semibold cursor-pointer ${
+            activeSection === "testcase"
+              ? "bg-gray-200 border-blue-500 border-b-2"
+              : " text-gray-400"
+          }`}
+        >
+          Testcase
+        </button>
+        <button
+          onClick={() => setActiveSection("result")}
+          className={`px-4 py-1 rounded-t-md font-semibold cursor-pointer ${
+            activeSection === "result"
+              ? "bg-gray-200 border-blue-500 border-b-2"
+              : "text-gray-400"
+          }`}
+        >
+          Result
+        </button>
       </div>
-    </>
+
+      {activeSection === "testcase" && (
+        <>
+          {/* Test Case Tabs */}
+          <div className="flex border-b mb-3">
+            {limitedTestCases.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveCaseIndex(index)}
+                className={`px-4 py-2 text-sm rounded-t-md mr-2 cursor-pointer ${
+                  activeCaseIndex === index
+                    ? "bg-gray-300 border-blue-500 border-b-2 font-semibold"
+                    : "bg-white hover:bg-gray-100"
+                }`}
+              >
+                Case {index + 1}
+              </button>
+            ))}
+          </div>
+
+          {/* Display Test Case */}
+          <div className="bg-white p-3 border rounded">
+            <div className="mb-2">
+              <span className="font-medium">Input:</span>
+              <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">
+                {limitedTestCases[activeCaseIndex].input}
+              </pre>
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeSection === "result" && (
+        <div>
+          <div className="mt-4 bg-black text-white p-3 rounded min-h-[100px]">
+            {loadingOutput ? (
+              <p className="text-gray-300">Running code...</p>
+            ) : output ? (
+              <>
+                <p className="font-semibold">Output:</p>
+                <pre className="whitespace-pre-wrap">{output}</pre>
+              </>
+            ) : (
+              <p className="text-gray-400">You must run your code first</p>
+            )}
+          </div>
+          {output && (
+            <>
+              {/* Test Case Tabs */}
+              <div className="flex border-b mb-3 mt-3">
+                {limitedTestCases.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveCaseIndex(index)}
+                    className={`px-4 py-2 text-sm rounded-t-md mr-2 cursor-pointer ${
+                      activeCaseIndex === index
+                        ? "bg-gray-300 border-blue-500 border-b-2 font-semibold"
+                        : "bg-white hover:bg-gray-100"
+                    }`}
+                  >
+                    Case {index + 1}
+                  </button>
+                ))}
+              </div>
+
+              {/* Display Test Case */}
+              <div className="bg-white p-3 border rounded">
+                <div className="mb-2">
+                  <span className="font-medium">Input:</span>
+                  <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">
+                    {limitedTestCases[activeCaseIndex].input}
+                  </pre>
+                </div>
+                <div>
+                  <span className="font-medium">Expected Output:</span>
+                  <pre className="bg-gray-100 p-2 rounded whitespace-pre-wrap">
+                    {limitedTestCases[activeCaseIndex].expectedOutput}
+                  </pre>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 

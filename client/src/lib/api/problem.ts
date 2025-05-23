@@ -12,7 +12,7 @@ export const fetchProblemByIdApi = async (id: string) => {
     return res.data;
 }
 
-export const runCodeApi = async({sourceCode,languageId,stdin=''}:{sourceCode:string,languageId:number,stdin?:string}) => {
-    const res = await axios.post(`${API_BASE}/code/run`,{sourceCode,languageId,stdin},{ withCredentials:true });
+export const runCodeApi = async({sourceCode,languageId,stdin='',questionId}:{sourceCode:string,languageId:number,stdin?:string,questionId:string}) => {
+    const res = await axios.post(`${API_BASE}/code/run`,{sourceCode,languageId,stdin,questionId},{ withCredentials:true });
     return res.data;
 }

@@ -51,20 +51,24 @@ const ProblemDetail = () => {
       const result = await runCodeApi({
         sourceCode: code,
         languageId,
-        stdin: "", // if you support input, put it here
+        stdin: "", // if you support input, put it here,
+        questionId: problemId,
       });
 
       if (result.stderr) {
         setOutput(result.stderr);
       } else if (result.compile_output) {
         setOutput(result.compile_output);
+      } else if (result.error) {
+        setOutput(result.error); // This will now show the function signature error in output
       } else {
         setOutput(result.stdout);
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      setOutput("Execution failed. Please try again.");
-      console.error("Run error:", error);
+    }  catch (error: any) {
+      const backendError = error.response?.data?.error || "Execution failed. Please try again.";
+      setOutput(backendError); // show in output panel
+      console.error("Run error:", backendError);
     } finally {
       setLoadingOutput(false);
     }
@@ -161,17 +165,13 @@ const ProblemDetail = () => {
                 >
                   Submit
                 </button>
-                {loadingOutput ? (
-                <p className="text-gray-600 mt-2">Running code...</p>
-                ) : output !== null ? (
-                  <div className="mt-2 bg-black text-white p-3 rounded">
-                    <p className="font-semibold">Output:</p>
-                    <pre className="whitespace-pre-wrap">{output}</pre>
-                  </div>
-                ) : null}
               </div>
             </div>
-            <TestCasePanel testCases={problem?.testCases ?? []} />
+            <TestCasePanel 
+                testCases={problem?.testCases ?? []} 
+                output={output}
+                loadingOutput={loadingOutput}
+            />
           </div>
         </SplitPane>
       </SplitPane>
