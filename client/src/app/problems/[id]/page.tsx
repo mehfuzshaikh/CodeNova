@@ -54,7 +54,6 @@ const ProblemDetail = () => {
         stdin: "", // if you support input, put it here,
         questionId: problemId,
       });
-
       if (result.stderr) {
         setOutput(result.stderr);
       } else if (result.compile_output) {

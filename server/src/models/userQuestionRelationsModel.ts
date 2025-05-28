@@ -3,8 +3,10 @@ import mongoose, { Schema, Types, Model } from "mongoose";
 interface ISolution {
   language: string;
   solutionCode: string;
-  isCorrect: boolean;
+  status: string; 
   submittedAt: Date;
+  time: number;
+  memory: number;
 }
 
 export interface IUserQuestionRelation{
@@ -19,8 +21,10 @@ type UserQuestionRelationModel = Model<IUserQuestionRelation>;
 const solutionSchema = new Schema<ISolution>({
   language: { type: String, required: true },
   solutionCode: { type: String, required: true },
-  isCorrect: { type: Boolean, default: false },
+  status: { type: String},
   submittedAt: { type: Date, default: Date.now },
+  time: { type: Number },
+  memory: { type: Number },
 });
 
 const userQuestionRelationSchema = new Schema<IUserQuestionRelation,UserQuestionRelationModel>({
