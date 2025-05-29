@@ -1,25 +1,28 @@
-import { Request, Response } from 'express';
-import axios from 'axios';
-import { languageIdToNameMap } from '../utils/languageMap';
-import { QUESTION } from '../models/questionModel';
-import { USERQUESTIONRELATION } from '../models/userQuestionRelationsModel';
+import { Request, Response } from "express";
+import axios from "axios";
+import { languageIdToNameMap } from "../utils/languageMap";
+import { QUESTION } from "../models/questionModel";
+import { USERQUESTIONRELATION } from "../models/userQuestionRelationsModel";
 
 function escapeRegex(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function getFunctionSignatureRegex(language: string, signatureLine: string): RegExp {
-  const escaped = escapeRegex(signatureLine.trim()).replace(/\s+/g, '\\s*');
+function getFunctionSignatureRegex(
+  language: string,
+  signatureLine: string
+): RegExp {
+  const escaped = escapeRegex(signatureLine.trim()).replace(/\s+/g, "\\s*");
 
-  if (language === 'python') {
-    return new RegExp(escaped + '\\s*:', 'm'); // e.g. def twoSum(...)
+  if (language === "python") {
+    return new RegExp(escaped + "\\s*:", "m"); // e.g. def twoSum(...)
   }
 
-  if (language === 'javascript') {
-    return new RegExp(escaped + '\\s*{', 'm'); // function twoSum(...) {
+  if (language === "javascript") {
+    return new RegExp(escaped + "\\s*{", "m"); // function twoSum(...) {
   }
 
-  if (language === 'java' || language === 'cpp') {
+  if (language === "java" || language === "cpp") {
     const funcName = signatureLine.match(/\b(\w+)\s*\(/)?.[1]; // extract "twoSum"
     if (!funcName) throw new Error("Invalid function signature format");
 
@@ -33,10 +36,10 @@ function getFunctionSignatureRegex(language: string, signatureLine: string): Reg
 function parseInputString(input: string): Record<string, any> {
   const result: Record<string, any> = {};
 
-  input.split(';').forEach(pair => {
-    const [key, value] = pair.split('=').map(s => s.trim());
+  input.split(";").forEach((pair) => {
+    const [key, value] = pair.split("=").map((s) => s.trim());
 
-    if (value?.startsWith('[') || value?.startsWith('{')) {
+    if (value?.startsWith("[") || value?.startsWith("{")) {
       // Try to parse arrays or objects
       try {
         result[key] = eval(value); // or use JSON5 if you want safer parsing
@@ -53,7 +56,19 @@ function parseInputString(input: string): Record<string, any> {
   return result;
 }
 
-export const runCode = async (req: Request, res: Response):Promise<void> => {
+interface Judge0Response {
+  stdout?: string;
+  stderr?: string;
+  compile_output?: string;
+  status?: {
+    id: number;
+    description: string;
+  };
+  time?: number;
+  memory?: number;
+}
+
+export const runCode = async (req: Request, res: Response): Promise<void> => {
   const { sourceCode, languageId, stdin, questionId } = req.body;
 
   if (!questionId) {
@@ -65,7 +80,7 @@ export const runCode = async (req: Request, res: Response):Promise<void> => {
     const languageName = languageIdToNameMap[languageId];
     if (!languageName) {
       res.status(400).json({ error: "Unsupported languageId" });
-      return
+      return;
     }
 
     const question = await QUESTION.findById(questionId);
@@ -74,9 +89,16 @@ export const runCode = async (req: Request, res: Response):Promise<void> => {
       return;
     }
 
-    const requiredSignature = question.functionSignatures[languageName as keyof typeof question.functionSignatures];
+    const requiredSignature =
+      question.functionSignatures[
+        languageName as keyof typeof question.functionSignatures
+      ];
     if (!requiredSignature) {
-      res.status(400).json({ error: `Function signature not found for language: ${languageName}` });
+      res
+        .status(400)
+        .json({
+          error: `Function signature not found for language: ${languageName}`,
+        });
       return;
     }
 
@@ -97,9 +119,7 @@ export const runCode = async (req: Request, res: Response):Promise<void> => {
     );
     const functionName = functionNameMatch ? functionNameMatch[1] : null;
     if (!functionName) {
-      res
-        .status(400)
-        .json({ error: "Invalid function signature format" });
+      res.status(400).json({ error: "Invalid function signature format" });
       return;
     }
 
@@ -118,7 +138,9 @@ export const runCode = async (req: Request, res: Response):Promise<void> => {
       if (languageName === "python") {
         testCaseRunnerCode += `\nprint(${functionName}(${args.join(", ")}))`;
       } else if (languageName === "javascript") {
-        testCaseRunnerCode += `\nconsole.log(${functionName}(${args.join(", ")}));`;
+        testCaseRunnerCode += `\nconsole.log(${functionName}(${args.join(
+          ", "
+        )}));`;
       } else if (languageName === "java") {
         const javaMain = `
 import java.util.*;
@@ -164,17 +186,17 @@ int main() {
         : `${sourceCode}\n${testCaseRunnerCode}`;
 
     const response = await axios.post(
-      'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true',
+      "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
       {
         source_code: finalCode,
         language_id: languageId,
-        stdin: stdin || '',
+        stdin: stdin || "",
       },
       {
         headers: {
-          'Content-Type': 'application/json',
-          'X-RapidAPI-Key': process.env.JUDGE0_API_KEY!,
-          'X-RapidAPI-Host': process.env.JUDGE0_API_HOST!,
+          "Content-Type": "application/json",
+          "X-RapidAPI-Key": process.env.JUDGE0_API_KEY!,
+          "X-RapidAPI-Host": process.env.JUDGE0_API_HOST!,
         },
       }
     );
@@ -182,135 +204,235 @@ int main() {
     res.status(200).json(response.data);
   } catch (error: any) {
     console.error(error.response?.data || error.message);
-    res.status(200).json({ error: 'Code execution failed' });
+    res.status(200).json({ error: "Code execution failed" });
   }
 };
 
+export const submitCode = async (req: Request,res: Response): Promise<void> => {
+  const { sourceCode, languageId, questionId } = req.body;
+  const userId = req.user?._id;
+
+  if (!questionId) {
+    res.status(400).json({ error: "Missing questionId" });
+    return;
+  }
+
+  try {
+    const languageName = languageIdToNameMap[languageId];
+    if (!languageName) {
+      res.status(400).json({ error: "Unsupported language" });
+      return;
+    }
+
+    const question = await QUESTION.findById(questionId);
+    if (!question) {
+      res.status(404).json({ error: "Question not found" });
+      return;
+    }
+
+    const requiredSignature = question.functionSignatures[languageName as keyof typeof question.functionSignatures];
+    if (!requiredSignature) {
+      res
+        .status(400)
+        .json({
+          error: `Function signature not found for language: ${languageName}`,
+        });
+      return;
+    }
+
+    const regex = getFunctionSignatureRegex(languageName, requiredSignature);
+
+    if (!regex.test(sourceCode)) {
+      res.status(200).json({
+        stdout: "",
+        stderr: "",
+        compile_output: "",
+        error: `Your code must include the predefined function signature:\n\n${requiredSignature}`,
+      });
+      return;
+    }
+
+    const functionName = requiredSignature.match(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/)?.[1];
+    if (!functionName) {
+      res.status(400).json({ error: "Invalid function signature" });
+      return;
+    }
+
+    const testCases = question.testCases;
+    let combinedCode = "";
+
+    if (languageName === "python") {
+      combinedCode = `${sourceCode}\n`;
+      for (const testCase of testCases) {
+        const inputs = parseInputString(testCase.input);
+        const args = Object.values(inputs).map((arg) => JSON.stringify(arg)).join(", ");
+        combinedCode += `print(${functionName}(${args}))\n`;
+      }
+    } else if (languageName === "javascript") {
+      combinedCode = `${sourceCode}\n`;
+      for (const testCase of testCases) {
+        const inputs = parseInputString(testCase.input);
+        const args = Object.values(inputs).map((arg) => JSON.stringify(arg)).join(", ");
+        combinedCode += `console.log(${functionName}(${args}));\n`;
+      }
+    } else if (languageName === "java") {
+      combinedCode = `
+import java.util.*;
+class Main {
+  public static ${sourceCode}
+
+  public static void main(String[] args) {
+    ${testCases
+      .map((testCase) => {
+        const inputs = parseInputString(testCase.input);
+        const nums = inputs["nums"] || "";
+        const target = inputs["target"] || "";
+        return `int[] nums = new int[]{${nums}};
+int target = ${target};
+int[] result = ${functionName}(nums, target);
+System.out.println(Arrays.toString(result));`;
+      })
+      .join("\n")}
+  }
+}`;
+    } else if (languageName === "cpp") {
+      combinedCode = `
+#include <iostream>
+#include <vector>
+using namespace std;
+
+${sourceCode}
+
+int main() {
+${testCases
+  .map((testCase) => {
+    const inputs = parseInputString(testCase.input);
+    const nums = inputs["nums"] || "";
+    const target = inputs["target"] || "";
+    return `vector<int> nums = {${nums}};
+int target = ${target};
+vector<int> result = ${functionName}(nums, target);
+for (int x : result) cout << x << " ";
+cout << endl;`;
+  })
+  .join("\n")}
+  return 0;
+}`;
+    }
+
+    // Submit combined code
+    const result = await axios.post<Judge0Response>("https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
+      {
+        source_code: combinedCode,
+        language_id: languageId,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-RapidAPI-Key": process.env.JUDGE0_API_KEY!,
+          "X-RapidAPI-Host": process.env.JUDGE0_API_HOST!,
+        },
+      }
+    );
 
 
-// export const submitCode = async (req: Request, res: Response) => {
-//   const { sourceCode, languageId, questionId } = req.body;
-//   const userId = req.user?._id; // assuming you have user attached by auth middleware
+    const {stdout,stderr,compile_output,status,time: execTime,memory: execMemory} = result.data;
 
-//   try {
-//     const languageName = languageIdToNameMap[languageId];
-//     if (!languageName){
-//       res.status(400).json({ error: "Unsupported language" });
-//       return;
-//     } 
+    // const normalize = (s: string) => s.replace(/\s+/g, ''); // remove all whitespace
+    const safeParse = (val: string): any => {
+      try {
+        return JSON.parse(val);
+      } catch {
+        return val.trim(); // fallback to trimmed string if not valid JSON
+      }
+    };
 
-//     const question = await QUESTION.findById(questionId);
-//     if (!question){
-//       res.status(404).json({ error: "Question not found" });
-//       return;
-//     } 
+    const actualOutputs =
+      stdout?.trim().split("\n").slice(1).map((line) => safeParse(line)) || [];
+    const expectedOutputs = testCases.map((tc) => safeParse(tc.expectedOutput));
 
-//     const requiredSignature = question.functionSignatures[languageName as keyof typeof question.functionSignatures];
-//     const functionName = requiredSignature.match(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/)?.[1];
-//     if (!functionName) return res.status(400).json({ error: "Invalid function signature" });
+    const isEqual = (a: any, b: any): boolean => {
+      if (typeof a !== typeof b) return false;
+      if (Array.isArray(a) && Array.isArray(b)) {
+        return (
+          a.length === b.length && a.every((val, idx) => isEqual(val, b[idx]))
+        );
+      }
+      return a === b;
+    };
 
-//     const testCases = question.testCases;
-//     let isAccepted = true;
-//     let finalStdout = [];
-//     let finalStatus = "Accepted";
-//     let time = 0, memory = 0;
+    const isAccepted =
+      actualOutputs.length === expectedOutputs.length &&
+      actualOutputs.every((out, i) => isEqual(out, expectedOutputs[i]));
 
-//     for (const testCase of testCases) {
-//       const inputs = parseInputString(testCase.input);
-//       const args = Object.values(inputs).map(arg =>
-//         languageName === "java" || languageName === "cpp" ? "" : JSON.stringify(arg)
-//       );
+    const finalStatus = isAccepted ? "Accepted" : "Wrong Answer";
+  
+    const existingRelation = await USERQUESTIONRELATION.findOne({
+      user_id: userId,
+      question_id: questionId,
+    });
 
-//       let testCode = "";
+    if (!existingRelation) {
+      // Create new document
+      const newRelation = await USERQUESTIONRELATION.create({
+        user_id: userId,
+        question_id: questionId,
+        isSolved: isAccepted ? "Solved" : "Pending",
+        solutions: [
+          {
+            language: languageName,
+            solutionCode: sourceCode,
+            status: finalStatus,
+            time: execTime,
+            memory: execMemory,
+            submittedAt: new Date(),
+          },
+        ],
+      });
 
-//       if (languageName === "python") {
-//         testCode = `${sourceCode}\nprint(${functionName}(${args.join(", ")}))`;
-//       } else if (languageName === "javascript") {
-//         testCode = `${sourceCode}\nconsole.log(${functionName}(${args.join(", ")}));`;
-//       } else if (languageName === "java") {
-//         testCode = `
-// import java.util.*;
-// class Main {
-//   public static ${sourceCode}
-//   public static void main(String[] args) {
-//     int[] nums = new int[]{${inputs["nums"]}};
-//     int target = ${inputs["target"]};
-//     int[] result = ${functionName}(nums, target);
-//     System.out.println(Arrays.toString(result));
-//   }
-// }`;
-//       } else if (languageName === "cpp") {
-//         testCode = `
-// #include <iostream>
-// #include <vector>
-// using namespace std;
+      res.status(200).json({
+        message: "Submission recorded",
+        language:languageName,
+        solutionCode: sourceCode,
+        time: execTime,
+        memory: execMemory,
+        status: finalStatus,
+        isSolved: newRelation.isSolved,
+        submittedAt: new Date(),
+      });
+      return;
+    } else {
+      // Already exists: always push the solution
+      existingRelation.solutions.push({
+        language: languageName,
+        solutionCode: sourceCode,
+        status: finalStatus,
+        time: execTime ?? 0,
+        memory: execMemory ?? 0,
+        submittedAt: new Date(),
+      });
 
-// ${sourceCode}
+      // Only update isSolved if it's not already "Solved" and the current is accepted
+      if (existingRelation.isSolved !== "Solved" && isAccepted) {
+        existingRelation.isSolved = "Solved";
+      }
 
-// int main() {
-//   vector<int> nums = {${inputs["nums"]}};
-//   int target = ${inputs["target"]};
-//   vector<int> result = ${functionName}(nums, target);
-//   for (int x : result) cout << x << " ";
-//   return 0;
-// }`;
-//       }
+      await existingRelation.save();
 
-//       const result = await axios.post(
-//         'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true',
-//         {
-//           source_code: testCode,
-//           language_id: languageId,
-//         },
-//         {
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'X-RapidAPI-Key': process.env.JUDGE0_API_KEY!,
-//             'X-RapidAPI-Host': process.env.JUDGE0_API_HOST!,
-//           },
-//         }
-//       );
-
-//       const { stdout, stderr, compile_output, status, time: execTime, memory: execMemory } = result.data;
-//       if (status?.description !== "Accepted" || (stdout?.trim() !== testCase.expectedOutput?.trim())) {
-//         isAccepted = false;
-//         finalStatus = status?.description || "Wrong Answer";
-//         break;
-//       }
-
-//       finalStdout.push(stdout);
-//       time += execTime || 0;
-//       memory += execMemory || 0;
-//     }
-
-//     // Save to userQuestionRelation
-//     const relation = await USERQUESTIONRELATION.findOneAndUpdate(
-//       { user_id: userId, question_id: questionId },
-//       {
-//         $setOnInsert: { user_id: userId, question_id: questionId, isSolved: "Pending" },
-//         $push: {
-//           solutions: {
-//             language: languageName,
-//             solutionCode: sourceCode,
-//             status: finalStatus,
-//             time,
-//             memory,
-//             submittedAt: new Date(),
-//           },
-//         },
-//         ...(isAccepted && { isSolved: "Solved" })
-//       },
-//       { new: true, upsert: true }
-//     );
-
-//     res.status(200).json({
-//       message: "Submission recorded",
-//       status: finalStatus,
-//       isSolved: relation.isSolved,
-//     });
-
-//   } catch (error: any) {
-//     console.error(error.response?.data || error.message);
-//     res.status(500).json({ error: "Code submission failed" });
-//   }
-// };
+      res.status(200).json({
+        message: "Submission recorded",
+        language:languageName,
+        solutionCode: sourceCode,
+        time: execTime,
+        memory: execMemory,
+        status: finalStatus,
+        isSolved: existingRelation.isSolved,
+        submittedAt: new Date(),
+      });
+      return;
+    }
+  } catch (error: any) {
+    console.error(error.response?.data || error.message);
+    res.status(500).json({ error: "Code submission failed" });
+  }
+};

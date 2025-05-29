@@ -16,3 +16,8 @@ export const runCodeApi = async({sourceCode,languageId,stdin='',questionId}:{sou
     const res = await axios.post(`${API_BASE}/code/run`,{sourceCode,languageId,stdin,questionId},{ withCredentials:true });
     return res.data;
 }
+
+export const submitCodeApi = async({sourceCode,languageId,questionId}:{sourceCode:string,languageId:number,questionId:string}) => {
+    const res = await axios.post(`${API_BASE}/code/submit`,{sourceCode,languageId,questionId},{ withCredentials:true });
+    return res.data;
+}

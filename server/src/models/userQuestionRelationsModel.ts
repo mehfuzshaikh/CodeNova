@@ -25,7 +25,7 @@ const solutionSchema = new Schema<ISolution>({
   submittedAt: { type: Date, default: Date.now },
   time: { type: Number },
   memory: { type: Number },
-});
+},{ _id: false });
 
 const userQuestionRelationSchema = new Schema<IUserQuestionRelation,UserQuestionRelationModel>({
   user_id: { type: Schema.Types.ObjectId, ref: 'Users', required: true },

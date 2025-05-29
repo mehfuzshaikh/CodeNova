@@ -6,10 +6,11 @@ import CodeEditor from "@/components/problems/CodeEditor";
 import TestCasePanel from "@/components/problems/TestCasePanel";
 import { useState,useEffect } from "react";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchProblemById } from '@/redux/features/problem/problemActions';
+import { fetchProblemById,submitCode } from '@/redux/features/problem/problemActions';
 import { useParams,useSearchParams } from 'next/navigation';
 import { runCodeApi } from "@/lib/api/problem";
 import languageMap from "@/lib/utils/languageMap";
+import SubmissionResultModal from "@/components/problems/SubmissionResultModal";
 
 const ProblemDetail = () => {
   const [language, setLanguage] = useState("javascript");
@@ -18,6 +19,8 @@ const ProblemDetail = () => {
   const [fontSize, setFontSize] = useState(14);
   const [output, setOutput] = useState<string | null>(null);
   const [loadingOutput, setLoadingOutput] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
 
   const dispatch = useAppDispatch();
@@ -72,6 +75,12 @@ const ProblemDetail = () => {
       setLoadingOutput(false);
     }
   };
+
+  const handleSubmit = () => {
+  const languageId = languageMap[language];
+  dispatch(submitCode(code, languageId, problemId));
+  setIsModalOpen(true);
+};
 
 
   return (
@@ -159,21 +168,25 @@ const ProblemDetail = () => {
               </div>
               <div>
                 <button
-                  // onClick={handleRunCode}
+                  onClick={handleSubmit}
                   className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 cursor-pointer"
                 >
                   Submit
                 </button>
               </div>
             </div>
-            <TestCasePanel 
-                testCases={problem?.testCases ?? []} 
-                output={output}
-                loadingOutput={loadingOutput}
+            <TestCasePanel
+              testCases={problem?.testCases ?? []}
+              output={output}
+              loadingOutput={loadingOutput}
             />
           </div>
         </SplitPane>
       </SplitPane>
+      <SubmissionResultModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
