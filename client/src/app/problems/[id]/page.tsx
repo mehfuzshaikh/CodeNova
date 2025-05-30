@@ -6,7 +6,8 @@ import CodeEditor from "@/components/problems/CodeEditor";
 import TestCasePanel from "@/components/problems/TestCasePanel";
 import { useState,useEffect } from "react";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchProblemById,submitCode } from '@/redux/features/problem/problemActions';
+import { fetchProblemById } from '@/redux/features/problem/problemActions';
+import { submitCode } from '@/redux/features/submitCode/submitCodeActions';
 import { useParams,useSearchParams } from 'next/navigation';
 import { runCodeApi } from "@/lib/api/problem";
 import languageMap from "@/lib/utils/languageMap";
@@ -20,12 +21,11 @@ const ProblemDetail = () => {
   const [output, setOutput] = useState<string | null>(null);
   const [loadingOutput, setLoadingOutput] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
 
   const dispatch = useAppDispatch();
   const { problem, loading, error } = useAppSelector((state) => state.problems);
-
   const params = useParams();
   const problemId = params.id as string;
   const searchParams = useSearchParams();
@@ -76,12 +76,13 @@ const ProblemDetail = () => {
     }
   };
 
-  const handleSubmit = () => {
-  const languageId = languageMap[language];
-  dispatch(submitCode(code, languageId, problemId));
-  setIsModalOpen(true);
-};
-
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    const languageId = languageMap[language];
+    await dispatch(submitCode(code, languageId, problemId));
+    setIsModalOpen(true);
+    setIsSubmitting(false);
+  };
 
   return (
     <div className="h-screen w-full overflow-hidden bg-gray-100">
@@ -169,9 +170,10 @@ const ProblemDetail = () => {
               <div>
                 <button
                   onClick={handleSubmit}
+                  disabled={isSubmitting}
                   className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 cursor-pointer"
                 >
-                  Submit
+                  {isSubmitting ? "Submitting..." : "Submit"}
                 </button>
               </div>
             </div>

@@ -3,6 +3,7 @@ import authReducer from './features/auth/authSlice';
 import problemReducer from './features/problem/problemSlice';
 import adminAuthReduce from './features/admin/authSlice';
 import questionReducer from './features/admin/questions/questionSlice';
+import submitReducer from './features/submitCode/submitCodeSlice';
 
 // import userReducer from './features/user/userSlice';
 
@@ -12,6 +13,7 @@ export const store = configureStore({
     adminAuth:adminAuthReduce,
     questions:questionReducer,
     problems: problemReducer,
+    submit:submitReducer
   },
 });
 

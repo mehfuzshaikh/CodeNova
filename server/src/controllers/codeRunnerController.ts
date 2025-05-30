@@ -245,7 +245,7 @@ export const submitCode = async (req: Request,res: Response): Promise<void> => {
     if (!regex.test(sourceCode)) {
       res.status(200).json({
         stdout: "",
-        stderr: "",
+        stderr: "", 
         compile_output: "",
         error: `Your code must include the predefined function signature:\n\n${requiredSignature}`,
       });
@@ -383,8 +383,8 @@ cout << endl;`;
             language: languageName,
             solutionCode: sourceCode,
             status: finalStatus,
-            time: execTime,
-            memory: execMemory,
+            time: isAccepted ? execTime : null,
+            memory: isAccepted ? execMemory : null,
             submittedAt: new Date(),
           },
         ],
@@ -407,8 +407,8 @@ cout << endl;`;
         language: languageName,
         solutionCode: sourceCode,
         status: finalStatus,
-        time: execTime ?? 0,
-        memory: execMemory ?? 0,
+        time: isAccepted ? execTime ?? 0 : null,
+        memory: isAccepted ? execMemory ?? 0 : null,
         submittedAt: new Date(),
       });
 

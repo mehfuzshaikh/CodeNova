@@ -5,8 +5,8 @@ interface ISolution {
   solutionCode: string;
   status: string; 
   submittedAt: Date;
-  time: number;
-  memory: number;
+  time: number | null;
+  memory: number | null;
 }
 
 export interface IUserQuestionRelation{
