@@ -12,6 +12,7 @@ import { useParams,useSearchParams } from 'next/navigation';
 import { runCodeApi } from "@/lib/api/problem";
 import languageMap from "@/lib/utils/languageMap";
 import SubmissionResultModal from "@/components/problems/SubmissionResultModal";
+import SubmissionsTable from "@/components/problems/SubmissionsTable";
 
 const ProblemDetail = () => {
   const [language, setLanguage] = useState("javascript");
@@ -22,6 +23,8 @@ const ProblemDetail = () => {
   const [loadingOutput, setLoadingOutput] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<"description" | "submissions">("description");
+
   
 
   const dispatch = useAppDispatch();
@@ -92,13 +95,46 @@ const ProblemDetail = () => {
         maxSize={-400}
         defaultSize="50%"
       >
-        <div className="p-3 bg-white shadow-md flex flex-col h-full">
-          <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">
+        <div className="p-3 bg-gray-50 shadow-md flex flex-col h-full">
+          <div className="flex gap-4 mb-4 border-b bg-gray-200 text-xl font-semibold rounded-t-2xl h-10">
+            <button
+              onClick={() => setActiveTab("description")}
+              className={`px-4 py-1 rounded-t-md font-semibold cursor-pointer ${
+                activeTab === "description"
+                  ? "bg-gray-200 border-blue-500 border-b-2"
+                  : "text-gray-400"
+              }`}
+            >
+              Description
+            </button>
+            <button
+              onClick={() => setActiveTab("submissions")}
+              className={`px-4 py-1 rounded-t-md font-semibold cursor-pointer ${
+                activeTab === "submissions"
+                  ? "bg-gray-200 border-blue-500 border-b-2"
+                  : "text-gray-400"
+              }`}
+            >
+              Submissions
+            </button>
+          </div>
+          {/* <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">
             Description
           </h2>
           <div className="overflow-y-auto flex-1">
             <ProblemDescription problem={problem} srNo={srNo} />
-          </div>
+          </div> */}
+          {activeTab === "description" && (
+            <div className="overflow-y-auto flex-1">
+              <ProblemDescription problem={problem} srNo={srNo} />
+            </div>
+          )}
+
+          {activeTab === "submissions" && (
+            <div className="overflow-y-auto flex-1">
+              <SubmissionsTable submissions={problem?.solutions || []} />
+            </div>
+          )}
         </div>
 
         {/* Right Panel: Code Editor and Test Cases */}

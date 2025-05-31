@@ -18,6 +18,15 @@ export interface FunctionSignatures {
   java?: string;
   cpp?: string;
 }
+
+interface Solution {
+  language: string;
+  solutionCode: string;
+  status: string;
+  submittedAt: string; // ISO date string
+  time: number | null;
+  memory: number | null;
+}
 interface Problem {
   _id: string;
   title: string;
@@ -29,6 +38,7 @@ interface Problem {
   examples: Example[];
   testCases: TestCase[];
   functionSignatures?: FunctionSignatures;
+  solutions?: Solution[];
 }
 
 interface ProblemState {
@@ -74,6 +84,14 @@ const problemSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    addSolutionToProblem: (state, action: PayloadAction<Solution>) => {
+      if (state.problem) {
+        state.problem.solutions = [
+          action.payload,
+          ...(state.problem.solutions || []),
+        ];
+      }
+    },
   },
 });
 
@@ -84,6 +102,7 @@ export const {
     fetchProblemByIdStart,
     fetchProblemByIdSuccess,
     fetchProblemByIdFailure,
+    addSolutionToProblem,
 } = problemSlice.actions;
 
 export default problemSlice.reducer;

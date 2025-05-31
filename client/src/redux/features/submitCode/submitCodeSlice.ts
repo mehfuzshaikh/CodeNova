@@ -5,8 +5,8 @@ interface SubmitResult {
   language: string;
   solutionCode: string;
   status: string;
-  time: number;
-  memory: number;
+  time: number | null;
+  memory: number | null;
   submittedAt: string;
   error?: string;
 }
@@ -15,16 +15,18 @@ interface SubmitState {
   loading: boolean;
   error: string | null;
   submitResult: SubmitResult | null;
+  selectedSubmission: SubmitResult | null;
 }
 
 const initialState: SubmitState = {
   loading: false,
   error: null,
   submitResult: null,
+  selectedSubmission: null,
 };
 
 const submitSlice = createSlice({
-  name: 'submit',
+  name: "submit",
   initialState,
   reducers: {
     submitCodeStart(state) {
@@ -43,6 +45,12 @@ const submitSlice = createSlice({
     clearSubmitResult(state) {
       state.submitResult = null;
     },
+    setSelectedSubmission: (state, action: PayloadAction<SubmitResult>) => {
+      state.selectedSubmission = action.payload;
+    },
+    clearSelectedSubmission: (state) => {
+      state.selectedSubmission = null;
+    },
   },
 });
 
@@ -51,6 +59,8 @@ export const {
   submitCodeSuccess,
   submitCodeFailure,
   clearSubmitResult,
+  setSelectedSubmission,
+  clearSelectedSubmission,
 } = submitSlice.actions;
 
 export default submitSlice.reducer;

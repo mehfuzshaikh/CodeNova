@@ -67,9 +67,14 @@ export const getUserQuestionById = async (req: Request, res: Response): Promise<
       constraints: question.constraints,
       examples: question.examples,
       testCases: question.testCases,
-      status: isSolved ? 'Solved' : 'Pending',
+      status: isSolved ? "Solved" : "Pending",
       functionSignatures: question.functionSignatures,
-      solutions: userRelation?.solutions || [],
+      // solutions: userRelation?.solutions || [], //it send solution in ascending order 
+      // so we sort it in descending order(submitted at)
+      solutions: (userRelation?.solutions || []).sort(
+        (a, b) =>
+          new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
+      ),
     };
 
     res.status(200).json({ message: 'Question fetched successfully', question: questionDetails });
