@@ -6,6 +6,7 @@ import { RootState, AppDispatch } from '@/redux/store';
 import { fetchProblems } from '@/redux/features/problem/problemActions';
 import { Loader2 } from 'lucide-react';
 import ProblemTable from '@/components/problems/ProblemTable';
+import ProtectedUserRoute from '@/components/shared/ProtectedUserRoute';
 const QuestionListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { problems, loading, error } = useSelector((state: RootState) => state.problems);
@@ -15,6 +16,7 @@ const QuestionListPage = () => {
   }, [dispatch]);
 
   return (
+    <ProtectedUserRoute>
     <div className="p-4">
       {/* <h2 className="text-2xl font-semibold mb-4">Challenges</h2> */}
 
@@ -35,6 +37,7 @@ const QuestionListPage = () => {
 
       {!loading && problems.length > 0 && <ProblemTable problems={problems} />}
     </div>
+    </ProtectedUserRoute>
   );
 };
 

@@ -136,11 +136,12 @@ export const runCode = async (req: Request, res: Response): Promise<void> => {
       });
 
       if (languageName === "python") {
-        testCaseRunnerCode += `\nprint(${functionName}(${args.join(", ")}))`;
+        testCaseRunnerCode +=
+          `\nresult = ${functionName}(${args.join(", ")})\n` +
+          `print(str(result).lower() if isinstance(result, bool) else result)`;
       } else if (languageName === "javascript") {
-        testCaseRunnerCode += `\nconsole.log(${functionName}(${args.join(
-          ", "
-        )}));`;
+        testCaseRunnerCode += `\nconsole.log(${functionName}(${args.join(", ")}));`;
+        console.log("testCaseRunnerCode",testCaseRunnerCode);
       } else if (languageName === "java") {
         const javaMain = `
 import java.util.*;
@@ -202,9 +203,9 @@ int main() {
     );
     console.log(response.data);
     res.status(200).json(response.data);
-  } catch (error: any) {
-    console.error(error.response?.data || error.message);
-    res.status(200).json({ error: "Code execution failed" });
+  } catch (error) {
+    // console.error(error.response?.data || error.message);
+    res.status(200).json({ message: "Code execution failed" ,error:(error as Error).message});
   }
 };
 
@@ -340,6 +341,8 @@ cout << endl;`;
 
     // const normalize = (s: string) => s.replace(/\s+/g, ''); // remove all whitespace
     const safeParse = (val: string): any => {
+      if (val == "True") return true;
+      if (val == "False") return false;
       try {
         return JSON.parse(val);
       } catch {
@@ -431,8 +434,8 @@ cout << endl;`;
       });
       return;
     }
-  } catch (error: any) {
-    console.error(error.response?.data || error.message);
-    res.status(500).json({ error: "Code submission failed" });
+  } catch (error) {
+    // console.error(error.response?.data || error.message);
+    res.status(500).json({ message: "Code submission failed",error: (error as Error).message });
   }
 };

@@ -7,6 +7,7 @@ import { fetchQuestions } from '@/redux/features/admin/questions/questionActions
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import QuestionCard from '@/components/admin/question/QuestionCard';
+import ProtectedAdminRoute from '@/components/shared/ProtectedAdminRoute';
 
 export default function ChallengesPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,6 +18,7 @@ export default function ChallengesPage() {
   }, [dispatch]);
 
   return (
+    <ProtectedAdminRoute>
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Challenge Questions</h2>
@@ -42,5 +44,6 @@ export default function ChallengesPage() {
         </div>
       )}
     </div>
+    </ProtectedAdminRoute>
   );
 }

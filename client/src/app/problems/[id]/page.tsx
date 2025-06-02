@@ -13,6 +13,7 @@ import { runCodeApi } from "@/lib/api/problem";
 import languageMap from "@/lib/utils/languageMap";
 import SubmissionResultModal from "@/components/problems/SubmissionResultModal";
 import SubmissionsTable from "@/components/problems/SubmissionsTable";
+import ProtectedUserRoute from "@/components/shared/ProtectedUserRoute";
 
 const ProblemDetail = () => {
   const [language, setLanguage] = useState("javascript");
@@ -88,6 +89,7 @@ const ProblemDetail = () => {
   };
 
   return (
+  <ProtectedUserRoute>
     <div className="h-screen w-full overflow-hidden bg-gray-100">
       <SplitPane
         split="vertical"
@@ -226,6 +228,7 @@ const ProblemDetail = () => {
         onClose={() => setIsModalOpen(false)}
       />
     </div>
+  </ProtectedUserRoute>
   );
 };
 

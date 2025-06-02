@@ -6,6 +6,7 @@ import { RootState } from '@/redux/store';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import ImageUploadModal from './ImageUploadModal';
+import DefaultAvatar from '../../../public/DefaultAvatar.png';
 
 const ProfileHeader: React.FC = () => {
   // Access user data from Redux
@@ -19,7 +20,7 @@ const ProfileHeader: React.FC = () => {
       <div className="flex items-center gap-8">
         <div className='align-baseline ml-20'>
           <Image 
-            src={user.profileImg || '/default-avatar.png'} 
+            src={user.profileImg || DefaultAvatar} 
             alt="Profile Picture" 
             width={120} 
             height={120} 

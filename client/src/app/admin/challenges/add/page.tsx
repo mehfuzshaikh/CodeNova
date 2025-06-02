@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FiTrash2 } from "react-icons/fi";
+import ProtectedAdminRoute from "@/components/shared/ProtectedAdminRoute";
 
 const schema = yup.object().shape({
   title: yup
@@ -215,6 +216,7 @@ export default function AddQuestionPage() {
   };
 
   return (
+    <ProtectedAdminRoute>
     <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-20">
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -406,5 +408,6 @@ export default function AddQuestionPage() {
         </div>
       </form>
     </div>
+    </ProtectedAdminRoute>
   );
 }
