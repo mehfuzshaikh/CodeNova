@@ -26,7 +26,9 @@ export interface IUser{
     website?:string | null,
     github?:string | null,
     linkedin?:string | null,
-    profileImg?:string | null
+    profileImg?:string | null,
+    points?: number,
+    badges?: string[],
 
 
 }
@@ -114,8 +116,15 @@ const userSchema = new Schema<IUser, UserModel>({
     website:String,
     github:String,
     linkedin:String,
-    profileImg:String
-
+    profileImg:String,
+    points: {
+        type: Number,
+        default: 0,
+    },
+    badges: {
+        type: [String],
+        default: ["joined_platform"],
+    },
 },{timestamps:true})
 
 userSchema.pre('save',async function(next)

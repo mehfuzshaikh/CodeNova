@@ -33,28 +33,70 @@ function getFunctionSignatureRegex(
   return new RegExp(escaped);
 }
 
+// This function not handle string parsing in testcases
+// function parseInputString(input: string): Record<string, any> {
+//   const result: Record<string, any> = {};
+
+//   input.split(";").forEach((pair) => {
+//     const [key, value] = pair.split("=").map((s) => s.trim());
+
+//     if (value?.startsWith("[") || value?.startsWith("{")) {
+//       // Try to parse arrays or objects
+//       try {
+//         result[key] = eval(value); // or use JSON5 if you want safer parsing
+//       } catch {
+//         result[key] = value; // fallback to string
+//       }
+//     } else if (!isNaN(Number(value))) {
+//       result[key] = Number(value);
+//     } else {
+//       result[key] = value;
+//     }
+//   });
+
+//   return result;
+// }
+
 function parseInputString(input: string): Record<string, any> {
   const result: Record<string, any> = {};
 
   input.split(";").forEach((pair) => {
-    const [key, value] = pair.split("=").map((s) => s.trim());
+    const [key, valueRaw] = pair.split("=").map((s) => s.trim());
 
-    if (value?.startsWith("[") || value?.startsWith("{")) {
-      // Try to parse arrays or objects
+    if (!key || valueRaw === undefined) return;
+
+    let value: any = valueRaw;
+
+    // Try to parse JSON if it looks like an array or object
+    if ((value.startsWith("[") && value.endsWith("]")) || (value.startsWith("{") && value.endsWith("}"))) {
       try {
-        result[key] = eval(value); // or use JSON5 if you want safer parsing
+        result[key] = JSON.parse(value);
+        return;
       } catch {
-        result[key] = value; // fallback to string
+        result[key] = value;
+        return;
       }
-    } else if (!isNaN(Number(value))) {
-      result[key] = Number(value);
-    } else {
-      result[key] = value;
     }
+
+    // Handle numbers
+    if (!isNaN(Number(value))) {
+      result[key] = Number(value);
+      return;
+    }
+
+    // Handle quoted strings (like "bbbbb" or 'bbbbb')
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      result[key] = value.slice(1, -1); // Remove surrounding quotes
+      return;
+    }
+
+    // Fallback to raw string
+    result[key] = value;
   });
 
   return result;
 }
+
 
 interface Judge0Response {
   stdout?: string;
@@ -203,8 +245,8 @@ int main() {
     );
     console.log(response.data);
     res.status(200).json(response.data);
-  } catch (error) {
-    // console.error(error.response?.data || error.message);
+  } catch (error:any) {
+    console.error(error.response?.data || error.message);
     res.status(200).json({ message: "Code execution failed" ,error:(error as Error).message});
   }
 };
