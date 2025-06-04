@@ -14,6 +14,8 @@ interface User {
   gender: string;
   name:string
   profileImg: string;
+  points: number;
+  badges: string[];
 }
 
 interface AuthState {

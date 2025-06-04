@@ -27,8 +27,8 @@ export interface IUser{
     github?:string | null,
     linkedin?:string | null,
     profileImg?:string | null,
-    points?: number,
-    badges?: string[],
+    points: number,
+    badges: string[],
 
 
 }

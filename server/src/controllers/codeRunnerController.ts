@@ -3,6 +3,8 @@ import axios from "axios";
 import { languageIdToNameMap } from "../utils/languageMap";
 import { QUESTION } from "../models/questionModel";
 import { USERQUESTIONRELATION } from "../models/userQuestionRelationsModel";
+import { getEligibleBadges,getNewBadges,getPointsForDifficulty } from "../utils/pointsAndBadges";
+import { USER } from "../models/userModel";
 
 function escapeRegex(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -417,6 +419,8 @@ cout << endl;`;
       question_id: questionId,
     });
 
+    const user = await USER.findById(userId);
+
     if (!existingRelation) {
       // Create new document
       const newRelation = await USERQUESTIONRELATION.create({
@@ -434,6 +438,22 @@ cout << endl;`;
           },
         ],
       });
+
+      if (isAccepted && user) {
+        const points = getPointsForDifficulty(
+          question.difficulty as "Easy" | "Medium" | "Hard"
+        );
+        const newBadges = getNewBadges(user.points, points, user.badges || []);
+
+        user.points += points;
+        user.badges = Array.from(
+          new Set([...(user.badges || []), ...newBadges])
+        );
+        await user.save();
+
+        // pointsAwarded = points;
+        // newlyAwardedBadges = newBadges;
+      }
 
       res.status(200).json({
         message: "Submission recorded",
@@ -458,8 +478,18 @@ cout << endl;`;
       });
 
       // Only update isSolved if it's not already "Solved" and the current is accepted
-      if (existingRelation.isSolved !== "Solved" && isAccepted) {
+      if (existingRelation.isSolved !== "Solved" && isAccepted && user) {
         existingRelation.isSolved = "Solved";
+
+        const points = getPointsForDifficulty(question.difficulty as "Easy" | "Medium" | "Hard");
+        const newBadges = getNewBadges(user.points, points, user.badges || []);
+
+        user.points += points;
+        user.badges = Array.from(new Set([...(user.badges || []), ...newBadges]));
+        await user.save();
+
+        // pointsAwarded = points;
+        // newlyAwardedBadges = newBadges;
       }
 
       await existingRelation.save();
