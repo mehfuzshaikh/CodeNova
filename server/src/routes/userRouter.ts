@@ -26,5 +26,6 @@ router.patch('/update-profile',
     userController.updateProfile
 );
 router.delete('/delete-user',protect,userController.deleteUser);
+router.get('/leaderboard',protect,userController.getLeaderboard);
 
 export default router;

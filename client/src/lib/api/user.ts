@@ -25,3 +25,8 @@ export const deleteUser = async(password:string)=>{
     withCredentials:true
   })
 }
+
+export const leaderboardApi = async()=>{
+  const res = await axios.get(`${API_BASE}/leaderboard`,{ withCredentials:true });
+  return res.data;
+}

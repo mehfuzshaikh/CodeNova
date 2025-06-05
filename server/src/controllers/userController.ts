@@ -1,5 +1,6 @@
 import { USER,IUser } from '../models/userModel';
 import { Request,Response} from 'express'
+import { USERQUESTIONRELATION } from '../models/userQuestionRelationsModel';
 
 const formatUrl = (value: string, baseUrl: string): string => {
     if(!value) return '';
@@ -98,3 +99,55 @@ export const deleteUser = async(req:Request,res:Response)=>{
         res.status(400).json({message:"Failed to delete user", error: (error as Error).message });
     }
 }
+
+export const getLeaderboard = async (req: Request, res: Response) => {
+  try {
+    // Fetch all verified users
+    const users = await USER.find({ isVerified: true,isActive: true })
+      .select("username profileImg points badges")
+      .sort({ points: -1,createdAt: 1 }) // Sort by points descending, then by creation date ascending;
+
+    // Fetch all solved question counts
+    const solvedCounts = await USERQUESTIONRELATION.aggregate([
+      { $match: { isSolved: "Solved" } },
+      {
+        $group: {
+          _id: "$user_id",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Create a map for quick lookup
+    const solvedMap = new Map<string, number>();
+    solvedCounts.forEach((entry) => {
+      solvedMap.set(entry._id.toString(), entry.count);
+    });
+
+    // Final leaderboard array
+    const leaderboard = users.map((user, index) => {
+      const userId = user._id.toString();
+      const totalSolvedQuestions = solvedMap.get(userId) || 0;
+
+      const highestBadge =
+        user.badges?.length > 0
+          ? user.badges[user.badges.length - 1]
+          : null;
+
+      return {
+        rank: index + 1,
+        _id: user._id,
+        username: user.username,
+        profileImg: user.profileImg,
+        points: user.points,
+        totalSolvedQuestions,
+        highestBadge,
+      };
+    });
+
+    res.status(200).json({ leaderboard });
+  } catch (err) {
+    console.error("Leaderboard error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

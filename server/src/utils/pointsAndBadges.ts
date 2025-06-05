@@ -4,8 +4,8 @@ export const badgeLevels = [
   { points: 14, badge: "intermediate_solver" },
   { points: 22, badge: "advanced_solver" },
   { points: 30, badge: "expert_solver" },
-//   { points: 38, badge: "master_solver" },
-//   { points: 45, badge: "legendary_solver" },
+  { points: 38, badge: "master_solver" },
+  { points: 45, badge: "legendary_solver" },
 ];
 
 export function getEligibleBadges(points: number): string[] {

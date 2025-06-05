@@ -17,7 +17,7 @@ const QuestionListPage = () => {
 
   return (
     <ProtectedUserRoute>
-    <div className="p-4">
+    <div className="p-4 bg-gray-50">
       {/* <h2 className="text-2xl font-semibold mb-4">Challenges</h2> */}
 
       {loading && (

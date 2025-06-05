@@ -25,7 +25,8 @@ export default function ProfileInfo() {
   const formatValue = (value?: string | null) => value || "Not provided";
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 w-80 max-w-3xl">
+    // <div className="bg-white rounded-lg shadow-md p-6 w-80 max-w-3xl h-162">
+    <div className="bg-white rounded-lg shadow-md p-6 w-full">
     <h2 className="font-semibold text-lg mb-4 text-gray-500">Basic Information</h2>
       {/* Top: Avatar + Username/Email */}
       <div className="flex items-center gap-4 mb-4">
