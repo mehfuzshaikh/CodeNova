@@ -86,3 +86,27 @@ export const getUserQuestionById = async (req: Request, res: Response): Promise<
     res.status(500).json({ message: 'Failed to fetch the question', error: (error as Error).message });
   }
 };
+
+export const getUserSubmissions = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?._id;
+    const records = await USERQUESTIONRELATION.find({ user_id: userId });
+
+    // Flatten all solutions
+    const allSubmissions = records.flatMap(relation => {
+      return relation.solutions.map(solution => ({
+        questionId: relation.question_id,
+        status: solution.status,
+        language: solution.language,
+        submittedAt: solution.submittedAt,
+        time: solution.time,
+        memory: solution.memory,
+      }));
+    });
+
+    res.status(200).json({ submissions: allSubmissions });
+  } catch (err) {
+    console.error('Failed to fetch user submissions:', err);
+    res.status(500).json({ message: 'Failed to fetch submissions' });
+  }
+};

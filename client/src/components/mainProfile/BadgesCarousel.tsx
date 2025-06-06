@@ -7,8 +7,18 @@ import Image from "next/image";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+const ALL_BADGES = [
+  "joined_platform",
+  "beginner_solver",
+  "intermediate_solver",
+  "advanced_solver",
+  "expert_solver",
+  "master_solver",
+  "legendary_solver",
+];
+
 const BadgesCarousel = () => {
-  const badges = useSelector((state: RootState) => state.auth.user?.badges || []);
+  const earnedBadges = useSelector((state: RootState) => state.auth.user?.badges || []);
 
   const settings = {
     dots: true,
@@ -35,9 +45,9 @@ const BadgesCarousel = () => {
 
   return (
     // <div className="mt-6 bg-white p-6 rounded-xl shadow">
-    <div className="w-full mt-6 bg-white p-6 rounded-xl shadow"> 
+    <div className="w-full mt-6 bg-white p-6 rounded-xl shadow">
       <h2 className="text-lg font-semibold mb-4 text-gray-500">Badges</h2>
-      <Slider {...settings}>
+      {/* <Slider {...settings}>
         {badges.length === 0 ? (
           <div className="text-center text-gray-500 col-span-3">No badges earned yet</div>
         ) : (
@@ -55,6 +65,35 @@ const BadgesCarousel = () => {
             </div>
           ))
         )}
+      </Slider> */}
+      <Slider {...settings}>
+        {ALL_BADGES.map((badge, index) => {
+          const isEarned = earnedBadges.includes(badge);
+
+          return (
+            <div key={index} className="px-2">
+              <div className="w-full h-32 relative flex items-center justify-center bg-gray-100 rounded-xl shadow-md">
+                <Image
+                  src={`/badges/${badge}.png`}
+                  alt={`Badge ${index + 1}`}
+                  width={100}
+                  height={100}
+                  className={`object-contain transition duration-300 ${
+                    !isEarned ? "grayscale opacity-50" : ""
+                  }`}
+                />
+
+                {!isEarned && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-sm text-gray-600 bg-white/80 px-2 py-1 rounded shadow">
+                      Locked
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </Slider>
     </div>
   );

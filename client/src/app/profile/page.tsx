@@ -30,6 +30,7 @@ import BasicInfo from '@/components/mainProfile/BasicInfo';
 import SolvedProblemsStats from '@/components/mainProfile/SolvedProblemsStats';
 import ProfileStatsCards from '@/components/mainProfile/ProfileStatsCards';
 import BadgesCarousel from '@/components/mainProfile/BadgesCarousel';
+import SubmissionHeatmap from '@/components/mainProfile/SubmissionHeatmap';
 
 const ProfilePage = () => {
   return (
@@ -48,6 +49,7 @@ const ProfilePage = () => {
             <BadgesCarousel />
           </div>
         </div>
+        <SubmissionHeatmap/>
       </div>
     </div>
   );

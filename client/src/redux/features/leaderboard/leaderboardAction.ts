@@ -1,4 +1,3 @@
-// redux/features/leaderboard/leaderboardAction.ts
 import { AppDispatch } from "@/redux/store";
 import { leaderboardApi } from "@/lib/api/user";
 import {

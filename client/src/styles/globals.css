@@ -184,3 +184,48 @@
     margin: auto;
   }
 }
+
+/* Heatmap color levels */
+.color-empty {
+  fill: #e5e7eb; /* gray-200 */
+}
+.color-github-1 {
+  fill: #bbf7d0; /* green-200 */
+}
+.color-github-2 {
+  fill: #4ade80; /* green-400 */
+}
+.color-github-3 {
+  fill: #16a34a; /* green-600 */
+}
+.color-github-4 {
+  fill: #166534; /* green-800 */
+}
+
+/* Add spacing between months */
+.react-calendar-heatmap .month-label {
+  font-size: 0.75rem;
+  fill: #6b7280; /* Tailwind gray-500 */
+}
+
+/* Add spacing by shifting weeks slightly */
+.react-calendar-heatmap .react-calendar-heatmap-week {
+  margin-right: 3px; /* spacing between weeks (months get spaced too) */
+}
+
+/* Rounded rectangles */
+.react-calendar-heatmap rect {
+  rx: 3px;
+  ry: 3px;
+  stroke: #fff;
+  stroke-width: 1px;
+  cursor: pointer;
+}
+
+/* Remove border on hover */
+.react-calendar-heatmap rect:hover {
+  stroke: #fff !important; /* or same as background */
+  stroke-width: 1px !important;
+}
+
+

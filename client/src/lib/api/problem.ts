@@ -21,3 +21,8 @@ export const submitCodeApi = async({sourceCode,languageId,questionId}:{sourceCod
     const res = await axios.post(`${API_BASE}/code/submit`,{sourceCode,languageId,questionId},{ withCredentials:true });
     return res.data;
 }
+
+export const getSubmissionsApi = async() => {
+    const res = await axios.get(`${API_BASE}/submissions`,{ withCredentials:true });
+    return res.data;
+}
