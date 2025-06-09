@@ -94,6 +94,7 @@ export const deleteUser = async(req:Request,res:Response)=>{
             return;
         }
         await USER.deleteOne({_id:userId});
+        await USERQUESTIONRELATION.deleteMany({user_id:userId})
         res.status(200).json({message:'User deleted successfully'});
     } catch (error) {
         res.status(400).json({message:"Failed to delete user", error: (error as Error).message });

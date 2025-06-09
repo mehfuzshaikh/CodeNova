@@ -16,6 +16,8 @@ import { verifyOtp, resendOtp } from "@/lib/api/auth";
 import { toast } from "sonner";
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/redux/features/auth/authSlice';
+import { loadUser } from "@/redux/features/auth/authActions";
+import { AppDispatch } from "@/redux/store";
 
 const schema = yup.object().shape({
   otp: yup
@@ -30,7 +32,9 @@ export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const router = useRouter();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
 
   const [customError, setCustomError] = useState<string | null>(null);
   const [resendDisabled, setResendDisabled] = useState(false);
@@ -75,6 +79,7 @@ export default function VerifyOtpPage() {
       const res = await verifyOtp(email, data.otp);
       toast.success(res.data.message);
       dispatch(setCredentials(res.data.data))
+      await dispatch(loadUser());
       router.push("/dashboard");
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };

@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import ProfileAvatar from './ProfileAvatar';
+import Image from 'next/image';
+import LOGO from '../../../../public/logo.png'
 
 
 export default function Navbar() {
@@ -12,10 +14,12 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between">
       {/* Left: Logo & App Name */}
-      <div className="flex items-center gap-2">
-        {/* Replace this with an image if you have a logo */}
-        <span className="text-xl font-bold text-blue-600">🚀 CodeChallenge</span>
-      </div>
+      <Link href="/" className="flex items-center gap-2">
+        <Image src={LOGO} alt="CodeNova Logo" width={50} height={50} />
+        <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-gray-700 text-transparent bg-clip-text">
+          CodeNova
+        </span>
+      </Link>
 
       {/* Center: Navigation */}
       {isAuthenticated && (
@@ -26,7 +30,6 @@ export default function Navbar() {
           <Link href="/about">About</Link>
         </div>
       )}
-      
 
       {/* Right: Auth Buttons */}
       <div className="flex gap-3">
@@ -39,10 +42,9 @@ export default function Navbar() {
               <Button>Sign Up</Button>
             </Link>
           </>
-        ):(
+        ) : (
           <ProfileAvatar />
         )}
-        
       </div>
     </nav>
   );

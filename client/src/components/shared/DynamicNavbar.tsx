@@ -18,8 +18,8 @@ const DynamicNavbar = () => {
             </>
             : 
             <>
-              <Navbar />
               <AuthLoader />
+              <Navbar />
             </>
 };
 

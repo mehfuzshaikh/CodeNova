@@ -9,7 +9,7 @@ import DynamicNavbar from "@/components/shared/DynamicNavbar";
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'CodeChallenge Platform',
+  title: 'CodeNova',
   description: 'Practice coding and level up!',
 };
 
