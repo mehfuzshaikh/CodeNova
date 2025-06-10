@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { MailIcon, LockIcon, EyeIcon, EyeOffIcon } from 'lucide-react';
 import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
@@ -40,7 +40,7 @@ export default function LoginPage() {
       const res = await login(data);
       toast.success(res.data.message || 'Login successful');
       dispatch(setCredentials(res.data.data))
-      router.push('/dashboard');
+      router.push('/learn');
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       const msg = error.response?.data?.message || 'Login failed';
@@ -54,18 +54,21 @@ export default function LoginPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md min-h-[400px] space-y-8 rounded-xl bg-white p-10 shadow-md"
       >
-        <h2 className="text-2xl font-bold text-center">Sign In to your account</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Sign In to your account</h2>
 
-        <div>
-          <Input {...register('email')} type="email" placeholder="Email" />
-          {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
-        </div>
+          <div className='relative space-y-1'>
+            <MailIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+            <Input {...register('email')} type="email" placeholder="Email" className='pl-9'/>
+            {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+          </div>
 
         <div className="relative">
+          <LockIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
           <Input
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             placeholder="Password"
+            className='pl-9'
           />
           {commonError && (
             <p className="text-sm text-red-600 mt-1">{commonError}</p>
@@ -73,7 +76,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-3 text-gray-500"
+            className="absolute right-3 top-2.5 text-gray-500"
           >
             {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
           </button>
@@ -85,7 +88,7 @@ export default function LoginPage() {
         </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full btn-ghost-custom" disabled={isSubmitting}>
           {isSubmitting ? 'Logging in...' : 'Login'}
         </Button>
 

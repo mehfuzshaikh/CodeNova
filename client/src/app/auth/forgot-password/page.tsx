@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { forgotPassword } from '@/lib/api/auth';
 import { toast } from 'sonner';
+import { MailIcon } from 'lucide-react';
 
 const schema = yup.object().shape({
   email: yup.string().email('Invalid email').required('Email is required')
@@ -38,24 +39,25 @@ export default function ForgotPasswordPage()
         }
       };
     return(
-        <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-32">
+        <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-35">
         <form
             onSubmit={handleSubmit(onSubmit)}
             className="w-full max-w-md space-y-6 rounded-xl bg-white p-8 shadow-md"
         >
-            <h2 className="text-2xl font-bold text-center">Reset your password</h2>
+            <h2 className="text-2xl font-bold text-center text-gray-800">Reset your password</h2>
             <p className="text-sm text-gray-600 text-center mb-4">
             Enter your registered email and we will send you a password reset link.
             </p>
 
-            <div>
-            <Input {...register('email')} type="email" placeholder="Email" />
+            <div className='relative'>
+            <MailIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={17} />
+            <Input {...register('email')} type="email" placeholder="Email" className='pl-9' />
             {errors.email && (
                 <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
             )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full btn-ghost-custom" disabled={isSubmitting}>
             {isSubmitting ? 'Sending...' : 'Send Reset Link'}
             </Button>
         </form>

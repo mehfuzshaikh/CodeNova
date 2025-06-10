@@ -80,7 +80,7 @@ export default function VerifyOtpPage() {
       toast.success(res.data.message);
       dispatch(setCredentials(res.data.data))
       await dispatch(loadUser());
-      router.push("/dashboard");
+      router.push("/learn");
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       setCustomError(error.response?.data?.message || "OTP verification failed");
@@ -113,7 +113,7 @@ export default function VerifyOtpPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md space-y-6 rounded-xl bg-white p-8 shadow-md"
       >
-        <h2 className="text-2xl font-bold text-center">Verify OTP</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Verify OTP</h2>
         <p className="text-sm text-gray-600 text-center mb-4">
           Enter the 6-digit OTP sent to{" "}
           <span className="font-semibold">{email}</span>
@@ -149,7 +149,7 @@ export default function VerifyOtpPage() {
           )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" className="w-full btn-ghost-custom" disabled={loading}>
           {loading ? "Verifying..." : "Verify"}
         </Button>
 
@@ -157,7 +157,7 @@ export default function VerifyOtpPage() {
           {"Didn't get the OTP?"}{" "}
           <button
             type="button"
-            className="font-medium text-blue-600 hover:underline disabled:text-gray-400"
+            className="font-medium text-blue-600 hover:underline disabled:text-gray-400 cursor-pointer"
             disabled={resendDisabled}
             onClick={handleResendOtp}
           >

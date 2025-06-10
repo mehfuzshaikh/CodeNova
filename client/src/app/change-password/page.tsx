@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { logout } from '@/redux/features/auth/authSlice';
 import { logout as logoutApi } from '@/lib/api/auth';
 import ProtectedUserRoute from '@/components/shared/ProtectedUserRoute';
+import { LockIcon, ShieldCheckIcon } from 'lucide-react';
 
 const schema = yup.object().shape({
   currentPassword:yup.string().required('Current password is required'),
@@ -74,26 +75,29 @@ const ChangePasswordPage = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md min-h-[400px] space-y-8 rounded-xl bg-white p-10 shadow-md"
       >
-        <h2 className="text-2xl font-bold text-center">Change password</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Change password</h2>
         <div className="relative">
-          <Input {...register('currentPassword')} placeholder='Current password' type={showPassword?'text':'password'}/>
+          <LockIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+          <Input {...register('currentPassword')} placeholder='Current password' type={showPassword?'text':'password'} className='pl-9'/>
           <button type='button' onClick={()=>setShowPassword(!showPassword)}  className="absolute right-3 top-2 text-gray-500">
           {showPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
           </button>
           {errors.currentPassword && <p className="text-sm text-red-600">{errors.currentPassword.message}</p>}
         </div>
         <div className="relative">
-          <Input {...register('newPassword')} placeholder='New password' type={showNewPassword?'text':'password'}/>
+          <ShieldCheckIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+          <Input {...register('newPassword')} placeholder='New password' type={showNewPassword?'text':'password'} className='pl-9'/>
           <button type='button' onClick={()=>setShowNewPassword(!showNewPassword)}  className="absolute right-3 top-2 text-gray-500">
           {showNewPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
           </button>
           {errors.newPassword && <p className="text-sm text-red-600">{errors.newPassword.message}</p>}
         </div>
         <div className="relative">
-          <Input {...register('confirmNewPassword')} placeholder='Confirm new password' type='password'/>
+          <ShieldCheckIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+          <Input {...register('confirmNewPassword')} placeholder='Confirm new password' type='password' className='pl-9'/>
           {errors.confirmNewPassword && <p className="text-sm text-red-600">{errors.confirmNewPassword.message}</p>}
         </div>
-        <Button type='submit' disabled={isSubmitting} className="w-full" >
+        <Button type='submit' disabled={isSubmitting} className="w-full btn-ghost-custom" >
           {isSubmitting ? 'Changing password...':'Change password'}
         </Button>
       </form>

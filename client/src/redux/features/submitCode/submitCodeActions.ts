@@ -29,8 +29,8 @@ export const submitCode = (sourceCode: string, languageId: number, questionId: s
             //  message: response.message,
              status: response.status,
              language: response.language,
-             time: response.time,
-             memory: response.memory,
+             time: response.status == "Accepted"?response.time:null,
+             memory: response.status == "Accepted"?response.memory:null,
              submittedAt: response.submittedAt,
              solutionCode: response.solutionCode,
            };

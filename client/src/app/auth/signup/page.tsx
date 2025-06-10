@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 // import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { UserIcon, MailIcon, LockIcon, ShieldCheckIcon, EyeIcon, EyeOffIcon } from 'lucide-react';
 import { signUp } from '@/lib/api/auth';
 import { toast } from 'sonner';
 
@@ -63,26 +63,30 @@ export default function SignUpPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md min-h-[500px] space-y-8 rounded-xl bg-white p-10 shadow-md"
       >
-        <h2 className="text-2xl font-bold text-center">Create an account</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Create an account</h2>
 
-        <div>
+        <div className='relative'>
           {/* <Label>Username</Label> */}
-          <Input {...register('username')} placeholder="Username" />
+          <UserIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+          <Input {...register('username')} placeholder="Username" className="pl-9"/>
           {errors.username && <p className="text-sm text-red-600">{errors.username.message}</p>}
         </div>
 
-        <div>
+        <div className='relative'>
           {/* <Label>Email</Label> */}
-          <Input {...register('email')} type="email" placeholder="Email" />
+          <MailIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={17} />
+          <Input {...register('email')} type="email" placeholder="Email" className="pl-9"/>
           {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
         </div>
 
         <div className="relative">
           {/* <Label>Password</Label> */}
+          <LockIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
           <Input
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             placeholder="Password"
+            className="pl-9"
           />
           <button
             type="button"
@@ -94,15 +98,16 @@ export default function SignUpPage() {
           {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
         </div>
 
-        <div>
+        <div className='relative'>
           {/* <Label>Confirm Password</Label> */}
-          <Input {...register('confirmPassword')} type="password" placeholder="Confirm Password" />
+          <ShieldCheckIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+          <Input {...register('confirmPassword')} type="password" placeholder="Confirm Password" className='pl-9' />
           {errors.confirmPassword && (
             <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
           )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full btn-ghost-custom" disabled={isSubmitting}>
           {isSubmitting ? 'Signing up...' : 'Sign Up'}
         </Button>
 
