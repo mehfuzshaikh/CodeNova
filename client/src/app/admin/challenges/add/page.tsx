@@ -222,7 +222,7 @@ export default function AddQuestionPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-3xl space-y-4 bg-white p-8 shadow-md rounded"
       >
-        <h2 className="text-2xl font-bold text-center">Add New Question</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Add New Question</h2>
 
         <Input placeholder="Title" {...register("title")} />
         {errors.title && <p className="text-red-600">{errors.title.message}</p>}
@@ -394,7 +394,7 @@ export default function AddQuestionPage() {
         )}
 
         <div className="flex justify-between">
-          <Button type="submit" disabled={isSubmitting} className="w-1/2 mr-2">
+          <Button type="submit" disabled={isSubmitting} className="w-1/2 mr-2 btn-ghost-custom">
             {isSubmitting ? "Adding..." : "Add Question"}
           </Button>
           <Button

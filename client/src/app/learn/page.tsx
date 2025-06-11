@@ -8,30 +8,35 @@ const languages = [
     description:
       'C++ is a high-level, general-purpose programming language created by Danish computer scientist Bjarne Stroustrup.',
     image: '/learn/cpp.png',
+    link:"https://www.w3schools.com/cpp/",
   },
   {
     title: 'Introduction to Python',
     description:
       'Python is an interpreted, high-level and general-purpose programming language.',
     image: '/learn/python.png',
+    link:"https://www.w3schools.com/python/",
   },
   {
     title: 'Introduction to JavaScript',
     description:
       'JavaScript is a high-level, interpreted programming language that conforms to the ECMAScript specification.',
     image: '/learn/js.png',
+    link:"https://www.w3schools.com/js/",
   },
   {
     title: 'Introduction to Java',
     description:
       'Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible.',
     image: '/learn/java.png',
+    link:"https://www.w3schools.com/java/",
   },
   {
     title: 'Introduction to C',
     description:
       'C is a general-purpose, procedural computer programming language supporting structured programming.',
     image: '/learn/c.png',
+    link:"https://www.w3schools.com/c/",
   },
 ];
 
@@ -47,10 +52,14 @@ export default function LearnPage() {
             {languages.map((lang, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-between hover:shadow-lg transition"
+                className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-between hover:shadow-lg transition min-h-[380px]"
               >
-                <h2 className="text-xl font-semibold text-center mb-2">{lang.title}</h2>
-                <p className="text-sm text-gray-600 text-center mb-4">{lang.description}</p>
+                <h2 className="text-xl font-semibold text-center mb-2">
+                  {lang.title}
+                </h2>
+                <p className="text-sm text-gray-600 text-center mb-4">
+                  {lang.description}
+                </p>
                 <Image
                   src={lang.image}
                   alt={lang.title}
@@ -58,9 +67,14 @@ export default function LearnPage() {
                   height={80}
                   className="mb-4"
                 />
-                <button className="btn-ghost-custom">
+                <a
+                  href={lang.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-ghost-custom inline-block text-center"
+                >
                   Learn
-                </button>
+                </a>
               </div>
             ))}
           </div>

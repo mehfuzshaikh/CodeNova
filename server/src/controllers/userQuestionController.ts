@@ -12,7 +12,6 @@ export const getUserQuestions = async (req: Request, res: Response):Promise<void
 
     // Fetch user-specific solved questions
     const solvedRelations = await USERQUESTIONRELATION.find({ user_id: userId,isSolved:"Solved" });
-    console.log("Solved Relations:", solvedRelations);
 
     // Create a set of solved question IDs for quick lookup
     const solvedSet = new Set(
@@ -21,7 +20,6 @@ export const getUserQuestions = async (req: Request, res: Response):Promise<void
         .map((rel) => rel.question_id.toString())  // Extract the question IDs
     );
 
-    console.log("Solved Set:", solvedSet);
     // Prepare questions with status
     const questionsWithStatus = questions.map((question) => ({
       _id: question._id,

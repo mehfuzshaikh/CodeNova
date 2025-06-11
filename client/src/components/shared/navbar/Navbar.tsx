@@ -21,18 +21,20 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between">
-      {/* Left: Logo & App Name */}
-      <Link href="/" className="flex items-center gap-2">
-        <Image src={LOGO} alt="CodeNova Logo" width={50} height={50} />
-        <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-gray-700 text-transparent bg-clip-text">
-          CodeNova
-        </span>
-      </Link>
+    <nav className="w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between relative">
+      {/* Left: Logo */}
+      <div className="flex-1">
+        <Link href="/" className="flex items-center gap-2">
+          <Image src={LOGO} alt="CodeNova Logo" width={50} height={50} />
+          <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-gray-700 text-transparent bg-clip-text">
+            CodeNova
+          </span>
+        </Link>
+      </div>
 
-      {/* Center: Navigation */}
+      {/* Center: Nav Links */}
       {isAuthenticated && (
-        <div className="hidden md:flex gap-6 text-sm font-medium text-gray-500">
+        <div className="absolute left-1/2 transform -translate-x-1/2 hidden md:flex gap-6 text-sm font-medium text-gray-500">
           {navLinks.map(({ label, href }) => {
             const isActive = pathname === href;
             return (
@@ -40,9 +42,7 @@ export default function Navbar() {
                 key={href}
                 href={href}
                 className={`transition-colors duration-200 ${
-                  isActive
-                    ? 'text-blue-500 font-bold'
-                    : 'hover:text-black'
+                  isActive ? "text-blue-500 font-bold" : "hover:text-black"
                 }`}
               >
                 {label}
@@ -52,16 +52,16 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Right: Auth Buttons */}
-      <div className="flex gap-3">
+      {/* Right: Auth/Profile */}
+      <div className="flex-1 flex justify-end gap-3">
         {!isAuthenticated ? (
           <>
             <Link href="/auth/login">
               <Button
                 variant="ghost"
                 className="bg-white text-black border border-gray-300 px-4 py-2 rounded-md transition-all duration-300 
-               hover:bg-blue-50 hover:border-blue-500 
-               hover:shadow-[0_0_6px_2px_rgba(96,165,250,0.4)]"
+                hover:bg-blue-50 hover:border-blue-500 
+                hover:shadow-[0_0_6px_2px_rgba(96,165,250,0.4)]"
               >
                 Login
               </Button>

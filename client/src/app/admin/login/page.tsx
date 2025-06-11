@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, LockIcon, UserIcon} from 'lucide-react';
 import { login } from '@/lib/api/admin/auth';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
       const res = await login(data);
       toast.success(res.data.message || 'Login successful');
       dispatch(setAdminCredentials(res.data.data))
-      router.push('/admin/dashboard');
+      router.push('/admin');
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       const msg = error.response?.data?.message || 'Login failed';
@@ -54,18 +54,21 @@ export default function AdminLoginPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-md min-h-[320px] space-y-8 rounded-xl bg-white p-10 shadow-md"
       >
-        <h2 className="text-2xl font-bold text-center">Admin Login</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Admin Login</h2>
 
-        <div>
-          <Input {...register('username')} placeholder="Username" />
+        <div className='relative'>
+          <UserIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+          <Input {...register('username')} placeholder="Username" className='pl-9'/>
           {errors.username && <p className="text-sm text-red-600">{errors.username.message}</p>}
         </div>
 
         <div className="relative">
+          <LockIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
           <Input
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             placeholder="Password"
+            className='pl-9'
           />
           <button
             type="button"
@@ -80,7 +83,7 @@ export default function AdminLoginPage() {
             <p className="text-sm text-red-600 mt-1">{commonError}</p>
           )}
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full btn-ghost-custom" disabled={isSubmitting}>
           {isSubmitting ? 'Logging in...' : 'Login'}
         </Button>
       </form>

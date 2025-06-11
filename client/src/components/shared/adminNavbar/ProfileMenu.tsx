@@ -45,7 +45,7 @@ export default function ProfileMenu({ children }: Props) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-64">
-        <div className="flex items-center space-x-3 px-3 py-2 border-b cursor-pointer">
+        <div className="flex items-center space-x-3 px-3 py-2 border-b">
           <Avatar className="h-10 w-10">
             <AvatarImage
               alt="Profile"

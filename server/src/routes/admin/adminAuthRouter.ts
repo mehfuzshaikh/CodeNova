@@ -1,5 +1,6 @@
 import * as authController from '../../controllers/admin/adminAuthController';
 import * as questionController from '../../controllers/admin/questionController';
+import * as userController from '../../controllers/admin/userController'
 
 import express from 'express';
 import { protect } from '../../middlewares/admin/adminProtectMiddleware';
@@ -20,5 +21,6 @@ router.delete('/question/:id',protect,questionController.deleteQuestion); // Del
 router.get('/question',protect,questionController.questions); // View all question
 router.get('/question/:id',protect,questionController.getQuestion); // View one question
 
-export default router;
+router.get('/users',protect,userController.getAllUsers); // Get all users
 
+export default router;

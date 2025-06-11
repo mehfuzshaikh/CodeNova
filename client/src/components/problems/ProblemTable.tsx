@@ -160,7 +160,7 @@ const ProblemTable: React.FC<ProblemTableProps> = ({ problems }) => {
               </td>
               <td className="px-6 py-5">
                 <span
-                  className={`px-3 py-1 rounded-full text-sm font-normal ${getDifficultyStyle(
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyStyle(
                     problem.difficulty
                   )}`}
                 >
