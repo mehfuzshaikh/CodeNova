@@ -6,6 +6,16 @@ import { RootState } from '@/redux/store';
 import { updateProfile } from '@/lib/api/user';
 import ProfileField from './ProfileField';
 import { updateUser } from '@/redux/features/auth/authSlice';
+import {
+  FaUser,
+  FaVenusMars,
+  FaMapMarkerAlt,
+  FaBirthdayCake,
+  FaAlignLeft,
+  FaGlobe,
+  FaGithub,
+  FaLinkedin,
+} from "react-icons/fa";
 
 // Later we shift this code to utils or any other place
 const formatDate = (datestring:string):string=>{
@@ -51,17 +61,17 @@ const ProfileForm: React.FC = () => {
 
   return (
     <div className="p-4 text-sm bg-white rounded shadow font-normal">
-      <h2 className="text-xl font-bold mb-4">Basic Info</h2>
+      <h2 className="text-xl font-bold mb-4 text-gray-700">Basic Info</h2>
       {[
-        { label: 'Name', field: 'name', value: user.name },
-        { label: 'Gender', field: 'gender', value: user.gender },
-        { label: 'Location', field: 'location', value: user.location },
-        { label: 'Birthday', field: 'birthday', value: formatDate(user.birthday) },
-        { label: 'Summary', field: 'summary', value: user.summary },
-        { label: 'Website', field: 'website', value: formatUrl(user.website,'https://') },
-        { label: 'GitHub', field: 'github', value: formatUrl(user.github,'https://github.com/') },
-        { label: 'LinkedIn', field: 'linkedin', value: formatUrl(user.linkedin,'https://linkedin.com/in/') },
-      ].map(({ label, field, value }) => (
+        { label: 'Name', field: 'name', value: user.name, icon: FaUser },
+        { label: 'Gender', field: 'gender', value: user.gender, icon: FaVenusMars },
+        { label: 'Location', field: 'location', value: user.location, icon: FaMapMarkerAlt },
+        { label: 'Birthday', field: 'birthday', value: formatDate(user.birthday), icon: FaBirthdayCake },
+        { label: 'Summary', field: 'summary', value: user.summary, icon: FaAlignLeft },
+        { label: 'Website', field: 'website', value: formatUrl(user.website,'https://'), icon: FaGlobe },
+        { label: 'GitHub', field: 'github', value: formatUrl(user.github,'https://github.com/'), icon: FaGithub },
+        { label: 'LinkedIn', field: 'linkedin', value: formatUrl(user.linkedin,'https://linkedin.com/in/'), icon: FaLinkedin },
+      ].map(({ label, field, value, icon }) => (
         <ProfileField
           key={field}
           label={label}
@@ -71,6 +81,7 @@ const ProfileForm: React.FC = () => {
           onEdit={(field) => setEditingField(field)}
           onSave={(newValue) => handleUpdate(field, newValue)}
           onCancel={() => setEditingField(null)}
+          icon={icon}
         />
       ))}
     </div>

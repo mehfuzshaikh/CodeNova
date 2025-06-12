@@ -25,8 +25,7 @@ const ProblemDetail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "submissions">("description");
-
-  
+  const [activeTestCaseTab, setActiveTestCaseTab] = useState<"testcase" | "result">("testcase");
 
   const dispatch = useAppDispatch();
   const { problem, loading, error } = useAppSelector((state) => state.problems);
@@ -41,7 +40,7 @@ const ProblemDetail = () => {
     }
   }, [dispatch, problemId]);
 
- useEffect(() => {
+  useEffect(() => {
     if (problem && problem?.functionSignatures) {
       const defaultCode = problem.functionSignatures[language as keyof typeof problem.functionSignatures];
       setCode(defaultCode || "// Write your code here");
@@ -70,6 +69,7 @@ const ProblemDetail = () => {
       } else {
         setOutput(result.stdout);
       }
+      setActiveTestCaseTab("result");   
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }  catch (error: any) {
       const backendError = error.response?.data?.error || "Execution failed. Please try again.";
@@ -86,6 +86,7 @@ const ProblemDetail = () => {
     await dispatch(submitCode(code, languageId, problemId));
     setIsModalOpen(true);
     setIsSubmitting(false);
+    setActiveTab("submissions")
   };
 
   return (
@@ -101,7 +102,7 @@ const ProblemDetail = () => {
           <div className="flex gap-4 mb-4 border-b bg-gray-200 text-xl font-semibold rounded-t-2xl h-10">
             <button
               onClick={() => setActiveTab("description")}
-              className={`px-4 py-1 rounded-t-md font-semibold cursor-pointer ${
+              className={`px-4 py-1 rounded-t-2xl font-semibold cursor-pointer ${
                 activeTab === "description"
                   ? "bg-gray-200 border-blue-500 border-b-2"
                   : "text-gray-400"
@@ -219,6 +220,8 @@ const ProblemDetail = () => {
               testCases={problem?.testCases ?? []}
               output={output}
               loadingOutput={loadingOutput}
+              activeSection={activeTestCaseTab}
+              setActiveSection={setActiveTestCaseTab}
             />
           </div>
         </SplitPane>

@@ -63,8 +63,8 @@ export default function ChallengesPage() {
     <ProtectedAdminRoute>
       <div className="p-6 bg-gray-50 min-h-screen">
         <div className="relative mb-10 max-w-6xl mx-auto">
-          <h2 className="text-3xl font-semibold text-gray-700 text-center">
-            Questions
+          <h2 className="text-3xl font-bold text-gray-700 text-center mt-4">
+            📝 Questions
           </h2>
         </div>
 

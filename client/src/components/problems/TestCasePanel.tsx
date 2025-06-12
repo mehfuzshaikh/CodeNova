@@ -7,16 +7,21 @@ type TestCasePanelProps = {
   testCases: TestCase[];
   output: string | null;
   loadingOutput: boolean;
+  setActiveSection?: (section: "testcase" | "result") => void;
+  activeSection?: "testcase" | "result";
 };
 
 const TestCasePanel: React.FC<TestCasePanelProps> = ({
   testCases,
   output,
   loadingOutput,
+  setActiveSection: externalSetActiveSection,
+  activeSection: externalActiveSection,
 }) => {
-  const [activeSection, setActiveSection] = useState<"testcase" | "result">(
-    "testcase"
-  );
+  const [internalActiveSection, setInternalActiveSection] = useState<"testcase" | "result">("testcase");
+  const activeSection = externalActiveSection ?? internalActiveSection;
+  const setActiveSection = externalSetActiveSection ?? setInternalActiveSection;
+
   const [activeCaseIndex, setActiveCaseIndex] = useState(0);
   const outputLines = output?.trim().split('\n') || [];
   const userOutput = outputLines[0] || '';
@@ -36,23 +41,20 @@ const TestCasePanel: React.FC<TestCasePanelProps> = ({
     const items = inner.split(",").map(s => s.trim());
     return `[${items.join(", ")}]`; 
   }
-
   return trimmed;
 }
-
 
   const expected = normalizeOutput(limitedTestCases[activeCaseIndex].expectedOutput);
   const actual = normalizeOutput(testCaseOutputs[activeCaseIndex] || "");
   const isCorrect = expected === actual;
-  console.log(expected, actual, isCorrect);
 
   return (
     <div className="p-3 -mt-4 bg-white shadow-md rounded-md">
       {/* Main Tabs: Testcase | Result */}
       <div className="flex gap-4 mb-4 border-b bg-gray-200 text-xl font-semibold rounded-t-2xl h-10">
         <button
-          onClick={() => setActiveSection("testcase")}
-          className={`px-4 py-1 rounded-t-md font-semibold cursor-pointer ${
+          onClick={() => setActiveSection?.("testcase")}
+          className={`px-4 py-1 rounded-t-2xl font-semibold cursor-pointer ${
             activeSection === "testcase"
               ? "bg-gray-200 border-blue-500 border-b-2"
               : " text-gray-400"
@@ -61,7 +63,7 @@ const TestCasePanel: React.FC<TestCasePanelProps> = ({
           Testcase
         </button>
         <button
-          onClick={() => setActiveSection("result")}
+          onClick={() => setActiveSection?.("result")}
           className={`px-4 py-1 rounded-t-md font-semibold cursor-pointer ${
             activeSection === "result"
               ? "bg-gray-200 border-blue-500 border-b-2"

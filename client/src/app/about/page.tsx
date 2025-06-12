@@ -1,8 +1,11 @@
 import React from 'react'
+import ProtectedUserRoute from '@/components/shared/ProtectedUserRoute'
 
 const AboutPage = () => {
   return (
-    <div>This is AboutPage</div>
+    <ProtectedUserRoute>
+      <div>This is AboutPage</div>
+    </ProtectedUserRoute>
   )
 }
 

@@ -45,7 +45,7 @@ export default function ProfileMenu({ children }: Props) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-64">
-        <div className="flex items-center space-x-3 px-3 py-2 border-b cursor-pointer" onClick={() => router.push('/profile')}>
+        <div className="flex items-center space-x-3 px-3 py-2 border-b cursor-pointer hover:bg-gray-100" onClick={() => router.push('/profile')}>
           <Avatar className="h-10 w-10">
             <AvatarImage
               src={user.profileImg}

@@ -45,7 +45,7 @@ const AccountPage = () => {
     <ProtectedUserRoute>
     <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-22">
       <div className="w-full max-w-4xl min-h-[400px] space-y-8 rounded-xl bg-white p-8 shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-15">
+        <h2 className="text-2xl font-bold text-center mb-15 text-gray-800">
           Account Information
         </h2>
 

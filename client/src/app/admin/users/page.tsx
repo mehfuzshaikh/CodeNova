@@ -66,7 +66,7 @@ const AdminUsersPage = () => {
     <ProtectedAdminRoute>
       <div className="p-10 bg-gray-50 min-h-screen">
         {/* Heading */}
-        <h1 className="text-3xl font-semibold text-gray-700 mb-6 text-center sm:text-center">
+        <h1 className="text-3xl font-bold text-gray-700 mb-6 text-center sm:text-center">
           👥 All Registered Users
         </h1>
 

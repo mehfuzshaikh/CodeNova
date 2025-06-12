@@ -41,7 +41,7 @@ const handleCopy = async () => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="min-w-2xl">
         {" "}
         {/* Increased modal width */}
         <DialogHeader>

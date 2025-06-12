@@ -127,11 +127,11 @@ const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} className="hover:bg-gray-300">
             Cancel
           </Button>
           <Button
-            className="bg-blue-500 text-white"
+            className="bg-blue-500 text-white hover:bg-blue-900"
             onClick={() => handleImageSave(image)}
           >
             Save
