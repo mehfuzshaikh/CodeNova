@@ -119,7 +119,7 @@ const userSchema = new Schema<IUser, UserModel>({
     profileImg:String,
     points: {
         type: Number,
-        default: 0,
+        default: 5,
     },
     badges: {
         type: [String],

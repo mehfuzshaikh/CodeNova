@@ -14,13 +14,13 @@ import {
 } from "@/components/ui/tooltip";
 
 const ALL_BADGES = [
-  { points: 0, badge: "joined_platform" },
-  { points: 6, badge: "beginner_solver" },
-  { points: 14, badge: "intermediate_solver" },
-  { points: 22, badge: "advanced_solver" },
-  { points: 30, badge: "expert_solver" },
-  { points: 38, badge: "master_solver" },
-  { points: 45, badge: "legendary_solver" },
+  { points: 5, badge: "joined_platform" },
+  { points: 10, badge: "beginner_solver" },
+  { points: 15, badge: "intermediate_solver" },
+  { points: 20, badge: "advanced_solver" },
+  { points: 25, badge: "expert_solver" },
+  { points: 30, badge: "master_solver" },
+  { points: 35, badge: "legendary_solver" },
 ];
 
 const BadgesCarousel = () => {
@@ -50,28 +50,8 @@ const BadgesCarousel = () => {
   };
 
   return (
-    // <div className="mt-6 bg-white p-6 rounded-xl shadow">
     <div className="w-full mt-6 bg-white p-6 rounded-xl shadow">
       <h2 className="text-lg font-semibold mb-4 text-gray-500">Badges</h2>
-      {/* <Slider {...settings}>
-        {badges.length === 0 ? (
-          <div className="text-center text-gray-500 col-span-3">No badges earned yet</div>
-        ) : (
-          badges.map((badge: string, index: number) => (
-            <div key={index} className="px-2">
-              <div className="w-full h-32 flex items-center justify-center bg-gray-100 rounded-xl shadow-md">
-                <Image
-                  src={`/badges/${badge}.png`}
-                  alt={`Badge ${index + 1}`}
-                  width={100}
-                  height={100}
-                  className="object-contain"
-                />
-              </div>
-            </div>
-          ))
-        )}
-      </Slider> */}
       <TooltipProvider>
       <Slider {...settings}>
         {ALL_BADGES.map((badges) => {
@@ -81,7 +61,7 @@ const BadgesCarousel = () => {
             .join(" ");
 
           const unlockMessage =
-              badges.points === 0
+              badges.points === 5
                 ? "Unlocks when you join the platform"
                 : `Unlocks when you earn ${badges.points} points`;
 

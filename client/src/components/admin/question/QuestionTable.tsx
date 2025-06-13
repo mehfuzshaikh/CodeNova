@@ -1,4 +1,3 @@
-import React from 'react';
 import Link from 'next/link';
 
 interface Question {
@@ -26,7 +25,7 @@ const getDifficultyStyle = (difficulty: string) => {
   }
 };
 
-const QuestionTable: React.FC<QuestionTableProps> = ({ questions, onDelete }) => {
+const QuestionTable = ({ questions, onDelete }: QuestionTableProps) => {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-x-auto mx-auto max-w-6xl">
       <table className="min-w-full text-sm">

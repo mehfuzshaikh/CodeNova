@@ -53,10 +53,10 @@ export const getUserQuestionById = async (req: Request, res: Response): Promise<
     const userRelation = await USERQUESTIONRELATION.findOne({ 
       user_id: userId, 
       question_id: questionId,
-      isSolved:"Solved"
+      // isSolved:"Solved"
     });
 
-    const isSolved = userRelation?.isSolved || false;
+    const isSolved = userRelation?.isSolved == "Solved"?"Solved":"Pending"
 
     // Prepare the response object
     const questionDetails = {
@@ -68,7 +68,7 @@ export const getUserQuestionById = async (req: Request, res: Response): Promise<
       constraints: question.constraints,
       examples: question.examples,
       testCases: question.testCases,
-      status: isSolved ? "Solved" : "Pending",
+      status: isSolved,
       functionSignatures: question.functionSignatures,
       // solutions: userRelation?.solutions || [], //it send solution in ascending order 
       // so we sort it in descending order(submitted at)

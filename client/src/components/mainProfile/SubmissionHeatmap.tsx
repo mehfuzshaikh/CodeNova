@@ -52,11 +52,11 @@ const SubmissionHeatmap = () => {
            const fillColor =
               count === 0
                 ? "#e5e7eb" // gray-200
-                : count <= 8
+                : count <= 5
                 ? "#bbf7d0" // green-200
-                : count <= 16
+                : count <= 10
                 ? "#4ade80" // green-400
-                : count <= 24
+                : count <= 15
                 ? "#16a34a" // green-600
                 : "#166534"; // green-800
 

@@ -17,7 +17,6 @@ export default function Navbar() {
     { label: 'Learn', href: '/learn' },
     { label: 'Problems', href: '/problems' },
     { label: 'Leaderboard', href: '/leaderboard' },
-    { label: 'About', href: '/about' },
   ];
 
   return (

@@ -1,11 +1,11 @@
 export const badgeLevels = [
-  { points: 0, badge: "joined_platform" },
-  { points: 6, badge: "beginner_solver" },
-  { points: 14, badge: "intermediate_solver" },
-  { points: 22, badge: "advanced_solver" },
-  { points: 30, badge: "expert_solver" },
-  { points: 38, badge: "master_solver" },
-  { points: 45, badge: "legendary_solver" },
+  { points: 5, badge: "joined_platform" },
+  { points: 10, badge: "beginner_solver" },
+  { points: 15, badge: "intermediate_solver" },
+  { points: 20, badge: "advanced_solver" },
+  { points: 25, badge: "expert_solver" },
+  { points: 30, badge: "master_solver" },
+  { points: 35, badge: "legendary_solver" },
 ];
 
 export function getEligibleBadges(points: number): string[] {
