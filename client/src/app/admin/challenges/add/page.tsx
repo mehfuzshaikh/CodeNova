@@ -312,7 +312,11 @@ export default function AddQuestionPage() {
         ))}
         <Button
           variant="secondary"
-          onClick={() => addExample({ input: "", output: "", explanation: "" })}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            addExample({ input: "", output: "", explanation: "" });
+          }}
         >
           Add Example
         </Button>
@@ -350,7 +354,11 @@ export default function AddQuestionPage() {
         ))}
         <Button
           variant="secondary"
-          onClick={() => addTestCase({ input: "", expectedOutput: "" })}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            addTestCase({ input: "", expectedOutput: "" });
+          }}
         >
           Add Test Case
         </Button>

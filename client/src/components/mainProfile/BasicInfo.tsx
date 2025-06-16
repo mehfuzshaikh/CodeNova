@@ -27,7 +27,9 @@ export default function ProfileInfo() {
   return (
     // <div className="bg-white rounded-lg shadow-md p-6 w-80 max-w-3xl h-162">
     <div className="bg-white rounded-lg shadow-md p-6 w-full">
-    <h2 className="font-semibold text-lg mb-4 text-gray-500">Basic Information</h2>
+      <h2 className="font-semibold text-lg mb-4 text-gray-500">
+        Basic Information
+      </h2>
       {/* Top: Avatar + Username/Email */}
       <div className="flex items-center gap-4 mb-4">
         <Image
@@ -48,11 +50,10 @@ export default function ProfileInfo() {
 
       {/* Edit Profile Button */}
       <div className="mb-6">
-        <button 
-            className="bg-sky-100 text-sky-700 font-medium py-1.5 px-4 rounded-md hover:bg-sky-200 transition w-full cursor-pointer"
-            onClick={() => router.push('/edit-profile')}
+        <button
+          className="bg-sky-100 text-sky-700 font-medium py-1.5 px-4 rounded-md hover:bg-sky-200 transition w-full cursor-pointer"
+          onClick={() => router.push("/edit-profile")}
         >
-          
           Edit Profile
         </button>
       </div>
@@ -85,48 +86,56 @@ export default function ProfileInfo() {
         </div>
         <div className="flex items-center gap-3">
           <FaGlobe className="text-gray-500" />
-          <a
-            href={
-              user.website?.startsWith("http")
+          {user.website ? (
+            <a
+              href={
+                user.website.startsWith("http")
+                  ? user.website
+                  : `https://${user.website}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline break-all"
+            >
+              {user.website.startsWith("http")
                 ? user.website
-                : `https://${user.website}`
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            {formatValue(user.website)}
-          </a>
+                : `https://${user.website}`}
+            </a>
+          ) : (
+            <span>Not provided</span>
+          )}
         </div>
+
         <div className="flex items-center gap-3">
           <FaGithub className="text-gray-500" />
-          <a
-            href={
-              user.github
-                ? `https://github.com/${user.github}`
-                : undefined
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            {formatValue(user.github)}
-          </a>
+          {user.github ? (
+            <a
+              href={`https://github.com/${user.github}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline break-all"
+            >
+              https://github.com/{user.github}
+            </a>
+          ) : (
+            <span>Not provided</span>
+          )}
         </div>
+
         <div className="flex items-center gap-3">
           <FaLinkedin className="text-gray-500" />
-          <a
-            href={
-              user.linkedin
-                ? `https://linkedin.com/in/${user.linkedin}`
-                : undefined
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            {formatValue(user.linkedin)}
-          </a>
+          {user.linkedin ? (
+            <a
+              href={`https://linkedin.com/in/${user.linkedin}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline break-all"
+            >
+              https://linkedin.com/in/{user.linkedin}
+            </a>
+          ) : (
+            <span>Not provided</span>
+          )}
         </div>
       </div>
     </div>

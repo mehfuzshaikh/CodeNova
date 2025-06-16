@@ -19,6 +19,15 @@ import {
   SelectItem,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { toast } from 'sonner';
+
 
 export default function ChallengesPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,14 +36,30 @@ export default function ChallengesPage() {
   const [search, setSearch] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('All');
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState<{ id: string; title: string } | null>(
+    null
+  );
+
   useEffect(() => {
     dispatch(fetchQuestions());
   }, [dispatch]);
 
-  const handleDelete = (id: string, title: string) => {
-    const isConfirmed = confirm(`Are you sure you want to delete "${title}"?`);
-    if (isConfirmed) {
-      dispatch(deleteQuestionAction(id));
+  const handleDeleteClick = (id: string, title: string) => {
+    setSelectedQuestion({ id, title });
+    setIsDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (selectedQuestion) {
+      try {
+        await dispatch(deleteQuestionAction(selectedQuestion.id));
+        toast.success(`Question deleted successfully!`);
+      } catch {
+        toast.error('Failed to delete question');
+      }
+      setIsDialogOpen(false);
+      setSelectedQuestion(null);
     }
   };
 
@@ -118,9 +143,29 @@ export default function ChallengesPage() {
         ) : (
           <QuestionTable
             questions={filteredQuestions}
-            onDelete={handleDelete}
+            onDeleteClick={handleDeleteClick}
           />
         )}
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete &quot;{selectedQuestion?.title}&quot;?</DialogTitle>
+            </DialogHeader>
+            <p className="text-gray-600 mt-2">
+              Are you sure you want to delete this question? This action cannot be undone.
+            </p>
+            <DialogFooter className="mt-4 flex justify-end gap-4">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDelete}>
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
       </div>
     </ProtectedAdminRoute>
   );

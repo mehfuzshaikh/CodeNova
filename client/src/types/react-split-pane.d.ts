@@ -18,6 +18,8 @@ declare module "react-split-pane" {
     pane2Style?: React.CSSProperties;
     resizerStyle?: React.CSSProperties;
     children?: React.ReactNode;  // Fix: Add children here!
+    minHeight?: number;
+    posittion?: string;
   }
 
   export default class SplitPane extends React.Component<SplitPaneProps> {}

@@ -50,7 +50,7 @@ const userSchema = new Schema<IUser, UserModel>({
         type:String,
         required:[true,'Password is required'],
         minlength:8,
-        validate:[validator.isStrongPassword,'Password must be strong'],
+        // validate:[validator.isStrongPassword,'Password must be strong'],
         select:false
     },
     confirmPassword:{

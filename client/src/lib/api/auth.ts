@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5000/api/v1/user';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE as string;
 
 export const signUp = async (data: {
   username: string;
@@ -8,27 +8,27 @@ export const signUp = async (data: {
   password: string;
   confirmPassword: string;
 }) => {
-  return axios.post(`${API_BASE}/signup`, data);
+  return axios.post(`${API_BASE}/user/signup`, data);
 };
 
 export const verifyOtp = async (email: string, otp: string) => {
-  return axios.post(`${API_BASE}/verify-otp`, { email, otp },{ withCredentials: true }); // cross origin
+  return axios.post(`${API_BASE}/user/verify-otp`, { email, otp },{ withCredentials: true }); // cross origin
 };
 
 export const resendOtp = async (email: string) => {
-  return axios.post(`${API_BASE}/resend-otp`, { email });
+  return axios.post(`${API_BASE}/user/resend-otp`, { email });
 };
 
 export const login = (data: { email: string; password: string }) => {
-  return axios.post(`${API_BASE}/login`, data, { withCredentials: true }); // cross origin
+  return axios.post(`${API_BASE}/user/login`, data, { withCredentials: true }); // cross origin
 };
 
 export const forgotPassword = async (email:string) => {
-  return axios.post(`${API_BASE}/forgot-password`, { email })
+  return axios.post(`${API_BASE}/user/forgot-password`, { email })
 };
 
 export const resetPassword = async (token: string, data: { password: string; confirmPassword: string; }) => {
-  return axios.post(`${API_BASE}/reset-password/${token}`,data)
+  return axios.post(`${API_BASE}/user/reset-password/${token}`,data)
 };
 
 export const updatePassword = async (data:{ 
@@ -36,9 +36,9 @@ export const updatePassword = async (data:{
   newPassword:string;
   confirmNewPassword:string;  
 }) => {
-  return axios.post(`${API_BASE}/update-password`,data,{ withCredentials:true })
+  return axios.post(`${API_BASE}/user/update-password`,data,{ withCredentials:true })
 }
 
 export const logout = async() => {
-  return axios.post(`${API_BASE}/logout`,{},{ withCredentials:true })
+  return axios.post(`${API_BASE}/user/logout`,{},{ withCredentials:true })
 };

@@ -15,14 +15,14 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
       <table className="min-w-full text-sm text-center">
         <thead>
           <tr className="bg-gray-100 text-gray-600 font-semibold whitespace-nowrap">
-            <th className="px-4 py-4">Rank</th>
+            <th className="px-2 py-4">Rank</th>
             <th className="px-4 py-4">Avatar</th>
-            <th className="px-4 py-4">Username</th>
+            <th className="px-3 py-4">Username</th>
             <th className="px-4 py-4">Email</th>
             <th className="px-2 py-4">Points</th>
             <th className="px-2 py-4">Solved</th>
+            <th className="px-3 py-4">Badge Count</th>
             <th className="px-2 py-4">Highest Badge</th>
-            <th className="px-2 py-4">Badge Count</th>
             <th className="px-4 py-4">Name</th>
             <th className="px-2 py-4">Gender</th>
             <th className="px-4 py-4">Location</th>
@@ -57,6 +57,7 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
               <td className="px-4 py-3">{user.email}</td>
               <td className="px-2 py-3">{user.points}</td>
               <td className="px-2 py-3">{user.totalSolvedQuestions}</td>
+               <td className="px-2 py-3">{user.badgeCount}</td>
 
               <td className="px-4 py-3">
                 <Image
@@ -68,11 +69,10 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
                 />
               </td>
 
-              <td className="px-4 py-3">{user.badgeCount}</td>
               <td className="px-4 py-3">{user.name || "-"}</td>
-              <td className="px-4 py-3">{user.gender || "-"}</td>
+              <td className="px-3 py-3">{user.gender || "-"}</td>
               <td className="px-4 py-3">{user.location || "-"}</td>
-              <td className="px-4 py-3">
+              <td className="px-3 py-3">
                 {user.birthday
                   ? new Date(user.birthday).toLocaleDateString()
                   : "-"}

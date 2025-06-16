@@ -9,7 +9,7 @@ interface Question {
 
 interface QuestionTableProps {
   questions: Question[];
-  onDelete: (id: string, title: string) => void;
+  onDeleteClick: (id: string, title: string) => void;
 }
 
 const getDifficultyStyle = (difficulty: string) => {
@@ -25,7 +25,7 @@ const getDifficultyStyle = (difficulty: string) => {
   }
 };
 
-const QuestionTable = ({ questions, onDelete }: QuestionTableProps) => {
+const QuestionTable = ({ questions, onDeleteClick }: QuestionTableProps) => {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-x-auto mx-auto max-w-6xl">
       <table className="min-w-full text-sm">
@@ -67,7 +67,7 @@ const QuestionTable = ({ questions, onDelete }: QuestionTableProps) => {
                     Edit
                   </Link>
                   <button
-                    onClick={() => onDelete(question._id!, question.title)}
+                    onClick={() => onDeleteClick(question._id!, question.title)}
                     className="text-red-600 hover:underline cursor-pointer"
                   >
                     Delete

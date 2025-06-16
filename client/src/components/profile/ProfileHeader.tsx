@@ -83,7 +83,7 @@ const ProfileHeader: React.FC = () => {
 
           {/* Name & Username */}
           <div className="text-center sm:text-left">
-            <h2 className="text-2xl font-semibold break-words">{user.name || 'User Name'}</h2>
+            <h2 className="text-2xl font-semibold break-words">{user.name || "Name"}</h2>
             <p className="text-gray-300 break-all">
               Username: {user.username || 'username'}
             </p>

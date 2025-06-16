@@ -11,12 +11,25 @@ import { Button } from '@/components/ui/button';
 import { UserIcon, MailIcon, LockIcon, ShieldCheckIcon, EyeIcon, EyeOffIcon } from 'lucide-react';
 import { signUp } from '@/lib/api/auth';
 import { toast } from 'sonner';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required').min(4),
   email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup.string().required('Password is required').min(8),
+  password: yup
+    .string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .matches(/\d/, 'Password must contain at least one number')
+    .matches(/[@$!%*?&]/, 'Password must contain at least one special character'),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref('password')], 'Passwords must match')
@@ -79,24 +92,39 @@ export default function SignUpPage() {
           {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
         </div>
 
-        <div className="relative">
-          {/* <Label>Password</Label> */}
-          <LockIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
-          <Input
-            {...register('password')}
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Password"
-            className="pl-9"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-3 text-gray-500"
-          >
-            {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
-          </button>
-          {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="relative">
+                <LockIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+                <Input
+                  {...register('password')}
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Password"
+                  className="pl-9"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-500"
+                >
+                  {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+                </button>
+                {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="max-w-xs text-left">
+              <p className="text-sm font-semibold mb-1">Password must include:</p>
+              <ul className="text-xs list-disc pl-5 space-y-1">
+                <li>At least 8 characters</li>
+                <li>One lowercase letter</li>
+                <li>One uppercase letter</li>
+                <li>One number</li>
+                <li>One special character (@$!%*?&)</li>
+              </ul>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         <div className='relative'>
           {/* <Label>Confirm Password</Label> */}

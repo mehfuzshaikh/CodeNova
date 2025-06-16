@@ -9,8 +9,12 @@ import codeRunnerRoutes from './routes/codeRunnerRouter';
 
 const app = express();
 
+const BASE_URL = process.env.BASE_URL;
+const CORS_PORT = process.env.CORS_PORT;
+const PORT = process.env.PORT;
+
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: `${BASE_URL}:${CORS_PORT}`,
     credentials: true
 }))
 
@@ -28,4 +32,4 @@ app.use('/api/v1/user',userProblemsRouter);
 app.use('/api/v1/admin',adminRouter);
 app.use('/api/v1/user/code',codeRunnerRoutes);
 
-app.listen(process.env.PORT, () => console.log('Server running on http://localhost:5000'));
+app.listen(PORT, () => console.log(`Server running on ${BASE_URL}:${PORT}`));
