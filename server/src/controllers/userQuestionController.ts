@@ -2,15 +2,12 @@ import { Request, Response } from 'express';
 import { QUESTION } from '../models/questionModel';
 import { USERQUESTIONRELATION } from '../models/userQuestionRelationsModel';
 
-// Get questions with user-specific solved status
 export const getUserQuestions = async (req: Request, res: Response):Promise<void> => {
   try {
-    const userId = req.user?._id;  // Assuming `req.user` is populated from middleware
+    const userId = req.user?._id;
 
-    // Fetch all questions
     const questions = await QUESTION.find();
 
-    // Fetch user-specific solved questions
     const solvedRelations = await USERQUESTIONRELATION.find({ user_id: userId,isSolved:"Solved" });
 
     // Create a set of solved question IDs for quick lookup
@@ -38,10 +35,9 @@ export const getUserQuestions = async (req: Request, res: Response):Promise<void
 
 export const getUserQuestionById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user?._id;  // Get user ID from middleware
-    const questionId = req.params.id;  // Get question ID from URL
+    const userId = req.user?._id;  
+    const questionId = req.params.id; 
 
-    // Find the specific question by ID
     const question = await QUESTION.findOne({_id:questionId});
 
     if (!question) {
@@ -49,11 +45,9 @@ export const getUserQuestionById = async (req: Request, res: Response): Promise<
       return;
     }
 
-    // Check if the user has solved this question
     const userRelation = await USERQUESTIONRELATION.findOne({ 
       user_id: userId, 
       question_id: questionId,
-      // isSolved:"Solved"
     });
 
     const isSolved = userRelation?.isSolved == "Solved"?"Solved":"Pending"

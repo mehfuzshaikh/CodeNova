@@ -135,15 +135,6 @@ type AddQuestionFormData = Omit<
     cpp?: string;
   };
 };
-// type AddQuestionFormData = {
-//   title: string;
-//   description: string;
-//   difficulty: "Easy" | "Medium" | "Hard";
-//   topics?: string;
-//   constraints?: string;
-//   examples: { input: string; output: string; explanation: string }[];
-//   testCases: { input: string; expectedOutput: string }[];
-// };
 
 export default function AddQuestionPage() {
   const router = useRouter();

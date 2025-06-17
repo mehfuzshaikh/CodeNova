@@ -23,12 +23,14 @@ export default function Navbar() {
     <nav className="w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between relative">
       {/* Left: Logo */}
       <div className="flex-1">
-        <Link href="/" className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
+        <Link href="/" className='flex'>
           <Image src={LOGO} alt="CodeNova Logo" width={50} height={50} />
           <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-gray-700 text-transparent bg-clip-text">
             CodeNova
           </span>
         </Link>
+        </div>
       </div>
 
       {/* Center: Nav Links */}

@@ -6,7 +6,6 @@ import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
-// import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { UserIcon, MailIcon, LockIcon, ShieldCheckIcon, EyeIcon, EyeOffIcon } from 'lucide-react';
 import { signUp } from '@/lib/api/auth';
@@ -17,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Link from 'next/link';
 
 
 const schema = yup.object().shape({
@@ -127,7 +127,6 @@ export default function SignUpPage() {
         </TooltipProvider>
 
         <div className='relative'>
-          {/* <Label>Confirm Password</Label> */}
           <ShieldCheckIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
           <Input {...register('confirmPassword')} type="password" placeholder="Confirm Password" className='pl-9' />
           {errors.confirmPassword && (
@@ -141,7 +140,7 @@ export default function SignUpPage() {
 
         <p className='text-center text-sm text-gray-600'>
           Have an account?{' '}
-          <a href='/auth/login' className='font-medium text-blue-600 hover:underline'>Sign In</a>
+          <Link href='/auth/login' className='font-medium text-blue-600 hover:underline'>Sign In</Link>
         </p>
       </form>
     </div>

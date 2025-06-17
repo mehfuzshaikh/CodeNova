@@ -1,6 +1,7 @@
 'use client';
 import ProtectedUserRoute from '@/components/shared/ProtectedUserRoute';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const languages = [
   {
@@ -67,14 +68,14 @@ export default function LearnPage() {
                   height={80}
                   className="mb-4"
                 />
-                <a
+                <Link
                   href={lang.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-ghost-custom inline-block text-center"
                 >
                   Learn
-                </a>
+                </Link>
               </div>
             ))}
           </div>

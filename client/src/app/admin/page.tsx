@@ -25,14 +25,11 @@ export default function AdminHomePage() {
   return (
     <ProtectedAdminRoute>
       <div className="bg-gray-50 min-h-screen px-6 py-10">
-        {/* Heading */}
         <h1 className="text-3xl font-bold text-center text-gray-700 mb-10 flex items-center justify-center gap-2">
           <FaCogs className="text-gray-700" /> Admin Dashboard Panel
         </h1>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12">
-          {/* Users Card */}
           <div className="bg-white border border-blue-200 shadow-md rounded-lg p-6 flex items-center gap-4 hover:shadow-lg transition">
             <FaUsers className="text-4xl text-gray-600" />
             <div>
@@ -41,7 +38,6 @@ export default function AdminHomePage() {
             </div>
           </div>
 
-          {/* Questions Card */}
           <div className="bg-white border border-blue-200 shadow-md rounded-lg p-6 flex items-center gap-4 hover:shadow-lg transition">
             <FaQuestionCircle className="text-4xl text-gray-600" />
             <div>
@@ -51,7 +47,6 @@ export default function AdminHomePage() {
           </div>
         </div>
 
-        {/* Admin Info Section */}
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow border border-blue-100">
           <h3 className="text-2xl font-semibold text-gray-700 mb-4 flex items-center gap-2">
             <FaCogs className="text-gray-700" /> Admin Controls & Capabilities

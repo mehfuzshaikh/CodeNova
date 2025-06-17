@@ -4,14 +4,12 @@ import { USERQUESTIONRELATION } from "../../models/userQuestionRelationsModel";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    // Step 1: Fetch all active + verified users
     const users = await USER.find({ isVerified: true, isActive: true })
       .select(
         "email username name profileImg gender location birthday summary website github linkedin points badges createdAt"
       )
       .sort({ points: -1, createdAt: 1 }); // Sorted by points DESC, createdAt ASC
 
-    // Step 2: Aggregate solved question counts
     const solvedCounts = await USERQUESTIONRELATION.aggregate([
       { $match: { isSolved: "Solved" } },
       {
@@ -22,13 +20,11 @@ export const getAllUsers = async (req: Request, res: Response) => {
       },
     ]);
 
-    // Step 3: Create a Map for solved count lookup
     const solvedMap = new Map<string, number>();
     solvedCounts.forEach((entry) => {
       solvedMap.set(entry._id.toString(), entry.count);
     });
 
-    // Step 4: Format final user list with rank
     const userList = users.map((user, index) => {
       const userId = user._id.toString();
       const totalSolvedQuestions = solvedMap.get(userId) || 0;

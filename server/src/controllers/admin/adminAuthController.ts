@@ -1,7 +1,7 @@
 import { Request,Response} from 'express'
 import jwt,{ SignOptions } from 'jsonwebtoken';
 import type { StringValue } from 'ms'; // For solve error on expiresIn
-import { ADMIN,AdminDocument } from '../../models/adminModel';
+import { ADMIN } from '../../models/adminModel';
 
 const jwtSecret = process.env.JWT_SECRET_KEY as string;
 const jwtExpireIn = (process.env.JWT_EXPIRES_IN || '1d') as StringValue;
@@ -15,7 +15,7 @@ const setCookiesToken = (res: Response, token: string) => {
     res.cookie('adminToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days
+      maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day validity
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     });
 };
@@ -41,12 +41,12 @@ export const addAdmin = async(req:Request,res:Response):Promise<void> => {
 
 export const adminLogin = async(req:Request,res:Response):Promise<void> => {
     try {
-        const { username,password} = req.body;
+        const { username,password } = req.body;
         if(!username || !password){
             res.status(400).json({ message:'Please enter username and password'});
             return;
         }
-        const admin = await ADMIN.findOne({username}).select('+password');
+        const admin = await ADMIN.findOne({username,isActive:true}).select('+password');
         let correct;
         if(admin){
             correct = await admin.correctPassword(password,admin.password);

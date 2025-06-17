@@ -65,16 +65,10 @@ const AdminUsersPage = () => {
   return (
     <ProtectedAdminRoute>
       <div className="p-10 bg-gray-50 min-h-screen">
-        {/* Heading */}
         <h1 className="text-3xl font-bold text-gray-700 mb-6 text-center sm:text-center">
           👥 All Registered Users
         </h1>
-
-        {/* Filters */}
-        {/* <div className="w-full flex justify-center mb-6">
-          <div className="w-full max-w-8xl flex flex-col sm:flex-row justify-between gap-4"> */}
           <div className="p-4 flex flex-wrap gap-4 justify-between mb-2">
-            {/* Left: Search */}
             <Input
               placeholder="🔍 Search by Username, Email, Name, Location"
               className="w-full sm:w-[400px]"
@@ -82,9 +76,7 @@ const AdminUsersPage = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
 
-            {/* Right: Dropdowns + Date + Button */}
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto sm:justify-end">
-              {/* Gender Filter */}
               <Select value={gender} onValueChange={setGender}>
                 <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder="Filter by Gender" />
@@ -98,7 +90,6 @@ const AdminUsersPage = () => {
                 </SelectContent>
               </Select>
 
-              {/* Joined From Date */}
               <label className="text-sm font-medium text-gray-600 mt-2.5">
                 Joined From:
               </label>
@@ -109,7 +100,6 @@ const AdminUsersPage = () => {
                 className="w-full sm:w-40"
               />
 
-              {/* Joined To Date */}
                <label className="text-sm font-medium text-gray-600 mt-2.5">
                 Joined To:
               </label>
@@ -120,7 +110,6 @@ const AdminUsersPage = () => {
                 className="w-full sm:w-40"
               />
 
-              {/* Clear Button */}
               <Button
                 onClick={handleClearFilters}
                 variant="outline"
@@ -132,24 +121,20 @@ const AdminUsersPage = () => {
           </div>
         </div>
 
-        {/* Loading */}
         {loading && (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin mr-2" /> Loading users...
           </div>
         )}
 
-        {/* Error */}
         {error && (
           <div className="text-red-500 text-center">Error: {error}</div>
         )}
 
-        {/* User Table */}
         {!loading && !error && filteredUsers.length > 0 && (
           <UserTable users={filteredUsers} />
         )}
 
-        {/* Empty State */}
         {!loading && !error && filteredUsers.length === 0 && (
           <div className="text-center text-gray-500">No users found.</div>
         )}

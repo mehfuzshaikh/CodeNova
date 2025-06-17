@@ -29,8 +29,6 @@ export interface IUser{
     profileImg?:string | null,
     points: number,
     badges: string[],
-
-
 }
 export interface IUserMethods {
     correctPassword(candidatePassword: string, userPassword: string): Promise<boolean>;

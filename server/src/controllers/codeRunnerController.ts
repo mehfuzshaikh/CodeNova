@@ -185,7 +185,6 @@ export const runCode = async (req: Request, res: Response): Promise<void> => {
           `print(str(result).lower() if isinstance(result, bool) else result)`;
       } else if (languageName === "javascript") {
         testCaseRunnerCode += `\nconsole.log(${functionName}(${args.join(", ")}));`;
-        console.log("testCaseRunnerCode",testCaseRunnerCode);
       } else if (languageName === "java") {
         const javaMain = `
 import java.util.*;
@@ -245,7 +244,6 @@ int main() {
         },
       }
     );
-    console.log(response.data);
     res.status(200).json(response.data);
   } catch (error:any) {
     console.error(error.response?.data || error.message);
@@ -507,7 +505,6 @@ cout << endl;`;
       return;
     }
   } catch (error) {
-    // console.error(error.response?.data || error.message);
     res.status(500).json({ message: "Code submission failed",error: (error as Error).message });
   }
 };

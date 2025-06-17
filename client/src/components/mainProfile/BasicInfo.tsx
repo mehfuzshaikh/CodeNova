@@ -16,6 +16,7 @@ import {
   FaLinkedin,
   FaEnvelope,
 } from "react-icons/fa";
+import Link from 'next/link';
 
 export default function ProfileInfo() {
   const router = useRouter();
@@ -87,7 +88,7 @@ export default function ProfileInfo() {
         <div className="flex items-center gap-3">
           <FaGlobe className="text-gray-500" />
           {user.website ? (
-            <a
+            <Link
               href={
                 user.website.startsWith("http")
                   ? user.website
@@ -100,7 +101,7 @@ export default function ProfileInfo() {
               {user.website.startsWith("http")
                 ? user.website
                 : `https://${user.website}`}
-            </a>
+            </Link>
           ) : (
             <span>Not provided</span>
           )}
@@ -109,14 +110,16 @@ export default function ProfileInfo() {
         <div className="flex items-center gap-3">
           <FaGithub className="text-gray-500" />
           {user.github ? (
-            <a
-              href={`https://github.com/${user.github}`}
+            <Link
+              href={user.github}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline break-all"
             >
-              https://github.com/{user.github}
-            </a>
+              {user.github.startsWith("http")
+                ? user.github
+                : `https://github.com/${user.github}`}
+            </Link>
           ) : (
             <span>Not provided</span>
           )}
@@ -125,14 +128,16 @@ export default function ProfileInfo() {
         <div className="flex items-center gap-3">
           <FaLinkedin className="text-gray-500" />
           {user.linkedin ? (
-            <a
-              href={`https://linkedin.com/in/${user.linkedin}`}
+            <Link
+              href={user.linkedin}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline break-all"
             >
-              https://linkedin.com/in/{user.linkedin}
-            </a>
+              {user.linkedin.startsWith("http")
+                ? user.linkedin
+                : `https://linkedin.com/in/${user.linkedin}`}
+            </Link>
           ) : (
             <span>Not provided</span>
           )}

@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { AdminUser } from "@/redux/features/admin/users/userSlice";
 import DefaultAvatar from "../../../public/DefaultAvatar.png";
+import Link from "next/link";
 
 interface UserTableProps {
   users: AdminUser[];
@@ -80,42 +81,42 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
 
               <td className="px-4 py-3">
                 {user.website ? (
-                  <a
+                  <Link
                     href={user.website}
                     className="text-blue-600 hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Website
-                  </a>
+                  </Link>
                 ) : (
                   "-"
                 )}
               </td>
               <td className="px-4 py-3">
                 {user.github ? (
-                  <a
+                  <Link
                     href={user.github}
                     className="text-blue-600 hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     GitHub
-                  </a>
+                  </Link>
                 ) : (
                   "-"
                 )}
               </td>
               <td className="px-4 py-3">
                 {user.linkedin ? (
-                  <a
+                  <Link
                     href={user.linkedin}
                     className="text-blue-600 hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     LinkedIn
-                  </a>
+                  </Link>
                 ) : (
                   "-"
                 )}

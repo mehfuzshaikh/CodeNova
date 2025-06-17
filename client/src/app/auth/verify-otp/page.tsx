@@ -32,10 +32,7 @@ export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const router = useRouter();
-  // const dispatch = useDispatch();
   const dispatch = useDispatch<AppDispatch>();
-
-
   const [customError, setCustomError] = useState<string | null>(null);
   const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0); // seconds left

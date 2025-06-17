@@ -12,6 +12,7 @@ import { login } from '@/lib/api/admin/auth';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { setAdminCredentials } from '@/redux/features/admin/authSlice';
+import Link from 'next/link';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -86,6 +87,12 @@ export default function AdminLoginPage() {
         <Button type="submit" className="w-full btn-ghost-custom" disabled={isSubmitting}>
           {isSubmitting ? 'Logging in...' : 'Login'}
         </Button>
+        <p className="text-center text-sm text-gray-600">
+          User?{' '}
+          <Link href="/learn" className="font-medium text-blue-600 hover:underline">
+            Log in here
+          </Link>
+        </p>
       </form>
     </div>
   );

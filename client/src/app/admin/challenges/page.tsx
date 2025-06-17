@@ -103,9 +103,7 @@ export default function ChallengesPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* Difficulty */}
             <Select
               value={difficultyFilter}
               onValueChange={setDifficultyFilter}
@@ -121,7 +119,6 @@ export default function ChallengesPage() {
               </SelectContent>
             </Select>
 
-            {/* Clear Filters */}
             <Button
               onClick={clearFilters}
               variant="outline"
@@ -129,13 +126,12 @@ export default function ChallengesPage() {
             >
               Clear Filters
             </Button>
-             <Link href="/admin/challenges/add">
+            <Link href="/admin/challenges/add">
               <Button className="btn-ghost-custom">Add Question</Button>
             </Link>
           </div>
         </div>
 
-        {/* Table */}
         {loading ? (
           <p className="text-center">Loading questions...</p>
         ) : error ? (

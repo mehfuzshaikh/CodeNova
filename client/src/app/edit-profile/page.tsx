@@ -9,7 +9,6 @@ export default function EditProfilePage() {
         <ProfileHeader />
       <div className="w-full flex justify-center">
         <div className="bg-white p-6 rounded shadow-md mt-6 min-w-3xl">
-          {/* <h2 className="text-xl font-semibold mb-4">Edit Profile</h2> */}
           <ProfileForm />
         </div>
       </div>

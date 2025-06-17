@@ -26,7 +26,7 @@ const setCookiesToken = (res: Response, token: string) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 90 * 24 * 60 * 60 * 1000, // 90 days
+      maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     });
 };
@@ -82,7 +82,6 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
       if (!isVerified && isExpired) {
         await USER.deleteOne({ _id: existingUser._id });
       } else {
-        // Case: unverified, not expired, and not same email → block
         const conflictField = isSameEmail ? "Email" : "Username";
         res.status(400).json({
           message: `${conflictField} is already in use`,
@@ -151,7 +150,7 @@ export const logIn = async(req:Request,res:Response):Promise<void>=>{
             res.status(400).json({message:'Please enter email and password'});
             return;
         } 
-        const user = await USER.findOne({email}).select('+password') as UserDocument | null;
+        const user = await USER.findOne({email,isActive:true}).select('+password') as UserDocument | null;
         let correct;
         if(user)
         {

@@ -90,8 +90,6 @@ export default function EditQuestionPage() {
   
   const [initialValues, setInitialValues] = useState<QuestionFormValues | null>(null);
 
-
-
   useEffect(() => {
     if (id) {
       const questionId = Array.isArray(id) ? id[0] : id;
@@ -143,8 +141,7 @@ export default function EditQuestionPage() {
         java:"",
         cpp:"",
       }
-    },
-    
+    }, 
   });
 
   useEffect(() => {

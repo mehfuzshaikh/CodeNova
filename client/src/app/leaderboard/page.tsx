@@ -62,7 +62,6 @@ const LeaderboardPage = () => {
                 <tbody>
                   {leaderboard.map((user) => {
                     const isCurrentUser = currentUser?._id === user._id;
-
                     return (
                       <tr
                         key={user._id}
@@ -71,7 +70,6 @@ const LeaderboardPage = () => {
                         }`}
                       >
                         <td className="px-6 py-4 text-xl">{getMedal(user.rank)}</td>
-
                         <td className="px-6 py-4 flex items-center gap-3">
                           <Image
                             src={user.profileImg || DefaultAvatar}

@@ -12,6 +12,7 @@ import { login } from '@/lib/api/auth';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/redux/features/auth/authSlice';
+import Link from 'next/link';
 
 const schema = yup.object().shape({
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -49,18 +50,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-20">
+    <div className="flex min-h-screen items-start justify-center bg-gray-50 px-4 pt-23">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-md min-h-[400px] space-y-8 rounded-xl bg-white p-10 shadow-md"
+        className="w-full max-w-md min-h-[400px] space-y-8 rounded-xl bg-white p-10 shadow-md mt-5"
       >
         <h2 className="text-2xl font-bold text-center text-gray-800">Sign In to your account</h2>
 
-          <div className='relative space-y-1'>
-            <MailIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
-            <Input {...register('email')} type="email" placeholder="Email" className='pl-9'/>
-            {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
-          </div>
+        <div className='relative space-y-1'>
+          <MailIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+          <Input {...register('email')} type="email" placeholder="Email" className='pl-9'/>
+          {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+        </div>
 
         <div className="relative">
           <LockIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
@@ -82,22 +83,30 @@ export default function LoginPage() {
           </button>
           {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
           <div className="text-right">
-          <a href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
-            Forgot password?
-          </a>
-        </div>
+            <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
+              Forgot password?
+            </Link>
+          </div>
         </div>
 
         <Button type="submit" className="w-full btn-ghost-custom" disabled={isSubmitting}>
           {isSubmitting ? 'Logging in...' : 'Login'}
         </Button>
 
-        <p className="text-center text-sm text-gray-600">
-          Don’t have an account?{' '}
-          <a href="/auth/signup" className="font-medium text-blue-600 hover:underline">
-            Sign Up
-          </a>
-        </p>
+        <div>
+          <p className="text-center text-sm text-gray-600 pb-2">
+            Don’t have an account?{' '}
+            <Link href="/auth/signup" className="font-medium text-blue-600 hover:underline">
+              Sign Up
+            </Link>
+          </p>
+          <p className="text-center text-sm text-gray-600">
+            Admin?{' '}
+            <Link href="/admin" className="font-medium text-blue-600 hover:underline">
+              Log in here
+            </Link>
+          </p>
+        </div>
       </form>
     </div>
   );

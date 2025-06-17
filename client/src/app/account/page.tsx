@@ -97,8 +97,7 @@ const AccountPage = () => {
             Delete Account
           </Button>
           <p className="mt-2 text-center text-sm text-gray-500">
-            This action cannot be undone. All your data will be permanently
-            deleted.
+            This action cannot be undone. All your data will be permanently deleted.
           </p>
         </div>
       </div>
