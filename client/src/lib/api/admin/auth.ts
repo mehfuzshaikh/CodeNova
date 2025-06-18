@@ -7,7 +7,7 @@ export const login = (data: { username: string; password: string }) => {
 };
 
 export const logout = async() => {
-  return axios.post(`${API_BASE}/admin/logout`,{},{ withCredentials:true })
+  return axios.post(`${API_BASE}/admin/logout`,{},{ withCredentials:true });
 };
 
 export const getCurrentAdmin = async () => {

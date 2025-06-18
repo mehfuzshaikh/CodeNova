@@ -8,8 +8,6 @@ import leaderboardReducer from './features/leaderboard/leaderboardSlice';
 import submissionStatsReducer from './features/submissionState/submissionStatsSlice';
 import userReducer from './features/admin/users/userSlice';
 
-// import userReducer from './features/user/userSlice';
-
 export const store = configureStore({
   reducer: {
     auth: authReducer,

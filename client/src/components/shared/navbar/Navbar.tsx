@@ -21,7 +21,6 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between relative">
-      {/* Left: Logo */}
       <div className="flex-1">
         <div className="flex items-center gap-2">
         <Link href="/" className='flex'>
@@ -33,7 +32,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Center: Nav Links */}
       {isAuthenticated && (
         <div className="absolute left-1/2 transform -translate-x-1/2 hidden md:flex gap-6 text-sm font-medium text-gray-500">
           {navLinks.map(({ label, href }) => {
@@ -53,7 +51,6 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Right: Auth/Profile */}
       <div className="flex-1 flex justify-end gap-3">
         {!isAuthenticated ? (
           <>

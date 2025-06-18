@@ -7,8 +7,6 @@ import { fetchLeaderboard } from "@/redux/features/leaderboard/leaderboardAction
 import { fetchSubmissionStats } from "@/redux/features/submissionState/submissionStatsAction";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-
-// const cardClass = "flex flex-col items-center justify-center w-39.5 h-39.5 rounded-lg bg-white shadow-md text-gray-500";
 const cardClass = "flex flex-col items-center justify-center w-full sm:w-[150px] h-[150px] rounded-lg bg-white shadow-md text-gray-500";
 
 const ProfileStatsCards = () => {
@@ -35,7 +33,6 @@ const ProfileStatsCards = () => {
   const userRank = leaderboard.find(allUser => allUser._id === user?._id)?.rank;
 
   return (
-    // <div className="flex flex-wrap gap-4 mt-6">
     <div className="flex flex-wrap gap-4 justify-between mt-6">
       <div className={cardClass}>
         <span className="text-lg font-semibold">Rank</span>

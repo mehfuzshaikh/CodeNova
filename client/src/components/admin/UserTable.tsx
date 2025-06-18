@@ -17,7 +17,7 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
         <thead>
           <tr className="bg-gray-100 text-gray-600 font-semibold whitespace-nowrap">
             <th className="px-2 py-4">Rank</th>
-            <th className="px-4 py-4">Avatar</th>
+            <th className="px-4 py-4">Image</th>
             <th className="px-3 py-4">Username</th>
             <th className="px-4 py-4">Email</th>
             <th className="px-2 py-4">Points</th>

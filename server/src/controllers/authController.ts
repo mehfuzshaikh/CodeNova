@@ -4,6 +4,7 @@ import jwt,{ SignOptions } from 'jsonwebtoken';
 import type { StringValue } from 'ms'; // For solve error on expiresIn
 import { sendEmail } from '../utils/sendEmail';
 import crypto from 'crypto';
+import { otpEmailTemplate,passwordResetTemplate } from '../utils/emailTemplates';
 // In this file you show new things we use, it is for solve typescript error
 
 const jwtSecret = process.env.JWT_SECRET_KEY as string;
@@ -37,7 +38,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
     const { email, password, confirmPassword, username } = req.body;
 
     const otp = generateOTP();
-    const otpExpires = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
     const expirationThreshold = 10 * 60 * 1000; // 10 minute
 
     const existingUser = await USER.findOne({$or: [{ email }, { username }],isActive: true});
@@ -73,7 +74,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
         existingUser.otpExpires = otpExpires;
         await existingUser.save();
 
-        await sendEmail(email,"Your OTP Code",`Your OTP for signup is ${otp}.\n It is valid for 2 minutes.`);
+        await sendEmail(email,"Verification code",otpEmailTemplate(otp,false));
 
         res.status(201).json({ message: "OTP resent successfully. Please check your email."});
         return;
@@ -99,7 +100,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
       otpExpires,
     });
 
-    await sendEmail(email,"Your OTP Code",`Your OTP for signup is ${otp}.\n It is valid for 2 minutes.`);
+    await sendEmail(email,"Verification code",otpEmailTemplate(otp,false));
 
     res.status(201).json({ message: "OTP sent successfully. Please check your email." });
   } catch (error) {
@@ -202,11 +203,11 @@ export const resendOTP = async (req: Request, res: Response): Promise<void> => {
 
         const newOTP = generateOTP();
         user.verificationCode = newOTP;
-        user.otpExpires = new Date(Date.now() + 2 * 60 * 1000); // 2 mins
+        user.otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
         user.otpRequestedAt = now;
         await user.save();
 
-        sendEmail(user.email,"Resend OTP",`Your new OTP is ${newOTP}. It is valid for 2 minutes.`);
+        sendEmail(user.email,"Resend OTP", otpEmailTemplate(newOTP, true));
         res.status(200).json({ message: "OTP resent successfully. Please check your email." });
     } catch (error) {
         res.status(500).json({message: "Something went wrong",error: (error as Error).message});
@@ -234,9 +235,9 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
     
         // const resetLink = `${req.protocol}://${req.get('host')}/api/v1/user/reset-password/${token}`;  // For postman
         const resetLink = `${req.protocol}://localhost:3000/auth/reset-password/${token}`; // For frontend
-        const message = `Click the link to reset your password:\n${resetLink}\nThis link will expire in 15 minutes.`;
+        // const message = `Click the link to reset your password:\n${resetLink}\nThis link will expire in 15 minutes.`;
     
-        await sendEmail(user.email, "Password Reset", message);
+        await sendEmail(user.email, "Reset Your Password ", passwordResetTemplate(resetLink));
     
         res.status(200).json({ message: "Password reset link sent to your email" });
     } catch (error) {

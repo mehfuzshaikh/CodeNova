@@ -9,7 +9,6 @@ type ProblemDescriptionProps = {
 };
 
 const ProblemDescription: React.FC<ProblemDescriptionProps> = ({problem,srNo}) => {
-
   return (
     <div className="p-4 bg-white shadow-md rounded-md">
       {problem ? (
@@ -47,7 +46,6 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({problem,srNo}) =
             {problem.difficulty}
           </p>
 
-          {/* Topics */}
           <div className="mb-6">
             <h2 className="text-xl font-semibold">Topics:</h2>
             <ul className="list-disc list-inside ml-4">
@@ -57,13 +55,10 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({problem,srNo}) =
             </ul>
           </div>
 
-          {/* Problem Description */}
           <div className="mb-6">
-            {/* <h2 className="text-xl font-semibold">Description:</h2> */}
             <p className="whitespace-pre-line">{problem.description}</p>
           </div>
 
-          {/* Examples */}
           <div className="mb-6">
             <h2 className="text-xl font-semibold">Examples:</h2>
             {problem.examples?.map((example, index) => (
@@ -83,7 +78,6 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({problem,srNo}) =
             ))}
           </div>
 
-          {/* Constraints */}
           <div className="mb-6">
             <h2 className="text-xl font-semibold">Constraints:</h2>
             <ul className="list-disc list-inside">
@@ -94,21 +88,6 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({problem,srNo}) =
               ))}
             </ul>
           </div>
-
-          {/* Test Cases */}
-          {/* <div>
-            <h2 className="text-xl font-semibold">Test Cases:</h2>
-            {problem.testCases?.map((testCase, index) => (
-              <div key={index} className="bg-gray-100 p-2 rounded mb-2">
-                <p>
-                  <strong>Input:</strong> {testCase.input}
-                </p>
-                <p>
-                  <strong>Output:</strong> {testCase.expectedOutput}
-                </p>
-              </div>
-            ))}
-          </div> */}
         </>
       ) : (
         <p>Loading...</p>

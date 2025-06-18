@@ -1,49 +1,3 @@
-// 'use client';
-
-// import { useEffect } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { RootState, AppDispatch } from '@/redux/store';
-// import { fetchProblems } from '@/redux/features/problem/problemActions';
-// import { Loader2 } from 'lucide-react';
-// import ProblemTable from '@/components/problems/ProblemTable';
-// import ProtectedUserRoute from '@/components/shared/ProtectedUserRoute';
-// const QuestionListPage = () => {
-//   const dispatch = useDispatch<AppDispatch>();
-//   const { problems, loading, error } = useSelector((state: RootState) => state.problems);
-
-//   useEffect(() => {
-//     dispatch(fetchProblems());
-//   }, [dispatch]);
-
-//   return (
-//     <ProtectedUserRoute>
-//     <div className="p-4 bg-gray-50">
-//       {/* <h2 className="text-2xl font-semibold mb-4">Challenges</h2> */}
-
-//       {loading && (
-//         <div className="flex justify-center items-center">
-//           <Loader2 className="animate-spin mr-2" /> Loading...
-//         </div>
-//       )}
-
-//       {error && <div className="text-red-500">Error: {error}</div>}
-
-//       {!loading && problems.length === 0 && (
-//          <div className="flex justify-center items-center">
-//           <Loader2 className="animate-spin mr-2" /> Loading...
-//         </div>
-//         // <div className="text-gray-500">No questions available.</div>
-//       )}
-
-//       {!loading && problems.length > 0 && <ProblemTable problems={problems} />}
-//     </div>
-//     </ProtectedUserRoute>
-//   );
-// };
-
-// export default QuestionListPage;
-
-
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -75,7 +29,7 @@ const QuestionListPage = () => {
     dispatch(fetchProblems());
   }, [dispatch]);
 
-   const clearFilters = () => {
+  const clearFilters = () => {
     setSearch('');
     setStatusFilter('All');
     setDifficultyFilter('All');
@@ -100,15 +54,12 @@ const QuestionListPage = () => {
   return (
     <ProtectedUserRoute>
       <div className="p-10 bg-gray-50 min-h-screen">
-        {/* Heading */}
         <h1 className="text-3xl font-semibold text-gray-700 mb-6 text-center sm:text-center">
           🧠 Practice Problems
         </h1>
 
-        {/* Filters */}
         <div className="w-full flex justify-center mb-6">
           <div className="w-full max-w-6xl flex flex-col sm:flex-row justify-between gap-4">
-            {/* Left: Search */}
             <Input
               placeholder="🔍 Search by title, category or Sr. No"
               className="w-full sm:w-[400px]"
@@ -116,9 +67,7 @@ const QuestionListPage = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
 
-            {/* Right: Dropdowns + Button */}
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto sm:justify-end">
-              {/* Status Filter */}
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder="Filter by Status" />
@@ -130,7 +79,6 @@ const QuestionListPage = () => {
                 </SelectContent>
               </Select>
 
-              {/* Difficulty Filter */}
               <Select
                 value={difficultyFilter}
                 onValueChange={setDifficultyFilter}
@@ -146,7 +94,6 @@ const QuestionListPage = () => {
                 </SelectContent>
               </Select>
 
-              {/* Clear Button */}
               <Button
                 onClick={clearFilters}
                 variant="outline"
@@ -158,7 +105,6 @@ const QuestionListPage = () => {
           </div>
         </div>
 
-        {/* Table or Loader */}
         {loading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="animate-spin mr-2" /> Loading...

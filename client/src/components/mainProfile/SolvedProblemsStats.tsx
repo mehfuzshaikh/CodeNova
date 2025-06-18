@@ -11,9 +11,7 @@ export default function SolvedProblemsStats() {
 
   useEffect(() => {
       dispatch(fetchProblems());
-    }, [dispatch]);
-
-  console.log("Problems in SolvedProblemsStats:", problems);
+  }, [dispatch]);
 
   const total = problems.length;
   const solved = problems.filter(p => p.status === "Solved");
@@ -37,15 +35,7 @@ export default function SolvedProblemsStats() {
       <h2 className="font-semibold text-lg mb-4 text-gray-500">
         Solved Problems
       </h2>
-      {/* <div className="flex items-center gap-8"> */}
-      <div className="flex flex-col md:flex-row items-center gap-8">
-        {/* Circle count */}
-        {/* <div className="w-24 h-24 rounded-full border-4 border-gray-300 flex flex-col justify-center items-center text-center">
-          <span className="text-2xl font-bold text-gray-800">{solved.length}</span>
-          <span className="text-sm text-gray-600">Solved</span>
-          <span className="text-xs text-gray-500">/ {total}</span>
-        </div> */}
-        {/* Circle count with blue progress */}
+      <div className="flex flex-col md:flex-row items-center gap-8">        
         <div className="relative w-24 h-24">
           <svg className="w-full h-full transform -rotate-90">
             <circle

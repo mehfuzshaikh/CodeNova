@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Clock, Cpu } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setSelectedSubmission } from "@/redux/features/submitCode/submitCodeSlice";
-import SubmissionResultModal from "./SubmissionResultModal"; // Update the path if needed
+import SubmissionResultModal from "./SubmissionResultModal";
 
 type Submission = {
   language: string;
@@ -114,7 +114,6 @@ export default function SubmissionsTable({ submissions }: Props) {
         </table>
       </div>
 
-      {/* Modal */}
       <SubmissionResultModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

@@ -55,7 +55,6 @@ export default function ProfileMenu({ children }: Props) {
           </Avatar>
           <div>
             <p className="text-sm font-medium">{user.username}</p>
-            {/* <p className="text-xs text-muted-foreground">{user.email}</p> */}
           </div>
         </div>
 

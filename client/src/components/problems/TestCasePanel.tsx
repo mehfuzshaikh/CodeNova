@@ -50,7 +50,6 @@ const TestCasePanel: React.FC<TestCasePanelProps> = ({
 
   return (
     <div className="p-3 -mt-4 bg-white shadow-md rounded-md">
-      {/* Main Tabs: Testcase | Result */}
       <div className="flex gap-4 mb-4 border-b bg-gray-200 text-xl font-semibold rounded-t-2xl h-10">
         <button
           onClick={() => setActiveSection?.("testcase")}
@@ -76,7 +75,6 @@ const TestCasePanel: React.FC<TestCasePanelProps> = ({
 
       {activeSection === "testcase" && (
         <>
-          {/* Test Case Tabs */}
           <div className="flex border-b mb-3">
             {limitedTestCases.map((_, index) => (
               <button
@@ -93,7 +91,6 @@ const TestCasePanel: React.FC<TestCasePanelProps> = ({
             ))}
           </div>
 
-          {/* Display Test Case */}
           <div className="bg-white p-3 border rounded">
             <div className="mb-2">
               <span className="font-medium">Input:</span>
@@ -121,7 +118,6 @@ const TestCasePanel: React.FC<TestCasePanelProps> = ({
           </div>
           {output && (
             <>
-              {/* Test Case Tabs */}
               <div className="flex border-b mb-3 mt-3">
                 {limitedTestCases.map((_, index) => (
                   <button
@@ -138,7 +134,6 @@ const TestCasePanel: React.FC<TestCasePanelProps> = ({
                 ))}
               </div>
 
-              {/* Display Test Case */}
               <div className="bg-white p-3 border rounded">
                 <div className="mb-2">
                   <span className="font-medium">Input:</span>

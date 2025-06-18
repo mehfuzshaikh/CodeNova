@@ -48,7 +48,7 @@ const SubmissionHeatmap = () => {
               }
             );
 
-            // Determine fill color based on submission count
+            // Fill color based on submission count
            const fillColor =
               count === 0
                 ? "#e5e7eb" // gray-200
@@ -70,7 +70,7 @@ const SubmissionHeatmap = () => {
               <Tooltip key={dateStr}>
                 <TooltipTrigger asChild>{element}</TooltipTrigger>
                 <TooltipContent className="text-sm">
-                  {count} submission{count !== 1 ? "s" : ""} on {formattedDate}
+                  {count} submission{count > 1 ? "s" : ""} on {formattedDate}
                 </TooltipContent>
               </Tooltip>
             );
@@ -78,7 +78,6 @@ const SubmissionHeatmap = () => {
         />
       </TooltipProvider>
 
-      {/* Optional: Color Legend */}
       <div className="flex items-center space-x-2 text-sm text-gray-600">
         <span>Less</span>
         <div className="w-4 h-4 bg-gray-200 rounded-sm" />

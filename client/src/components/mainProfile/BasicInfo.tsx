@@ -26,12 +26,10 @@ export default function ProfileInfo() {
   const formatValue = (value?: string | null) => value || "Not provided";
 
   return (
-    // <div className="bg-white rounded-lg shadow-md p-6 w-80 max-w-3xl h-162">
     <div className="bg-white rounded-lg shadow-md p-6 w-full">
       <h2 className="font-semibold text-lg mb-4 text-gray-500">
         Basic Information
       </h2>
-      {/* Top: Avatar + Username/Email */}
       <div className="flex items-center gap-4 mb-4">
         <Image
           src={user.profileImg || DefaultAvatar}
@@ -49,7 +47,6 @@ export default function ProfileInfo() {
         </div>
       </div>
 
-      {/* Edit Profile Button */}
       <div className="mb-6">
         <button
           className="bg-sky-100 text-sky-700 font-medium py-1.5 px-4 rounded-md hover:bg-sky-200 transition w-full cursor-pointer"
@@ -59,7 +56,6 @@ export default function ProfileInfo() {
         </button>
       </div>
 
-      {/* Info Items with Icons */}
       <div className="space-y-3 text-sm text-gray-700">
         <div className="flex items-center gap-3">
           <FaUser className="text-gray-500" />

@@ -17,7 +17,6 @@ import {
   FaLinkedin,
 } from "react-icons/fa";
 
-// Later we shift this code to utils or any other place
 const formatDate = (datestring:string):string=>{
   if(!datestring) return '';
   const date = new Date(datestring);

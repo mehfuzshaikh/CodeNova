@@ -1,13 +1,11 @@
 import axios from 'axios';
-// import { ProfileData } from '@/types/profileDataType';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE as string;
-
 
 export const getCurrentUser = async () => {
     const res = await axios.get(`${API_BASE}/user/me`,{ withCredentials:true });
     return res.data;
-  };
+};
   
 export const updateProfile = async(data:FormData)=>{
     const res = await axios.patch(`${API_BASE}/user/update-profile`,data,{ 

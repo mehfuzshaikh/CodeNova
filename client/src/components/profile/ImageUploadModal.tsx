@@ -8,6 +8,7 @@ import { Input } from "../ui/input";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "@/lib/api/user";
 import { updateUser } from "@/redux/features/auth/authSlice";
+import { toast } from "sonner";
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB
 const ALLOWED_FORMATS = ["image/jpeg", "image/png", "image/jpg"];
@@ -20,6 +21,7 @@ const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   const [error, setError] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [isSaving, setIsSaving] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -61,9 +63,9 @@ const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 
   const handleImageSave = async (imageUrl: string | null) => {
     if (!imageUrl) return setError("No image selected");
-  
+
+    setIsSaving(true);
     try {
-      // Create a FormData object
       const formData = new FormData();
   
       // Check if the imageUrl is a Base64 string
@@ -72,22 +74,22 @@ const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         const response = await fetch(imageUrl);
         const blob = await response.blob();
         const file = new File([blob], "profile.png", { type: blob.type });
-  
-        // Append the file to the FormData object
         formData.append("profileImg", file);
       }
   
-      // Make the API call with FormData
       const response = await updateProfile(formData);
       if (response?.user?.profileImg) {
         dispatch(updateUser({ profileImg: response.user.profileImg }));
         onClose();
-        alert("Profile picture updated successfully");
+        toast.success("Profile picture updated successfully");
       }
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       const errorMessage = error?.response?.data?.message || "Failed to update profile picture";
+      toast.error(errorMessage);
       setError(errorMessage);
+    } finally {
+      setIsSaving(false);
     }
   };
   return (
@@ -133,8 +135,9 @@ const ImageUploadModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           <Button
             className="bg-blue-500 text-white hover:bg-blue-900"
             onClick={() => handleImageSave(image)}
+            disabled={isSaving}
           >
-            Save
+            {isSaving ? "Saving..." : "Save"}
           </Button>
         </div>
       </DialogContent>

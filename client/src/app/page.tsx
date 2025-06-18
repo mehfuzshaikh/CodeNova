@@ -7,17 +7,14 @@ import Image from "next/image";
 export default function Home() {
   return (
     <section className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
-      {/* Main Heading */}
       <h1 className="mt-35 text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold bg-gradient-to-r from-blue-400 to-blue-800 text-transparent bg-clip-text">
         CodeNova
       </h1>
 
-      {/* Tagline */}
       <p className="mt-4 text-lg sm:text-2xl md:text-3xl text-gray-700 max-w-3xl">
         Sharpen your coding skills and benchmark yourself
       </p>
 
-      {/* Call to Action Button */}
       <div className="mt-7">
         <Link href="/auth/signup" passHref>
           <Button
@@ -25,112 +22,33 @@ export default function Home() {
             hover:bg-blue-600 hover:shadow-blue-400/50 hover:shadow-lg hover:border-blue-300"
           >
             Join CodeNova Now
-            {/* Let’s Get Started */}
           </Button>
         </Link>
       </div>
 
       <section className="w-full overflow-hidden py-6 mt-7">
         <div className="whitespace-nowrap animate-scroll flex items-center gap-30">
-          <Image
-            src="/tech_logo/html.png"
-            alt="HTML"
-            height={100}
-            width={100}
-          />
+          
+          <Image src="/tech_logo/html.png" alt="HTML" height={100} width={100} />
           <Image src="/tech_logo/css.png" alt="CSS" height={60} width={60} />
-          <Image
-            src="/tech_logo/js.png"
-            alt="Javascript"
-            height={80}
-            width={80}
-          />
-          <Image
-            src="/tech_logo/ts.png"
-            alt="Typescript"
-            height={60}
-            width={60}
-          />
-          <Image
-            src="/tech_logo/nodejs2.png"
-            alt="Nodejs"
-            height={90}
-            width={90}
-          />
-          <Image
-            src="/tech_logo/mongodb.png"
-            alt="MongoDb"
-            height={90}
-            width={90}
-          />
-          <Image
-            src="/tech_logo/react.png"
-            alt="React"
-            height={60}
-            width={60}
-          />
-          <Image
-            src="/tech_logo/redux.png"
-            alt="Redux"
-            height={90}
-            width={90}
-          />
-          <Image
-            src="/tech_logo/next.png"
-            alt="Next"
-            height={120}
-            width={120}
-          />
-          {/* repeat logos to ensure loop effect */}
-          <Image
-            src="/tech_logo/html.png"
-            alt="HTML"
-            height={100}
-            width={100}
-          />
+          <Image src="/tech_logo/js.png" alt="Javascript" height={80} width={80} />
+          <Image src="/tech_logo/ts.png" alt="Typescript" height={60} width={60} />
+          <Image src="/tech_logo/nodejs2.png" alt="Nodejs" height={90} width={90} />
+          <Image src="/tech_logo/mongodb.png" alt="MongoDb" height={90} width={90} />
+          <Image src="/tech_logo/react.png" alt="React" height={60} width={60} />
+          <Image src="/tech_logo/redux.png" alt="Redux" height={90} width={90} />
+          <Image src="/tech_logo/next.png" alt="Next" height={120} width={120} />
+          
+          <Image src="/tech_logo/html.png" alt="HTML" height={100} width={100} />
           <Image src="/tech_logo/css.png" alt="CSS" height={60} width={60} />
-          <Image
-            src="/tech_logo/js.png"
-            alt="Javascript"
-            height={80}
-            width={80}
-          />
-          <Image
-            src="/tech_logo/ts.png"
-            alt="Typescript"
-            height={60}
-            width={60}
-          />
-          <Image
-            src="/tech_logo/nodejs2.png"
-            alt="Nodejs"
-            height={90}
-            width={90}
-          />
-          <Image
-            src="/tech_logo/mongodb.png"
-            alt="MongoDb"
-            height={90}
-            width={90}
-          />
-          <Image
-            src="/tech_logo/react.png"
-            alt="React"
-            height={60}
-            width={60}
-          />
-          <Image
-            src="/tech_logo/redux.png"
-            alt="Redux"
-            height={90}
-            width={90}
-          />
-          <Image
-            src="/tech_logo/next.png"
-            alt="Next"
-            height={120}
-            width={120}
-          />
+          <Image src="/tech_logo/js.png" alt="Javascript" height={80} width={80} />
+          <Image src="/tech_logo/ts.png" alt="Typescript" height={60} width={60} />
+          <Image src="/tech_logo/nodejs2.png" alt="Nodejs" height={90} width={90} />
+          <Image src="/tech_logo/mongodb.png" alt="MongoDb" height={90} width={90} />
+          <Image src="/tech_logo/react.png" alt="React" height={60} width={60} />
+          <Image src="/tech_logo/redux.png" alt="Redux" height={90} width={90} />
+          <Image src="/tech_logo/next.png" alt="Next" height={120} width={120} />
+          
         </div>
       </section>
       {/* Glow Divider */}
@@ -162,12 +80,11 @@ export default function Home() {
       <div className="w-screen h-24 bg-gradient-to-t from-white via-blue-400 to-[#0c0f1a]"></div>
 
       <section className="bg-white py-20 px-6 md:px-20 text-gray-900">
-        {/* Heading */}
+
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal text-center mb-16">
           The Developer Skills Platform
         </h2>
 
-        {/* Row 1: Text Left - Image Right */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-10 mb-20">
           <div className="md:w-1/2 space-y-4">
             <h3 className="text-2xl font-semibold text-blue-700">
@@ -190,7 +107,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Row 2: Image Left - Text Right */}
         <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-10">
           <div className="md:w-1/2">
             <Image
@@ -213,7 +129,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Row 3: Text Left - Image Right */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-10 mb-20 pt-20">
           <div className="md:w-1/2 space-y-4">
             <h3 className="text-2xl font-semibold text-blue-700">
@@ -236,7 +151,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Row 4: Image Left - Text Right */}
         <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-10">
           <div className="md:w-1/2">
             <Image
@@ -259,7 +173,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Row 5: Text Left - Image Right */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-10 mb-20 pt-20">
           <div className="md:w-1/2 space-y-4">
             <h3 className="text-2xl font-semibold text-blue-700">
@@ -284,13 +197,11 @@ export default function Home() {
       </section>
       <footer className="w-screen bg-[#0c0f1a] text-gray-400 text-sm py-6 px-4">
         <div className="max-w-6xl mx-auto flex flex-col items-center space-y-3">
-          {/* Logo */}
           <div className="flex items-center space-x-2">
             <Image src="/logo.png" alt="CodeNova Logo" width={30} height={30} />
             <span className="text-white text-base font-semibold">CodeNova</span>
           </div>
 
-          {/* Footer Text */}
           <p className="text-center">
             © CodeNova {new Date().getFullYear()} | All Rights Reserved.
           </p>

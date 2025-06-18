@@ -25,7 +25,6 @@ const ProtectedUserRoute = ({ children }: Props) => {
     return () => clearTimeout(timer);
   }, [isAuthenticated, router]);
 
-  // Show a loader or nothing while waiting for the state
   if (isLoading) return null;
 
   return isAuthenticated ? <>{children}</> : null;

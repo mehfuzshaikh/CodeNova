@@ -26,7 +26,6 @@ const ProblemDetail = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"description" | "submissions">("description");
   const [activeTestCaseTab, setActiveTestCaseTab] = useState<"testcase" | "result">("testcase");
-
   const dispatch = useAppDispatch();
   const { problem, loading, error } = useAppSelector((state) => state.problems);
   const params = useParams();
@@ -70,11 +69,10 @@ const ProblemDetail = () => {
         setOutput(result.stdout);
       }
       setActiveTestCaseTab("result");   
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }  catch (error: any) {
-      const backendError = error.response?.data?.error || "Execution failed. Please try again.";
-      setOutput(backendError); // show in output panel
-      console.error("Run error:", backendError);
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      const msg = error.response?.data?.message || 'Execution failed. Please try again.';
+      setOutput(msg); // show error in output panel
     } finally {
       setLoadingOutput(false);
     }
@@ -121,12 +119,6 @@ const ProblemDetail = () => {
               Submissions
             </button>
           </div>
-          {/* <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">
-            Description
-          </h2>
-          <div className="overflow-y-auto flex-1">
-            <ProblemDescription problem={problem} srNo={srNo} />
-          </div> */}
           {activeTab === "description" && (
             <div className="overflow-y-auto flex-1">
               <ProblemDescription problem={problem} srNo={srNo} />
@@ -140,14 +132,12 @@ const ProblemDetail = () => {
           )}
         </div>
 
-        {/* Right Panel: Code Editor and Test Cases */}
         <SplitPane
           split="horizontal"
           minSize={50}
           maxSize={-250}
           defaultSize="55%"
         >
-          {/* Top Right: Code Editor */}
           <div className="p-3 bg-gray-50 shadow-md h-screen w-full">
             <div className="flex justify-start items-center mb-2 bg-gray-200 rounded-t-2xl p-2 h-10 gap-5">
               <h2 className="text-xl font-semibold">Code</h2>
@@ -196,7 +186,6 @@ const ProblemDetail = () => {
           </div>
 
           <div className="p-3 bg-white shadow-md h-full">
-            {/* <h2 className="text-xl font-semibold bg-gray-200 rounded-t-2xl p-2 h-10">Testcase</h2> */}
             <div className="flex justify-end mr-5 mb-3">
               <div className="mr-2">
                 <button

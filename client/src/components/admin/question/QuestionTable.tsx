@@ -50,9 +50,7 @@ const QuestionTable = ({ questions, onDeleteClick }: QuestionTableProps) => {
               <td className="px-6 py-5">{question.title}</td>
               <td className="px-6 py-5">
                 <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyStyle(
-                    question.difficulty
-                  )}`}
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyStyle(question.difficulty)}`}
                 >
                   {question.difficulty}
                 </span>
