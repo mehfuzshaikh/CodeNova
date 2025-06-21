@@ -50,7 +50,7 @@ const ProfileForm: React.FC = () => {
       }
       const formData = new FormData();
       formData.append(field,newValue);
-      await updateProfile(formData);
+      await updateProfile(formData); 
       dispatch(updateUser({ [field]: newValue }));
       setEditingField(null); // Close edit mode
     } catch {

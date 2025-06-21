@@ -93,9 +93,7 @@ export default function ChallengesPage() {
           </h2>
         </div>
 
-        {/* Filters */}
         <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6 max-w-6xl mx-auto">
-          {/* Search */}
           <Input
             placeholder="🔍 Search by title, category or Sr. No"
             className="w-full sm:w-[300px]"

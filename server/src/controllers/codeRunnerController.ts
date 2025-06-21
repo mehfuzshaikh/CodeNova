@@ -3,7 +3,7 @@ import axios from "axios";
 import { languageIdToNameMap } from "../utils/languageMap";
 import { QUESTION } from "../models/questionModel";
 import { USERQUESTIONRELATION } from "../models/userQuestionRelationsModel";
-import { getEligibleBadges,getNewBadges,getPointsForDifficulty } from "../utils/pointsAndBadges";
+import { getNewBadges,getPointsForDifficulty } from "../utils/pointsAndBadges";
 import { USER } from "../models/userModel";
 
 function escapeRegex(str: string) {
@@ -34,30 +34,6 @@ function getFunctionSignatureRegex(
   // default fallback
   return new RegExp(escaped);
 }
-
-// This function not handle string parsing in testcases
-// function parseInputString(input: string): Record<string, any> {
-//   const result: Record<string, any> = {};
-
-//   input.split(";").forEach((pair) => {
-//     const [key, value] = pair.split("=").map((s) => s.trim());
-
-//     if (value?.startsWith("[") || value?.startsWith("{")) {
-//       // Try to parse arrays or objects
-//       try {
-//         result[key] = eval(value); // or use JSON5 if you want safer parsing
-//       } catch {
-//         result[key] = value; // fallback to string
-//       }
-//     } else if (!isNaN(Number(value))) {
-//       result[key] = Number(value);
-//     } else {
-//       result[key] = value;
-//     }
-//   });
-
-//   return result;
-// }
 
 function parseInputString(input: string): Record<string, any> {
   const result: Record<string, any> = {};
@@ -134,20 +110,14 @@ export const runCode = async (req: Request, res: Response): Promise<void> => {
     }
 
     const requiredSignature =
-      question.functionSignatures[
-        languageName as keyof typeof question.functionSignatures
-      ];
+      question.functionSignatures[languageName as keyof typeof question.functionSignatures];
+
     if (!requiredSignature) {
-      res
-        .status(400)
-        .json({
-          error: `Function signature not found for language: ${languageName}`,
-        });
+      res.status(400).json({ error: `Function signature not found for language: ${languageName}` });
       return;
     }
 
     const regex = getFunctionSignatureRegex(languageName, requiredSignature);
-
     if (!regex.test(sourceCode)) {
       res.status(200).json({
         stdout: "",
@@ -158,76 +128,127 @@ export const runCode = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const functionNameMatch = requiredSignature.match(
-      /([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/
-    );
-    const functionName = functionNameMatch ? functionNameMatch[1] : null;
+    // Extract function name and argument names
+    const functionNameMatch = requiredSignature.match(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(([^)]*)\)/);
+    const functionName = functionNameMatch?.[1] ?? null;
+    const paramStr = functionNameMatch?.[2] ?? "";
+    const paramNames = paramStr.split(",").map(s => s.trim().split(" ").pop() || "").filter(Boolean);
+
     if (!functionName) {
       res.status(400).json({ error: "Invalid function signature format" });
       return;
     }
 
     const testCases = question.testCases.slice(0, 2);
-    let testCaseRunnerCode = "";
+    let finalCode = "";
 
-    for (const testCase of testCases) {
-      const inputs = parseInputString(testCase.input);
-
-      const args = Object.keys(inputs).map((key) => {
-        return languageName === "java" || languageName === "cpp"
-          ? ""
-          : JSON.stringify(inputs[key]);
-      });
-
-      if (languageName === "python") {
+    if (languageName === "python") {
+      let testCaseRunnerCode = "";
+      for (const testCase of testCases) {
+        const inputs = parseInputString(testCase.input);
+        const args = paramNames
+          .map((name) => JSON.stringify(inputs[name]))
+          .join(", ");
         testCaseRunnerCode +=
-          `\nresult = ${functionName}(${args.join(", ")})\n` +
+          `\nresult = ${functionName}(${args})\n` +
           `print(str(result).lower() if isinstance(result, bool) else result)`;
-      } else if (languageName === "javascript") {
-        testCaseRunnerCode += `\nconsole.log(${functionName}(${args.join(", ")}));`;
-      } else if (languageName === "java") {
-        const javaMain = `
+      }
+      finalCode = `${sourceCode}\n${testCaseRunnerCode}`;
+    } else if (languageName === "javascript") {
+      let testCaseRunnerCode = "";
+      for (const testCase of testCases) {
+        const inputs = parseInputString(testCase.input);
+        const args = paramNames
+          .map((name) => JSON.stringify(inputs[name]))
+          .join(", ");
+        testCaseRunnerCode += `\nconsole.log(${functionName}(${args}));`;
+      }
+      finalCode = `${sourceCode}\n${testCaseRunnerCode}`;
+    } else if (languageName === "java") {
+      const hasMain =
+        /public\s+static\s+void\s+main\s*\(\s*String\s*\[\]\s*\w*\)/.test(
+          sourceCode
+        );
+
+      const backendTests = testCases
+        .map((testCase) => {
+          const inputs = parseInputString(testCase.input);
+          const declarations = paramNames
+            .map((name) => {
+              const val = inputs[name];
+              if (Array.isArray(val))
+                return `int[] ${name} = new int[]{${val.join(", ")}};`;
+              if (typeof val === "number") return `int ${name} = ${val};`;
+              return `// unsupported type for ${name}`;
+            })
+            .join("\n");
+
+          return `
+    {
+      ${declarations}
+      int[] result = ${functionName}(${paramNames.join(", ")});
+      // Don't print result here — internal only
+    }`;
+        })
+        .join("\n");
+
+      const backendRunner = `
+  public static void runBackendTests() {
+    ${backendTests}
+  }`;
+
+      finalCode = `
 import java.util.*;
 class Main {
-  public static int[] ${functionName}(int[] nums, int target) {
-    // User function body
+  ${sourceCode}
+  ${backendRunner}
+  ${
+    hasMain
+      ? ""
+      : 'public static void main(String[] args) { System.out.println("undefined"); }'
   }
+}
+`;
+    } else if (languageName === "cpp") {
+      const hasMain = /int\s+main\s*\(/.test(sourceCode);
 
-  public static void main(String[] args) {
-    int[] nums = new int[]{${inputs["nums"]}};
-    int target = ${inputs["target"]};
-    int[] result = ${functionName}(nums, target);
-    System.out.println(Arrays.toString(result));
-  }
+      const backendTests = testCases
+        .map((testCase) => {
+          const inputs = parseInputString(testCase.input);
+          const declarations = paramNames
+            .map((name) => {
+              const val = inputs[name];
+              if (Array.isArray(val))
+                return `vector<int> ${name} = {${val.join(", ")}};`;
+              if (typeof val === "number") return `int ${name} = ${val};`;
+              return `// unsupported type for ${name}`;
+            })
+            .join("\n");
+
+          return `
+    {
+      ${declarations}
+      vector<int> result = ${functionName}(${paramNames.join(", ")});
+      // Don't print result here — internal only
+    }`;
+        })
+        .join("\n");
+
+      const backendRunner = `
+void runBackendTests() {
+  ${backendTests}
 }`;
-        testCaseRunnerCode = javaMain;
-        break;
-      } else if (languageName === "cpp") {
-        const cppMain = `
+
+      finalCode = `
 #include <iostream>
 #include <vector>
 using namespace std;
 
-vector<int> ${functionName}(vector<int>& nums, int target) {
-  // User function body
-}
-
-int main() {
-  vector<int> nums = {${inputs["nums"]}};
-  int target = ${inputs["target"]};
-  vector<int> result = ${functionName}(nums, target);
-  for (int x : result) cout << x << " ";
-  return 0;
-}`;
-        testCaseRunnerCode = cppMain;
-        break;
-      }
+${sourceCode}
+${backendRunner}
+${hasMain ? "" : 'int main() { cout << "undefined" << endl; return 0; }'}
+`;
     }
-
-    const finalCode =
-      languageName === "java" || languageName === "cpp"
-        ? testCaseRunnerCode
-        : `${sourceCode}\n${testCaseRunnerCode}`;
 
     const response = await axios.post(
       "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
@@ -244,10 +265,12 @@ int main() {
         },
       }
     );
+
     res.status(200).json(response.data);
-  } catch (error:any) {
+
+  } catch (error: any) {
     console.error(error.response?.data || error.message);
-    res.status(200).json({ message: "Code execution failed" ,error:(error as Error).message});
+    res.status(200).json({ message: "Code execution failed", error: error.message });
   }
 };
 
@@ -448,9 +471,6 @@ cout << endl;`;
           new Set([...(user.badges || []), ...newBadges])
         );
         await user.save();
-
-        // pointsAwarded = points;
-        // newlyAwardedBadges = newBadges;
       }
 
       res.status(200).json({
@@ -485,9 +505,6 @@ cout << endl;`;
         user.points += points;
         user.badges = Array.from(new Set([...(user.badges || []), ...newBadges]));
         await user.save();
-
-        // pointsAwarded = points;
-        // newlyAwardedBadges = newBadges;
       }
 
       await existingRelation.save();

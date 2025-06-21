@@ -1,5 +1,5 @@
 import { USER,UserDocument } from '../models/userModel';
-import { Request,Response} from 'express'
+import { Request,Response} from 'express';
 import jwt,{ SignOptions } from 'jsonwebtoken';
 import type { StringValue } from 'ms'; // For solve error on expiresIn
 import { sendEmail } from '../utils/sendEmail';

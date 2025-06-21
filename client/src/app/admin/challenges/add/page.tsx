@@ -94,7 +94,7 @@ const schema = yup.object().shape({
           .required("Expected output is required"),
       })
     )
-    .min(1, "At least one test case is required")
+    .min(8, "Eight test cases are required")
     .required("Test cases are required"),
 
   functionSignatures: yup.object({

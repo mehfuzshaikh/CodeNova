@@ -117,7 +117,6 @@ const AdminUsersPage = () => {
               >
                 Clear Filters
               </Button>
-            {/* </div> */}
           </div>
         </div>
 

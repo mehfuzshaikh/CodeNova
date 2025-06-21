@@ -31,7 +31,7 @@ export const addQuestionSchema = Joi.object({
         expectedOutput: Joi.string().trim().required(),
       })
     )
-    .min(1)
+    .min(8)
     .required(),
   functionSignatures: functionSignaturesSchema.required(),
 });

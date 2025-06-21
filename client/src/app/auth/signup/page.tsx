@@ -64,7 +64,6 @@ export default function SignUpPage() {
         } else if (msg?.includes('Username')) {
           setError('username', { type: 'manual', message: msg });
         } else {
-          // fallback: show general error if you like
           toast.error(msg || 'Signup failed')
         }
     }
@@ -79,14 +78,12 @@ export default function SignUpPage() {
         <h2 className="text-2xl font-bold text-center text-gray-800">Create an account</h2>
 
         <div className='relative'>
-          {/* <Label>Username</Label> */}
           <UserIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
           <Input {...register('username')} placeholder="Username" className="pl-9"/>
           {errors.username && <p className="text-sm text-red-600">{errors.username.message}</p>}
         </div>
 
         <div className='relative'>
-          {/* <Label>Email</Label> */}
           <MailIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={17} />
           <Input {...register('email')} type="email" placeholder="Email" className="pl-9"/>
           {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}

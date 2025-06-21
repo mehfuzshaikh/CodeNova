@@ -16,10 +16,23 @@ import { logout } from '@/redux/features/auth/authSlice';
 import { logout as logoutApi } from '@/lib/api/auth';
 import ProtectedUserRoute from '@/components/shared/ProtectedUserRoute';
 import { LockIcon, ShieldCheckIcon } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const schema = yup.object().shape({
   currentPassword:yup.string().required('Current password is required'),
-  newPassword:yup.string().required('Password is required').min(8,'New password must be at least 8 characters'),
+  newPassword: yup
+      .string()
+      .required('Password is required')
+      .min(8, 'Password must be at least 8 characters')
+      .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+      .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .matches(/\d/, 'Password must contain at least one number')
+      .matches(/[@$!%*?&]/, 'Password must contain at least one special character'),
   confirmNewPassword:yup
     .string()
     .oneOf([yup.ref('newPassword')],'Passwords must match')
@@ -86,14 +99,30 @@ const ChangePasswordPage = () => {
           {errors.currentPassword && <p className="text-sm text-red-600">{errors.currentPassword.message}</p>}
         </div>
 
-        <div className="relative">
-          <ShieldCheckIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
-          <Input {...register('newPassword')} placeholder='New password' type={showNewPassword?'text':'password'} className='pl-9'/>
-          <button type='button' onClick={()=>setShowNewPassword(!showNewPassword)}  className="absolute right-3 top-2 text-gray-500">
-          {showNewPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
-          </button>
-          {errors.newPassword && <p className="text-sm text-red-600">{errors.newPassword.message}</p>}
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="relative">
+              <ShieldCheckIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />
+              <Input {...register('newPassword')} placeholder='New password' type={showNewPassword?'text':'password'} className='pl-9'/>
+              <button type='button' onClick={()=>setShowNewPassword(!showNewPassword)}  className="absolute right-3 top-2 text-gray-500">
+              {showNewPassword ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              </button>
+              {errors.newPassword && <p className="text-sm text-red-600">{errors.newPassword.message}</p>}
+            </div>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="max-w-xs text-left">
+              <p className="text-sm font-semibold mb-1">Password must include:</p>
+              <ul className="text-xs list-disc pl-5 space-y-1">
+                <li>At least 8 characters</li>
+                <li>One lowercase letter</li>
+                <li>One uppercase letter</li>
+                <li>One number</li>
+                <li>One special character (@$!%*?&)</li>
+              </ul>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         <div className="relative">
           <ShieldCheckIcon className="absolute left-3 top-4.5 -translate-y-1/2 text-gray-400" size={18} />

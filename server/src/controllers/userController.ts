@@ -1,5 +1,5 @@
 import { USER,IUser } from '../models/userModel';
-import { Request,Response} from 'express'
+import { Request,Response} from 'express';
 import { USERQUESTIONRELATION } from '../models/userQuestionRelationsModel';
 
 const formatUrl = (value: string, baseUrl: string): string => {

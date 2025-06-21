@@ -42,7 +42,7 @@ const schema = yup.object().shape({
       input: yup.string().required("Test case input is required"),
       expectedOutput: yup.string().required("Expected output is required"),
     })
-  ).min(1, "At least one test case is required"),
+  ).min(8, "Eight test cases are required"),
   functionSignatures: yup.object({
       python: yup
         .string()
