@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/tooltip";
 import Link from 'next/link';
 
-
 const schema = yup.object().shape({
   username: yup.string().required('Username is required').min(4),
   email: yup.string().email('Invalid email').required('Email is required'),

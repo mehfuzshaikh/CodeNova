@@ -74,8 +74,6 @@ function parseInputString(input: string): Record<string, any> {
 
   return result;
 }
-
-
 interface Judge0Response {
   stdout?: string;
   stderr?: string;
@@ -318,78 +316,131 @@ export const submitCode = async (req: Request,res: Response): Promise<void> => {
       return;
     }
 
-    const functionName = requiredSignature.match(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/)?.[1];
+    const functionNameMatch = requiredSignature.match(/([a-zA-Z_][a-zA-Z0-9_]*)\s*\(([^)]*)\)/);
+    const functionName = functionNameMatch?.[1] ?? null;
+    const paramStr = functionNameMatch?.[2] ?? "";
+    const paramNames = paramStr.split(",").map(s => s.trim().split(" ").pop() || "").filter(Boolean);
+    
     if (!functionName) {
       res.status(400).json({ error: "Invalid function signature" });
       return;
     }
 
     const testCases = question.testCases;
-    let combinedCode = "";
+    let finalCode = "";
 
     if (languageName === "python") {
-      combinedCode = `${sourceCode}\n`;
+      let testCaseRunnerCode = "";
       for (const testCase of testCases) {
         const inputs = parseInputString(testCase.input);
-        const args = Object.values(inputs).map((arg) => JSON.stringify(arg)).join(", ");
-        combinedCode += `print(${functionName}(${args}))\n`;
+        const args = paramNames
+          .map((name) => JSON.stringify(inputs[name]))
+          .join(", ");
+        testCaseRunnerCode +=
+          `\nresult = ${functionName}(${args})\n` +
+          `print(str(result).lower() if isinstance(result, bool) else result)`;
       }
+      finalCode = `${sourceCode}\n${testCaseRunnerCode}`;
     } else if (languageName === "javascript") {
-      combinedCode = `${sourceCode}\n`;
+      let testCaseRunnerCode = "";
       for (const testCase of testCases) {
         const inputs = parseInputString(testCase.input);
-        const args = Object.values(inputs).map((arg) => JSON.stringify(arg)).join(", ");
-        combinedCode += `console.log(${functionName}(${args}));\n`;
+        const args = paramNames
+          .map((name) => JSON.stringify(inputs[name]))
+          .join(", ");
+        testCaseRunnerCode += `\nconsole.log(${functionName}(${args}));`;
       }
+      finalCode = `${sourceCode}\n${testCaseRunnerCode}`;
     } else if (languageName === "java") {
-      combinedCode = `
+      const hasMain =
+        /public\s+static\s+void\s+main\s*\(\s*String\s*\[\]\s*\w*\)/.test(
+          sourceCode
+        );
+
+      const backendTests = testCases
+        .map((testCase) => {
+          const inputs = parseInputString(testCase.input);
+          const declarations = paramNames
+            .map((name) => {
+              const val = inputs[name];
+              if (Array.isArray(val))
+                return `int[] ${name} = new int[]{${val.join(", ")}};`;
+              if (typeof val === "number") return `int ${name} = ${val};`;
+              return `// unsupported type for ${name}`;
+            })
+            .join("\n");
+
+          return `
+    {
+      ${declarations}
+      int[] result = ${functionName}(${paramNames.join(", ")});
+      // Don't print result here — internal only
+    }`;
+        })
+        .join("\n");
+
+      const backendRunner = `
+  public static void runBackendTests() {
+    ${backendTests}
+  }`;
+
+      finalCode = `
 import java.util.*;
 class Main {
-  public static ${sourceCode}
-
-  public static void main(String[] args) {
-    ${testCases
-      .map((testCase) => {
-        const inputs = parseInputString(testCase.input);
-        const nums = inputs["nums"] || "";
-        const target = inputs["target"] || "";
-        return `int[] nums = new int[]{${nums}};
-int target = ${target};
-int[] result = ${functionName}(nums, target);
-System.out.println(Arrays.toString(result));`;
-      })
-      .join("\n")}
+  ${sourceCode}
+  ${backendRunner}
+  ${
+    hasMain
+      ? ""
+      : 'public static void main(String[] args) { System.out.println("undefined"); }'
   }
-}`;
+}
+`;
     } else if (languageName === "cpp") {
-      combinedCode = `
+      const hasMain = /int\s+main\s*\(/.test(sourceCode);
+
+      const backendTests = testCases
+        .map((testCase) => {
+          const inputs = parseInputString(testCase.input);
+          const declarations = paramNames
+            .map((name) => {
+              const val = inputs[name];
+              if (Array.isArray(val))
+                return `vector<int> ${name} = {${val.join(", ")}};`;
+              if (typeof val === "number") return `int ${name} = ${val};`;
+              return `// unsupported type for ${name}`;
+            })
+            .join("\n");
+
+          return `
+    {
+      ${declarations}
+      vector<int> result = ${functionName}(${paramNames.join(", ")});
+      // Don't print result here — internal only
+    }`;
+        })
+        .join("\n");
+
+      const backendRunner = `
+void runBackendTests() {
+  ${backendTests}
+}`;
+
+      finalCode = `
 #include <iostream>
 #include <vector>
 using namespace std;
 
 ${sourceCode}
-
-int main() {
-${testCases
-  .map((testCase) => {
-    const inputs = parseInputString(testCase.input);
-    const nums = inputs["nums"] || "";
-    const target = inputs["target"] || "";
-    return `vector<int> nums = {${nums}};
-int target = ${target};
-vector<int> result = ${functionName}(nums, target);
-for (int x : result) cout << x << " ";
-cout << endl;`;
-  })
-  .join("\n")}
-  return 0;
-}`;
+${backendRunner}
+${hasMain ? "" : 'int main() { cout << "undefined" << endl; return 0; }'}
+`;
     }
 
     // Submit combined code
     const result = await axios.post<Judge0Response>("https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
       {
-        source_code: combinedCode,
+        source_code: finalCode,
         language_id: languageId,
       },
       {
@@ -404,7 +455,6 @@ cout << endl;`;
 
     const {stdout,stderr,compile_output,status,time: execTime,memory: execMemory} = result.data;
 
-    // const normalize = (s: string) => s.replace(/\s+/g, ''); // remove all whitespace
     const safeParse = (val: string): any => {
       if (val == "True") return true;
       if (val == "False") return false;
