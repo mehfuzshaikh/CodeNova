@@ -358,7 +358,7 @@ export default function AddQuestionPage() {
 
         <label className="text-gray-500 text-sm">JavaScript</label>
         <Textarea
-          placeholder="function twoSum(nums, target) { ... }"
+          placeholder="function twoSum(nums, target)"
           {...register("functionSignatures.javascript")}
         />
         {errors.functionSignatures?.javascript && (
@@ -367,7 +367,7 @@ export default function AddQuestionPage() {
 
         <label className="text-gray-500 text-sm">Python</label>
         <Textarea
-          placeholder="def twoSum(nums: List[int], target: int) -> List[int]"
+          placeholder="def twoSum(nums, target)"
           {...register("functionSignatures.python")}
         />
         {errors.functionSignatures?.python && (
@@ -376,7 +376,7 @@ export default function AddQuestionPage() {
 
         <label className="text-gray-500 text-sm">C++</label>
         <Textarea
-          placeholder="vector<int> twoSum(vector<int>& nums, int target) { ... }"
+          placeholder="vector<int> twoSum(vector<int>& nums, int target)"
           {...register("functionSignatures.cpp")}
         />
         {errors.functionSignatures?.cpp && (
@@ -385,7 +385,7 @@ export default function AddQuestionPage() {
 
         <label className="text-gray-500 text-sm">Java</label>
         <Textarea
-          placeholder="public int[] twoSum(int[] nums, int target) { ... }"
+          placeholder="public int[] twoSum(int[] nums, int target)"
           {...register("functionSignatures.java")}
         />
         {errors.functionSignatures?.java && (
